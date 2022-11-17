@@ -1,0 +1,6 @@
+.rdt_TableHeadRow:first-child {
+    min-width: 10px;
+}
+input[type="text"], select {
+    width: 100%;
+}
