@@ -12,6 +12,10 @@ import UserToken from '../components/UserToken'
 // const BlankLayout = Loadable(lazy(() => import('../layouts/BlankLayout')));
 /***** Pages ****/
 
+// Modals
+const AddLineItem = Loadable(lazy(() => import('../components/tender/AddLineItemModal')));
+const EditQuote = Loadable(lazy(() => import('../components/tender/EditQuote')));
+
 
 
 const PdfData = Loadable(lazy(() => import('../views/smartconTables/Tickets')));
@@ -198,11 +202,14 @@ const Routernew = () => {
      
         <Route path="/"  element={<FullLayout></FullLayout>}>
 
+          {/* Tendar Modal */}
+          <Route path="/addlineitem" name="clienttdata" element={<AddLineItem />}></Route>
+          <Route path="/editquote" name="clienttdata" element={<EditQuote />}></Route>
+
+          
       {/* Table Edit's */}
         <Route path="/TenderEdit/:id" name="clienttdata" element={<TenderEdit />}></Route>
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
-
-
 
         <Route path="/pdf/:id" name="pdfData" element={<PdfData />}></Route>
         <Route path="/pdfnext" name="pdfData" element={<PdfNext />}></Route>

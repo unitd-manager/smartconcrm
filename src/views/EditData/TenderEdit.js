@@ -4,12 +4,17 @@ import {ToastContainer} from 'react-toastify'
 import {  Link, useParams } from 'react-router-dom';
 import * as Icon from 'react-feather';
 import Swal from 'sweetalert2'
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import '../form-editor/editor.scss'
 import pdfMake from "pdfmake"
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import AddLineItemModal from '../../components/tender/AddLineItemModal';
+import EditQuote from '../../components/tender/EditQuote';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
+
 
 const TenderEdit = () => {
 
@@ -29,13 +34,14 @@ const TenderEdit = () => {
     const [viewLineModal, setViewLineModal] = useState(false);
     const [addContactModal, setAddContactModal] = useState(false);
     const [addCompanyModal, setAddCompanyModal] = useState(false);
-    const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
+    const [editQuoteModal, setEditQuoteModal] = useState(false);
 
-   
+    const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
     const [contact, setContact] = useState();
     const [company, setCompany] = useState();
     const [incharge, setIncharge] = useState();
     const [selectedCompany, setSelectedCompany] = useState()
+    const [addLineItemModal, setAddLineItemModal] = useState(false);
     const {id} = useParams()
 
     const editCostingSummaryToggle = () => {
@@ -76,7 +82,7 @@ const TenderEdit = () => {
       .then((res)=> {
         setCompany(res.data.data)
       }).catch(()=>{
-        message("Company not found","error")
+        message("Company not found","info")
       })
     }
 
@@ -86,9 +92,9 @@ const TenderEdit = () => {
         api.post('/tender/getQuoteById',{opportunity_id:id})
         .then((res)=> {
           setQuote(res.data.data[0])
-          //console.log(res)  
+          console.log(res)  
         }).catch(() => {
-          message("Quote not found","error")
+          message("Quote not found","info")
         })
      }
 
@@ -169,7 +175,7 @@ const TenderEdit = () => {
             getContact(res.data.data.company_id)
         })
        .catch(() => {
-         message("Tender Data Not Found",'error')
+         message("Tender Data Not Found",'info')
         })
      }
     
@@ -193,8 +199,6 @@ const TenderEdit = () => {
     }
 
     // edit Tab Costing Summary Form
-
-
     const handleCostingSummeryInputs = (e) => {
       seteditCostingSummaryData({...editCostingSummaryData, [e.target.name]:e.target.value});
     }
@@ -205,6 +209,7 @@ const TenderEdit = () => {
       .then((res)=> {
           console.log(res)
           setEditCostingSummaryModel(false);
+          window.location.reload()
       })
     }
 
@@ -247,7 +252,6 @@ const TenderEdit = () => {
     }
 
     // Get Line Item 
-
     const getLineItem = (quotationId) => {
       api.post('/tender/getQuoteLineItemsById',{quote_id:quotationId})
       .then((res)=> {
@@ -671,7 +675,7 @@ const TenderEdit = () => {
 
         <Form >
           <FormGroup>
-          <ComponentCard title="Key Details | Code: O-1045">
+          <ComponentCard title={`Key Details | Code: ${tenderDetails && tenderDetails.opportunity_code}`}>
               <Row>
               <Col md="3">
                   <FormGroup>
@@ -1692,6 +1696,7 @@ const TenderEdit = () => {
                       }
                       }>View Line Items</u></Label>
 
+                      {/* View Line Item Modal */}
                       <Modal isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
                             <ModalHeader toggle={viewLineToggle.bind(null)}>Line Items</ModalHeader>
                             <ModalBody>
@@ -1731,14 +1736,36 @@ const TenderEdit = () => {
                                 </table>
                                 </FormGroup>
                             </ModalBody>
-                        </Modal>
+                      </Modal>
+                       {/* End View Line Item Modal */}
+
                   </FormGroup>
                 </Col>
+                
+                <EditQuote editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} 
+                id={quote && quote.quote_id}
+                quoteDate={quote && quote.quote_date}
+                quoteCode={quote && quote.quote_code}
+                quoteStatus={quote && quote.quote_status}
+                projectLocation={quote && quote.project_location}
+                projectReference={quote && quote.project_reference}
+                paymentMethod={quote && quote.payment_method}
+                revision={quote && quote.revision}
+                introDrawingQuote={quote && quote.intro_drawing_quote}
+                condition={quote && quote.condition}
+                ></EditQuote>
+                <AddLineItemModal addLineItemModal={addLineItemModal} setAddLineItemModal={setAddLineItemModal}></AddLineItemModal>
+            
                 <Col>
                   <FormGroup>
-                    {quote && (<button type='button' onClick={()=>{
-                      GeneratePdf(quote.quote_id)
-                    }}><Label>Generate Pdf</Label></button>)}
+
+                    <Row>
+            
+                      <Col md='4'><Label><Link to=""><span onClick={()=>{setEditQuoteModal(true) }}><Icon.Edit /></span></Link></Label></Col>
+                      <Col md='4'>{quote && (<Label><Link to=""><span onClick={()=>{GeneratePdf(quote.quote_id)}}><Icon.Printer/></span></Link></Label>)}</Col>
+                      <Col md='4'><Label><Link to=""> <span onClick={()=>{setAddLineItemModal(true) }}><Icon.PlusCircle /></span> </Link></Label></Col>
+                    </Row>
+
                   </FormGroup>
                 </Col>
                 </Row>
