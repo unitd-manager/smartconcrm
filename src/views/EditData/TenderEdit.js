@@ -9,7 +9,8 @@ import '../form-editor/editor.scss'
 import pdfMake from "pdfmake"
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import AddLineItemModal from '../../components/tender/AddLineItemModal';
-import EditQuote from '../../components/tender/EditQuote';
+import EditQuote from '../../components/tender/EditQuoteModal';
+import EditLineItemModal from '../../components/tender/EditLineItemModal';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
@@ -35,6 +36,7 @@ const TenderEdit = () => {
     const [addContactModal, setAddContactModal] = useState(false);
     const [addCompanyModal, setAddCompanyModal] = useState(false);
     const [editQuoteModal, setEditQuoteModal] = useState(false);
+    const [editLineModal, setEditLineModal] = useState(false);
 
     const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
     const [contact, setContact] = useState();
@@ -42,6 +44,7 @@ const TenderEdit = () => {
     const [incharge, setIncharge] = useState();
     const [selectedCompany, setSelectedCompany] = useState()
     const [addLineItemModal, setAddLineItemModal] = useState(false);
+    const [editLineModelItem, setEditLineModelItem] = useState(null)
     const {id} = useParams()
 
     const editCostingSummaryToggle = () => {
@@ -62,6 +65,7 @@ const TenderEdit = () => {
     const addCompanyToggle = () => {
       setAddCompanyModal(!addCompanyModal);
     };
+  
 
     // Get Costing Summary Data
     const getCostingbySummary = () =>
@@ -297,6 +301,7 @@ const TenderEdit = () => {
         getQuote();
         getIncharge();
         getCompany();
+        console.log(lineItem)
       },[id])
 
       //Open PDF
@@ -1718,15 +1723,19 @@ const TenderEdit = () => {
                                     {lineItem && lineItem.map((e)=>{
                                       return(
                                         <tr>
-                                            <td data-label="Title">{e.title}</td>
-                                            <td data-label="Description">{e.description}</td>
-                                            <td data-label="Qty">{e.quantity}</td>
-                                            <td data-label="Unit Price">{e.unit_price}</td>
-                                            <td data-label="Amount">{e.amount}</td>
-                                            <td data-label="Updated By">{e.created_by}</td>
-                                            <td data-label="Action"><Link to=""><span onClick={()=>{
-                                              deleteRecord(e.quote_items_id)
-                                            }}><Icon.Trash2 /></span></Link></td>
+                                          <td data-label="Title">{e.title}</td>
+                                          <td data-label="Description">{e.description}</td>
+                                          <td data-label="Qty">{e.quantity}</td>
+                                          <td data-label="Unit Price">{e.unit_price}</td>
+                                          <td data-label="Amount">{e.amount}</td>
+                                          <td data-label="Updated By">{e.created_by}</td>
+                                          <td data-label="Action">
+                                            <Link to=""><span onClick={()=>{
+                                              setEditLineModelItem(e)
+                                              setEditLineModal(true)
+                                              }}><Icon.Edit2 /></span></Link>
+                                            <Link to=""><span onClick={()=>{deleteRecord(e.quote_items_id)}}><Icon.Trash2 /></span></Link>
+                                          </td>
                                         </tr>
                                       )
                                         
@@ -1737,23 +1746,14 @@ const TenderEdit = () => {
                                 </FormGroup>
                             </ModalBody>
                       </Modal>
+
+                      <EditLineItemModal editLineModal={editLineModal} setEditLineModal={setEditLineModal} FetchLineItemData={editLineModelItem}></EditLineItemModal>
                        {/* End View Line Item Modal */}
 
                   </FormGroup>
                 </Col>
                 
-                <EditQuote editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} 
-                id={quote && quote.quote_id}
-                quoteDate={quote && quote.quote_date}
-                quoteCode={quote && quote.quote_code}
-                quoteStatus={quote && quote.quote_status}
-                projectLocation={quote && quote.project_location}
-                projectReference={quote && quote.project_reference}
-                paymentMethod={quote && quote.payment_method}
-                revision={quote && quote.revision}
-                introDrawingQuote={quote && quote.intro_drawing_quote}
-                condition={quote && quote.condition}
-                ></EditQuote>
+                <EditQuote editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} existingQuote={quote}></EditQuote>
                 <AddLineItemModal addLineItemModal={addLineItemModal} setAddLineItemModal={setAddLineItemModal}></AddLineItemModal>
             
                 <Col>

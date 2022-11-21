@@ -13,9 +13,10 @@ import UserToken from '../components/UserToken'
 /***** Pages ****/
 
 // Modals
-const AddLineItem = Loadable(lazy(() => import('../components/tender/AddLineItemModal')));
-const EditQuote = Loadable(lazy(() => import('../components/tender/EditQuote')));
-
+const EditCostingSummaryModal = Loadable(lazy(() => import('../components/tender/EditCostingSummaryModal')));
+const AddLineItemModal = Loadable(lazy(() => import('../components/tender/AddLineItemModal')));
+const EditQuoteModal = Loadable(lazy(() => import('../components/tender/EditQuoteModal')));
+const EditLineItemModal = Loadable(lazy(() => import('../components/tender/EditLineItemModal')));
 
 
 const PdfData = Loadable(lazy(() => import('../views/smartconTables/Tickets')));
@@ -203,10 +204,11 @@ const Routernew = () => {
         <Route path="/"  element={<FullLayout></FullLayout>}>
 
           {/* Tendar Modal */}
-          <Route path="/addlineitem" name="clienttdata" element={<AddLineItem />}></Route>
-          <Route path="/editquote" name="clienttdata" element={<EditQuote />}></Route>
-
-          
+          <Route path="/editcostingsummary" name="editcostingsummary" element={<EditCostingSummaryModal />}></Route>
+          <Route path="/addlineitem" name="addlineitem" element={<AddLineItemModal />}></Route>
+          <Route path="/editquote" name="editquote" element={<EditQuoteModal />}></Route>
+          <Route path="/editlineitem" name="editlineitem" element={<EditLineItemModal />}></Route>
+   
       {/* Table Edit's */}
         <Route path="/TenderEdit/:id" name="clienttdata" element={<TenderEdit />}></Route>
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
