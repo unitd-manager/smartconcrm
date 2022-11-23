@@ -6,11 +6,17 @@ import * as Icon from 'react-feather';
 import Swal from 'sweetalert2'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss'
+
 import pdfMake from "pdfmake"
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+
+import EditCostingSummaryModal from '../../components/tender/EditCostingSummaryModal';
+import ViewQuoteLogModal from '../../components/tender/ViewQuoteLogModal';
 import AddLineItemModal from '../../components/tender/AddLineItemModal';
 import EditQuote from '../../components/tender/EditQuoteModal';
 import EditLineItemModal from '../../components/tender/EditLineItemModal';
+// import GeneratePDFPrint from '../../components/tender/GeneratePDFPrint';
+// import ViewLineItemModal from '../../components/tender/ViewLineItemModal';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
@@ -38,7 +44,7 @@ const TenderEdit = () => {
     const [editQuoteModal, setEditQuoteModal] = useState(false);
     const [editLineModal, setEditLineModal] = useState(false);
 
-    const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
+    // const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
     const [contact, setContact] = useState();
     const [company, setCompany] = useState();
     const [incharge, setIncharge] = useState();
@@ -47,12 +53,7 @@ const TenderEdit = () => {
     const [editLineModelItem, setEditLineModelItem] = useState(null)
     const {id} = useParams()
 
-    const editCostingSummaryToggle = () => {
-      setEditCostingSummaryModel(!editCostingSummaryModel);
-      };
-      const quotationstoggle = () => {
-        setquotationsModal(!quotationsModal);
-      };
+    
     const attachmentToggle = () => {
       setAttachmentModal(!attachmentModal);
       };
@@ -73,7 +74,7 @@ const TenderEdit = () => {
       api.post('/tender/getCostingSummaryById',{opportunity_id:id})
       .then((res)=> {
           setCostingSummary(res.data.data)
-          seteditCostingSummaryData(res.data.data)
+          //seteditCostingSummaryData(res.data.data)
           console.log('costing summary',res.data.data)
       }).catch(()=>{
         message("Costing Summary not found","info")
@@ -200,21 +201,6 @@ const TenderEdit = () => {
         .catch(() => {
           message('Unable to edit record.','error')
         })
-    }
-
-    // edit Tab Costing Summary Form
-    const handleCostingSummeryInputs = (e) => {
-      seteditCostingSummaryData({...editCostingSummaryData, [e.target.name]:e.target.value});
-    }
-
-    const EditCostingSummary = () => {
-
-      api.post('/tender/edit-TabCostingSummaryForm',editCostingSummaryData)
-      .then((res)=> {
-          console.log(res)
-          setEditCostingSummaryModel(false);
-          window.location.reload()
-      })
     }
 
     // Add new Contact 
@@ -696,7 +682,7 @@ const TenderEdit = () => {
               </Col>
               <Col md="3">
                   <FormGroup>
-                  <Label>Company Name (OR) <Link to="" color="primary" onClick={addCompanyToggle.bind(null)}><b><u>Add New Company</u></b></Link></Label>
+                  <Label>Company Name (OR) <Link to="" color="primary" onClick={()=>{setAddCompanyModal(true)}}><b><u>Add New Company</u></b></Link></Label>
                   <Input type="select" onChange={(e)=> {
                     handleInputs(e)
                     getContact(e.target.value)
@@ -1136,9 +1122,9 @@ const TenderEdit = () => {
                     Cancel
                   </Button>
                 </ModalFooter>
-              </Modal> 
-                      </Input>
-                        </FormGroup>
+          </Modal> 
+                  </Input>
+                      </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
@@ -1340,193 +1326,21 @@ const TenderEdit = () => {
         <ComponentCard title="More Details">
           <ToastContainer></ToastContainer>
 
-          <Modal isOpen={editCostingSummaryModel} toggle={editCostingSummaryToggle.bind(null)}>
-            <ModalHeader toggle={editCostingSummaryToggle.bind(null)}>Edit Costing Summary</ModalHeader>
-            <ModalBody>
-              <Row>
-              <Col md="12">
-                <Card>
-                  <CardTitle tag="h4" className="border-bottom bg-primary p-3 mb-0 text-white">
-                    Edit Costing Summary
-                  </CardTitle>
-                  <CardBody>
-                    <Form>
-                      <Row>
-                        <Col md="4">
-                          <FormGroup>
-                            <Label>No. of Worker Used</Label>
-                            <Input type="number" onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.no_of_worker_used} name="no_of_worker_used"/>
-                          </FormGroup>
-                        </Col>
-                        <Col md="4">
-                          <FormGroup>
-                            <Label>No. of Days Worked</Label>
-                            <Input type="number" onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.no_of_days_worked} name="no_of_days_worked"/>
-                          </FormGroup>
-                        </Col>
-                        <Col md="4">
-                          <FormGroup>
-                            <Label>Labout Rates Per Day</Label>
-                            <Input type="number" onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.labour_rates_per_day} name="labour_rates_per_day"/>
-                          </FormGroup>
-                        </Col>
-                        <Col md="4">
-                          <FormGroup>
-                            <Label>Total Price (S$ W/o GST)</Label>
-                            <Input type="number" onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.invoiced_price} name="invoiced_price" />
-                          </FormGroup>
-                        </Col>
-                        <Col md="4">
-                          <FormGroup>
-                            <Label>Profit Margin %</Label>
-                            <Input type="number" disabled onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.profit_percentage} name="profit_percentage" />
-                          </FormGroup>
-                        </Col>
-                        <Col md="4">
-                          <FormGroup>
-                            <Label>Profit Margin</Label>
-                            <Input type="number" disabled name="profit" onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.profit} tabindex="-1"/>
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                    </Form>
-                  </CardBody>
-                  <CardBody className="bg-light">
-                    <CardTitle tag="h4" className="mb-0">
-                      
-                    </CardTitle>
-                  </CardBody>
-                  <CardBody>
-                    <Row>
-                    <Col md="4">
-                      <FormGroup>
-                          <Label>Total Material</Label>
-                          <Input type="number" disabled onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.total_material_price} name="total_material_price"/>
-                      </FormGroup>
-                      </Col>
-                      {/* <Col md="3">
-                      <FormGroup>
-                          <Label>Transport Charges %</Label>
-                          <Input type="text" value={costingsummary && costingsummary.transport_charges_percentage}/>
-                      </FormGroup>
-                      </Col> */}
-                      <Col md="4">
-                      <FormGroup>
-                          <Label>Transport Charges </Label>
-                          <Input type="number" onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.transport_charges} name="transport_charges"/>
-                      </FormGroup>
-                      </Col>
-                      <Col md="4">
-                      <FormGroup>
-                          <Label>Total Labour Charges</Label>
-                          <Input type="number" disabled onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.total_labour_charges} name="total_labour_charges"/>
-                      </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                    {/* <Col md="3">
-                      <FormGroup>
-                          <Label>Salesman Commission %</Label>
-                          <Input type="text" value={costingsummary && costingsummary.salesman_commission_percentage}/>
-                      </FormGroup>
-                      </Col> */}
-                      <Col md="4">
-                      <FormGroup>
-                          <Label>Salesman Commission </Label>
-                          <Input type="number" onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.salesman_commission} name="salesman_commission"/>
-                      </FormGroup>
-                      </Col>
-                      {/* <Col md="3">
-                      <FormGroup>
-                          <Label>Finance Charges % </Label>
-                          <Input type="text" value={costingsummary && costingsummary.finance_charges_percentage} />
-                      </FormGroup>
-                      </Col> */}
-                      <Col md="4">
-                      <FormGroup>
-                          <Label>Finance Charges </Label>
-                          <Input type="number" onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.finance_charges} name="finance_charges"/>
-                      </FormGroup>
-                      </Col>
-                      <Col md="4">
-                      <FormGroup>
-                          <Label>Office Overheads </Label>
-                          <Input type="number" onChange={handleCostingSummeryInputs} defaultValue={costingsummary && costingsummary.office_overheads} name="office_overheads" />
-                      </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                    {/* <Col md="3">
-                      <FormGroup>
-                          <Label>Office Overheads %</Label>
-                          <Input type="text" value={costingsummary && costingsummary.office_overheads_percentage}/>
-                      </FormGroup>
-                      </Col> */}
-                    
-                      <Col md="4">
-                      <FormGroup>
-                          <Label>Other Charges </Label>
-                          <Input type="number" onChange={handleCostingSummeryInputs} value={costingsummary && costingsummary.other_charges} name="other_charges"/>
-                      </FormGroup>
-                      </Col>
-                      <Col md="4">
-                      <FormGroup>
-                          <Label>TOTAL COST</Label>
-                          <Input type="number" disabled onChange={handleCostingSummeryInputs} value={costingsummary && costingsummary.total_cost} name="total_cost"/>
-                      </FormGroup>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                  <CardBody>
-                  <CardTitle className="mb-0 bg-light">
-                  
-                    </CardTitle>
-                
-                  </CardBody>
-                </Card>
-              </Col>
-              </Row>  
-            </ModalBody>
-            <ModalFooter>
-              <Button color="primary" onClick={()=>{
-                    EditCostingSummary();
-                  //editCostingSummaryToggle.bind(null)
-                }
-              }
-                >
-                Submit
-              </Button>
-              <Button color="secondary" onClick={editCostingSummaryToggle.bind(null)}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </Modal> 
+{/* Call Edit Costing Summary Modal */}
 
-          <Modal isOpen={quotationsModal} toggle={quotationstoggle.bind(null)}>
-            <ModalHeader toggle={quotationstoggle.bind(null)}>Quote History</ModalHeader>
-            <ModalBody>
-              <Row>
-              <Col md="12">
-                <Card>
-                  <CardTitle tag="h4" className="border-bottom bg-primary p-3 mb-0 text-white">
-                    Quote History
-                  </CardTitle>
-                  <CardBody>
-                  
-                  </CardBody>
-                </Card>
-              </Col>
-              </Row>  
-            </ModalBody>
-            <ModalFooter>
-              <Button color="primary" onClick={quotationstoggle.bind(null)}>
-                Submit
-              </Button>
-              <Button color="secondary" onClick={quotationstoggle.bind(null)}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </Modal> 
+      <EditCostingSummaryModal 
+          editCostingSummaryModel={editCostingSummaryModel} 
+          setEditCostingSummaryModel={setEditCostingSummaryModel}
+          costingsummary={costingsummary}
+      />
+
+{/* End Call Edit Costing Summary Modal */}
+
+{/* Call View Quote Log Modal */}
+  
+  <ViewQuoteLogModal quotationsModal={quotationsModal} setquotationsModal={setquotationsModal}/>
+
+{/* End Call View Quote Log Modal */}
 
           <Nav tabs>
             <NavItem>
@@ -1649,10 +1463,9 @@ const TenderEdit = () => {
               <Row>
                   <Col md="3" className='mb-4 d-flex justify-content-between'>
                     <h3>Quotations </h3> 
-                    <Button color="primary" onClick={quotationstoggle.bind(null)}>View Quote Log</Button>
+                    <Button color="primary" onClick={()=>{setquotationsModal(true)}}>View Quote Log</Button>
                   </Col>
               </Row>
-
 
             <Form>
                 <Row>
@@ -1702,6 +1515,13 @@ const TenderEdit = () => {
                       }>View Line Items</u></Label>
 
                       {/* View Line Item Modal */}
+
+                      {/* <ViewLineItemModal 
+                      viewLineModal={viewLineModal} 
+                      setViewLineModal={setViewLineModal} 
+                      FechedlineItem={lineItem}/> */}
+
+
                       <Modal isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
                             <ModalHeader toggle={viewLineToggle.bind(null)}>Line Items</ModalHeader>
                             <ModalBody>
@@ -1754,13 +1574,13 @@ const TenderEdit = () => {
                 </Col>
                 
                 <EditQuote editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} existingQuote={quote}></EditQuote>
-                <AddLineItemModal addLineItemModal={addLineItemModal} setAddLineItemModal={setAddLineItemModal}></AddLineItemModal>
-            
+                <AddLineItemModal projectInfo={quote} addLineItemModal={addLineItemModal} setAddLineItemModal={setAddLineItemModal}></AddLineItemModal>
+                {/* <GeneratePDFPrint /> */}
+
                 <Col>
                   <FormGroup>
 
                     <Row>
-            
                       <Col md='4'><Label><Link to=""><span onClick={()=>{setEditQuoteModal(true) }}><Icon.Edit /></span></Link></Label></Col>
                       <Col md='4'>{quote && (<Label><Link to=""><span onClick={()=>{GeneratePdf(quote.quote_id)}}><Icon.Printer/></span></Link></Label>)}</Col>
                       <Col md='4'><Label><Link to=""> <span onClick={()=>{setAddLineItemModal(true) }}><Icon.PlusCircle /></span> </Link></Label></Col>

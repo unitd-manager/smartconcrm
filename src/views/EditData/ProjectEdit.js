@@ -5,25 +5,36 @@ import { Card,
     ModalHeader,
     ModalBody,
     ModalFooter, } from 'reactstrap';
-    import {ToastContainer} from 'react-toastify'
-    import { Link } from 'react-router-dom';
+import {ToastContainer} from 'react-toastify'
+import { Link} from 'react-router-dom';
+import * as Icon from 'react-feather';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
+import TransportCharges from '../../components/ProjectModal/TransportCharges';
+import TotalLabourChargesModal from '../../components/ProjectModal/TotalLabourChargesModal';
+// import api from '../../constants/api';
 
 const ProjectEdit = () => {
 
+  // const {project_id} = useParams(id)
+
     const [activeTab, setActiveTab] = useState('1');
-    const [editCostingSummaryModel, setEditCostingSummaryModel] = useState(false);
+    // const [editCostingSummaryModel, setEditCostingSummaryModel] = useState(false);
     const [quotationsModal, setquotationsModal] = useState(false);
     const [attachmentModal, setAttachmentModal] = useState(false);
     const [viewLineModal, setViewLineModal] = useState(false);
+    const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
+    const [addTransportChargesModal, setAddTransportChargesModal] = useState(false);
+    const [addTotalLabourChargesModal, setTotalLabourChargesModal] = useState(false);
+    
 
     const toggle = (tab) => {
         if (activeTab !== tab) setActiveTab(tab);
       };
-    const editCostingSummaryToggle = () => {
-      setEditCostingSummaryModel(!editCostingSummaryModel);
-      };
+    // const editCostingSummaryToggle = () => {
+    //   setEditCostingSummaryModel(!editCostingSummaryModel);
+    //   };
       const quotationstoggle = () => {
         setquotationsModal(!quotationsModal);
       };
@@ -34,126 +45,132 @@ const ProjectEdit = () => {
       setViewLineModal(!viewLineModal);
       };
    
+
+      // useEffect(() => {
+      //   api.post('/projecttabcostingsummary/getTabCostingSummary',{project_id})
+      // }, [])
+      
+
   return (
     <>
     <BreadCrumbs />
       
-             <Form >
-                <FormGroup>
-                <ComponentCard title="Project Details | Code: O-1045">
-                    <Row>
-                    <Col md="3">
-                        <FormGroup>
-                        <Label>Title</Label>
-                        <Input  type="text" value="" name="title" />
-                        </FormGroup>
-                    </Col>
-                    
-                    <Col md="3">
-                        <FormGroup>
-                        <Label>Category <span className='required'> *</span> </Label>
-                        <Input type="select" value="" name="company_id">
-                            <option value="">Please Select</option>
-                            <option value="Project">Project</option>
-                            <option selected="selected" value="Maintenance">Maintenance</option>
-                            <option value="Tenancy Project">Tenancy Project</option>
-                            <option value="Tenancy Work">Tenancy Work</option>
-                      </Input>
-                        </FormGroup>
-                    </Col>
+        <Form >
+            <FormGroup>
+            <ComponentCard title="Project Details | Code: O-1045 | Category : Project   | Company : fffuuf   | Status : WIP">
+                <Row>
+                <Col md="3">
+                    <FormGroup>
+                    <Label>Title</Label>
+                    <Input  type="text" value="" name="title" />
+                    </FormGroup>
+                </Col>
+                
+                <Col md="3">
+                    <FormGroup>
+                    <Label>Category <span className='required'> *</span> </Label>
+                    <Input type="select" value="" name="company_id">
+                        <option value="">Please Select</option>
+                        <option value="Project">Project</option>
+                        <option selected="selected" value="Maintenance">Maintenance</option>
+                        <option value="Tenancy Project">Tenancy Project</option>
+                        <option value="Tenancy Work">Tenancy Work</option>
+                  </Input>
+                    </FormGroup>
+                </Col>
 
-                    <Col md="3">
-                        <FormGroup>
-                        <Label>Status </Label>
-                        <Input type="select"  value="" name="contact_id" >
-                            <option value="">Please Select</option>
-                            <option selected="selected" value="WIP">WIP</option>
-                            <option value="Billable">Billable</option>
-                            <option value="Billed">Billed</option>
-                            <option value="Complete">Complete</option>
-                            <option value="Cancelled">Cancelled</option>
-                            <option value="On Hold">On Hold</option>
-                            <option value="Latest">Latest</option>
+                <Col md="3">
+                    <FormGroup>
+                    <Label>Status </Label>
+                    <Input type="select"  value="" name="contact_id" >
+                        <option value="">Please Select</option>
+                        <option selected="selected" value="WIP">WIP</option>
+                        <option value="Billable">Billable</option>
+                        <option value="Billed">Billed</option>
+                        <option value="Complete">Complete</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="On Hold">On Hold</option>
+                        <option value="Latest">Latest</option>
+                </Input>
+                    </FormGroup>
+                </Col>
+                <Col md="3">
+                    <FormGroup>
+                    <Label>Company</Label>
+                    <Input type="text" disabled value="" name="office_ref_no"/>
+                    </FormGroup>
+                </Col>
+                </Row>
+          
+                <Row>
+                
+                <Col md="3">
+                    <FormGroup>
+                    <Label>Contact</Label>
+                    <Input type="select" value=""  name="mode_of_submission" >
+                        <option value="">Please Select</option>
                     </Input>
-                        </FormGroup>
-                    </Col>
-                    <Col md="3">
-                        <FormGroup>
-                        <Label>Company</Label>
-                        <Input type="text" disabled value="" name="office_ref_no"/>
-                        </FormGroup>
-                    </Col>
-                    </Row>
-              
-                    <Row>
-                    
-                    <Col md="3">
-                        <FormGroup>
-                        <Label>Contact</Label>
-                        <Input type="select" value=""  name="mode_of_submission" >
-                            <option value="">Please Select</option>
-                        </Input>
-                        </FormGroup>
-                    </Col>
-                    
-                    <Col md="3">
-                        <FormGroup>
-                        <Label>Start Date</Label>
-                            <Input type="date"  value="" name="site_show_date"/>
-                        </FormGroup>
-                    </Col>
-                    <Col md="3">
-                        <FormGroup>
-                        <Label>Estimated Finish Date</Label>
-                        <Input value="" type="date" 
-                         name="project_end_date" />
-                        </FormGroup>
-                    </Col>
-                    <Col md="3">
-                        <FormGroup>
-                        <Label>Description</Label>
-                        <Input type="text"  value="" name="services"/>
-                        </FormGroup>
-                    </Col>
-                    </Row>
-                    <Row>
-                    
-                    <Col md="3">
-                        <FormGroup>
-                        <Label>Project Manager</Label>
-                        <Input type="select" value=""  name="site_show_attendee">
-                            <option value="" selected="selected">Please Select</option>
-                           
-                         </Input>
+                    </FormGroup>
+                </Col>
+                
+                <Col md="3">
+                    <FormGroup>
+                    <Label>Start Date</Label>
+                        <Input type="date"  value="" name="site_show_date"/>
+                    </FormGroup>
+                </Col>
+                <Col md="3">
+                    <FormGroup>
+                    <Label>Estimated Finish Date</Label>
+                    <Input value="" type="date" 
+                      name="project_end_date" />
+                    </FormGroup>
+                </Col>
+                <Col md="3">
+                    <FormGroup>
+                    <Label>Description</Label>
+                    <Input type="text"  value="" name="services"/>
+                    </FormGroup>
+                </Col>
+                </Row>
+                <Row>
+                
+                <Col md="3">
+                    <FormGroup>
+                    <Label>Project Manager</Label>
+                    <Input type="select" value=""  name="site_show_attendee">
+                        <option value="" selected="selected">Please Select</option>
+                        
+                      </Input>
 
-                        </FormGroup>
-                    </Col>
-                    <Col md="3">
-                        <FormGroup>
-                        <Label>Ducting Cost (OR) <Link to="" color="primary"><b><u>Add</u></b></Link></Label>
-                        <Input type="text" disabled value=""  name="actual_submission_date"/>
-                        </FormGroup>
-                    </Col>
-                    </Row>
-                 
-                    <Row>
-                    <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-                        <Button type="button" className="btn btn-success mr-2">
-                        Save & Continue
-                        </Button>
-                        <Button type="submit" className="btn btn-dark">
-                        Cancel
-                        </Button>
-                     </div>
-                    </Row>
-                </ComponentCard>
-                </FormGroup> 
-              </Form>
+                    </FormGroup>
+                </Col>
+                <Col md="3">
+                    <FormGroup>
+                    <Label>Ducting Cost (OR) <Link to="" color="primary"><b><u>Add</u></b></Link></Label>
+                    <Input type="text" disabled value=""  name="actual_submission_date"/>
+                    </FormGroup>
+                </Col>
+                </Row>
+              
+                <Row>
+                <div className="pt-3 mt-3 d-flex align-items-center gap-2">
+                    <Button type="button" className="btn btn-success mr-2">
+                    Save & Continue
+                    </Button>
+                    <Button type="submit" className="btn btn-dark">
+                    Cancel
+                    </Button>
+                  </div>
+                </Row>
+            </ComponentCard>
+            </FormGroup> 
+        </Form>
 
   <ComponentCard title="More Details">
     <ToastContainer></ToastContainer>
 
-    <Modal isOpen={editCostingSummaryModel} toggle={editCostingSummaryToggle.bind(null)}>
+    {/* <Modal isOpen={editCostingSummaryModel} toggle={editCostingSummaryToggle.bind(null)}>
       <ModalHeader toggle={editCostingSummaryToggle.bind(null)}>Edit Costing Summary</ModalHeader>
       <ModalBody>
         <Row>
@@ -371,7 +388,7 @@ const ProjectEdit = () => {
           Cancel
         </Button>
       </ModalFooter>
-    </Modal> 
+    </Modal>  */}
 
 
     <Modal isOpen={quotationsModal} toggle={quotationstoggle.bind(null)}>
@@ -400,8 +417,14 @@ const ProjectEdit = () => {
       </ModalFooter>
     </Modal> 
 
+{/* Call Modal's */}
 
+    <AddPurchaseOrderModal addPurchaseOrderModal={addPurchaseOrderModal} setAddPurchaseOrderModal={setAddPurchaseOrderModal}/>
+    <TransportCharges addTransportChargesModal={addTransportChargesModal} setAddTransportChargesModal={setAddTransportChargesModal}/>
+    <TotalLabourChargesModal addTotalLabourChargesModal={addTotalLabourChargesModal} setTotalLabourChargesModal={setTotalLabourChargesModal} />
+        
         <Nav tabs>
+
           <NavItem>
             <NavLink
               className={activeTab === '1' ? 'active' : ''}
@@ -413,14 +436,14 @@ const ProjectEdit = () => {
             </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink
-              className={activeTab === '2' ? 'active' : ''}
-              onClick={() => {
-                toggle('2');
-              }}
-            >
-              Quotations
-            </NavLink>
+          <NavLink
+            className={activeTab === '2' ? 'active' : ''}
+            onClick={() => {
+              toggle('2');
+            }}
+          >
+            Quotations
+          </NavLink>
           </NavItem>
           <NavItem>
             <NavLink
@@ -429,23 +452,97 @@ const ProjectEdit = () => {
                 toggle('3');
               }}
             >
-              Attachment
+              Materials Purchased
             </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={activeTab === '4' ? 'active' : ''}
+              onClick={() => {
+                toggle('4');
+              }}
+            >
+              Materials used
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={activeTab === '5' ? 'active' : ''}
+              onClick={() => {
+                toggle('5');
+              }}
+            >
+              Materials Transferred
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={activeTab === '6' ? 'active' : ''}
+              onClick={() => {
+                toggle('6');
+              }}
+            >
+              Delivery Order
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={activeTab === '7' ? 'active' : ''}
+              onClick={() => {
+                toggle('7');
+              }}
+            >
+              Subcon Work Order
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={activeTab === '8' ? 'active' : ''}
+              onClick={() => {
+                toggle('8');
+              }}
+            >
+              Claim
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={activeTab === '9' ? 'active' : ''}
+              onClick={() => {
+                toggle('9');
+              }}
+            >
+              Finance
+            </NavLink>
+          </NavItem>
+          <NavItem>
+          <NavLink
+            className={activeTab === '10' ? 'active' : ''}
+            onClick={() => {
+              toggle('10');
+            }}
+          >
+            Employee & Attachment
+          </NavLink>
           </NavItem>
         
         </Nav>
+
+{/* Tab 1 */}
+
         <TabContent className="p-4" activeTab={activeTab}>
           <TabPane tabId="1">
-            <Row>
+            {/* <Row>
               <Col md="12" className='mb-4'>
                   <Button color="primary">Edit Costing Summary</Button>
               </Col>
-            </Row>
+            </Row> */}
             <Row>
               <Col md="3"><FormGroup><h3>Costing Summary</h3> </FormGroup></Col>
-              <Col md="3"><FormGroup><Label>Total Cost : test</Label> </FormGroup></Col>
-              <Col md="3"><FormGroup><Label>PO Price (S$ W/o GST) : test</Label> </FormGroup></Col>
-              <Col md="3"><FormGroup><Label>Profit Margin : test %</Label> </FormGroup></Col>
+              <Col md="2"><FormGroup><Label>Total Cost : test</Label> </FormGroup></Col>
+              <Col md="2"><FormGroup><Label>PO Price (S$ W/o GST) : test</Label> </FormGroup></Col>
+              <Col md="3"><FormGroup><Label> Invoiced Price (S$ W/o GST) :</Label> </FormGroup></Col>
+              <Col md="2"><FormGroup><Label>Profit Margin : test %</Label> </FormGroup></Col>
             </Row>
             <hr/>
             <Row>
@@ -458,14 +555,14 @@ const ProjectEdit = () => {
             </Col>
             <Col md="3">
                 <FormGroup>
-                <Label>Transport Charges</Label>
+                <Label>Transport Charges <Link to="" color="primary"><span onClick={()=>{setAddTransportChargesModal(true)}}><b><u>Add</u></b></span></Link></Label>
                 <br/>
                 <span>test</span>
                 </FormGroup>
             </Col>
             <Col md="3">
                 <FormGroup>
-                <Label>Total Labour Charges</Label>
+                <Label>Total Labour Charges <Link to="" color="primary"><span onClick={()=>{setTotalLabourChargesModal(true)}}><b><u>Add</u></b></span></Link></Label>
                 <br/>
                 <span>test</span>
                 </FormGroup>
@@ -473,7 +570,7 @@ const ProjectEdit = () => {
            
             <Col md="3">
                 <FormGroup>
-                <Label>Salesman Commission</Label>
+                <Label>Salesman Commission <Link to="" color="primary"><b><u>Add</u></b></Link></Label>
                 <br/>
                 <span>test</span>
                 </FormGroup>
@@ -483,21 +580,21 @@ const ProjectEdit = () => {
             <Row>
             <Col md="3">
                 <FormGroup>
-                <Label> Finance Charges </Label>
+                <Label> Finance Charges <Link to="" color="primary"><b><u>Add</u></b></Link></Label>
                 <br/>
                 <span>test</span>
                 </FormGroup>
             </Col>
             <Col md="3">
                 <FormGroup>
-                <Label>Office Overheads</Label>
+                <Label>Office Overheads <Link to="" color="primary"><b><u>Add</u></b></Link></Label>
                 <br/>
                 <span>test</span>
                 </FormGroup>
             </Col>
             <Col md="3">
                 <FormGroup>
-                <Label>Other Charges</Label>
+                <Label>Other Charges <Link to="" color="primary"><b><u>Add</u></b></Link></Label>
                 <br/>
                 <span>test</span>
                 </FormGroup>
@@ -512,7 +609,9 @@ const ProjectEdit = () => {
             </Col>
             </Row>
           </TabPane>
-          
+
+{/* Tab 2 */}       
+
           <TabPane tabId="2">
 
               <Row>
@@ -521,7 +620,6 @@ const ProjectEdit = () => {
                     <Button color="primary" onClick={quotationstoggle.bind(null)}>View Quote Log</Button>
                   </Col>
               </Row>
-
 
             <Form>
                 <Row>
@@ -585,20 +683,6 @@ const ProjectEdit = () => {
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {/* {lineItem && lineItem.map((e)=>{
-                                      return(
-                                        <tr>
-                                            <td data-label="Title">{e.title}</td>
-                                            <td data-label="Description">{e.description}</td>
-                                            <td data-label="Qty">{e.quantity}</td>
-                                            <td data-label="Unit Price">{e.unit_price}</td>
-                                            <td data-label="Amount">{e.amount}</td>
-                                            <td data-label="Updated By">{e.created_by}</td>
-                                            <td data-label="Action"></td>
-                                        </tr>
-                                      )
-                                        
-                                    })} */}
                                    
                                   </tbody>
                                 </table>
@@ -607,20 +691,124 @@ const ProjectEdit = () => {
                             <ModalFooter>
                                 <Button color="primary" onClick={viewLineToggle.bind(null)}>Submit</Button>
                             </ModalFooter>
-                        </Modal>
+                      </Modal>
                   </FormGroup>
                 </Col>
                 <Col>
                   <FormGroup>
-                    <Label>Generate Pdf</Label>
+                    <Row>
+              
+                      <Col md='4'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
+                      <Col md='4'><Label><Link to=""><span ><Icon.Printer/></span></Link></Label></Col>
+                      <Col md='4'><Label><Link to=""> <span><Icon.PlusCircle /></span> </Link></Label></Col>
+                    </Row>
                   </FormGroup>
                 </Col>
                 </Row>
             </Form>
-      </TabPane>
+          </TabPane>
 
+{/* Tab 3 */}
 
-      <TabPane tabId="3">
+        <TabPane tabId="3">
+
+        <Row>
+            {/* <Col md="3" className='mb-4 d-flex justify-content-between'> </Col> */}
+            <Col md="3"><FormGroup><h3>Materials Purchased </h3> </FormGroup></Col>
+            <Col md="3"><Button color="primary" onClick={()=>{setAddPurchaseOrderModal(true)}}>Add Purchase Order</Button></Col>
+            <Col md="3"><Button color="primary">Create Delivery Order</Button></Col>
+            <Col md="3"><Button color="success">Add all Qty to Stock</Button></Col>
+        </Row>
+
+        {/* <Form>
+          <Row>
+            <Col><FormGroup><Label>Revision</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Quote Code</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Quote Date</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Quote Status</Label> </FormGroup></Col>
+            <Col md="1"><FormGroup><Label>Discount</Label> </FormGroup></Col>
+            <Col md="1"><FormGroup><Label>Amount</Label> </FormGroup></Col>
+            <Col><FormGroup><Label></Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
+          </Row>
+          <Row>
+          <Col>
+            <FormGroup></FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <span>test</span>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <Label>test</Label>
+            </FormGroup>
+          </Col>
+          <Col >
+            <FormGroup>
+                <Label>test</Label>
+            </FormGroup>
+          </Col>
+          <Col md="1">
+            <FormGroup>
+                <Label>test</Label>
+            </FormGroup>
+          </Col>
+          <Col md="1">
+            <FormGroup>
+                <Label>test</Label>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <Label><u>View Line Items</u></Label>
+
+                <Modal isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
+                      <ModalHeader toggle={viewLineToggle.bind(null)}>Line Items</ModalHeader>
+                      <ModalBody>
+                          <FormGroup>
+                          <table className='lineitem'>
+                            
+                            <thead>
+                              <tr>
+                                <th scope="col">Title	</th>
+                                <th scope="col">Description	</th>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Unit Price</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Updated By</th>
+                                <th scope="col">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            
+                            </tbody>
+                          </table>
+                          </FormGroup>
+                      </ModalBody>
+                      <ModalFooter>
+                          <Button color="primary" onClick={viewLineToggle.bind(null)}>Submit</Button>
+                      </ModalFooter>
+                  </Modal>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+              <Row>
+
+                <Col md='4'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
+                <Col md='4'><Label><Link to=""><span ><Icon.Printer/></span></Link></Label></Col>
+                <Col md='4'><Label><Link to=""> <span><Icon.PlusCircle /></span> </Link></Label></Col>
+              </Row>
+            </FormGroup>
+          </Col>
+          </Row>
+        </Form> */}
+        </TabPane>
+
+{/* Start Tab Content 10 */}
+      <TabPane tabId="10">
                 <Row>
                 <Col xs="12" md="3">
                     <ComponentCard title="Attachments">
@@ -643,8 +831,9 @@ const ProjectEdit = () => {
                 </Col>
                 </Row>
                
-          </TabPane>
-          
+      </TabPane>
+{/* End Tab Content 10 */}
+
         </TabContent>
       </ComponentCard>
     </>

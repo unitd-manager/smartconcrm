@@ -28,8 +28,8 @@ const LoginFormik = ({setToken}) => {
           alert('Invalid Username or Password')
         }else{
           
-          localStorage.setItem('user',JSON.stringify(res.data.user))
-            setToken('123')
+          localStorage.setItem('user',JSON.stringify(res.data.data))
+            setToken(res.data.token)
            window.location.reload()
         }
         //navigate('/dashboards/classic');
