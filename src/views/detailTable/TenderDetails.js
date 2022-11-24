@@ -21,7 +21,7 @@ import message from '../../components/Message';
 const BasicForm = () => {
 
 const [company, setCompany] = useState();
-const [contact, setContact] = useState();
+// const [contact, setContact] = useState();
 const [modal, setModal] = useState(false);
 const [modal1, setModal1] = useState(false);
 const toggle = () => {
@@ -40,16 +40,16 @@ const getCompany = () =>{
 }
 
 // Api call for getting Contact
-const getContact = (id) =>{
-  api.post('/company/getContactByCompanyId',{company_id:id})
-  .then((res)=> {
-     setContact(res.data.data)
-  })
-  .catch(err => {
-    setContact([])
-    console.log(err)
-  })
-}
+// const getContact = (id) =>{
+//   api.post('/company/getContactByCompanyId',{company_id:id})
+//   .then((res)=> {
+//      setContact(res.data.data)
+//   })
+//   .catch(err => {
+//     setContact([])
+//     console.log(err)
+//   })
+// }
 
 //Logic for adding company in db
 const [companyInsertData, setCompanyInsertData] = useState({
@@ -152,7 +152,7 @@ const insertTender = () => {
                     <Label>Company Name </Label>
 
                     <Input type="select" name="company_id" onChange={(e)=>{
-                      getContact(e.target.value)
+                      //getContact(e.target.value)
                       handleInputsTenderForms(e)
                     }}>
                     <option value="" selected >Please Select</option>
@@ -169,7 +169,7 @@ const insertTender = () => {
                 </Col>
                 </Row>
               </FormGroup>
-              <FormGroup>
+              {/* <FormGroup>
                 <Row>
                   <Col md="10">
                     <Label>Contact</Label>
@@ -181,12 +181,9 @@ const insertTender = () => {
                       })}
                     </Input>
                 </Col>
-                  {/* <Col md="2">
-                    <Label>Add New Contact</Label>
-                    <Button color="primary" onClick={toggle1.bind(null)}>Add New</Button>
-                </Col> */}
+                
                 </Row>
-              </FormGroup>
+              </FormGroup> */}
               <FormGroup>
                 <Row>
                   <Col md="10">
