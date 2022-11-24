@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardBody, CardTitle,Row,Col,Form,FormGroup,Label,Input,TabContent,TabPane,Nav, NavItem,NavLink,Button,Modal,ModalHeader,ModalBody, ModalFooter, } from 'reactstrap';
 import {ToastContainer} from 'react-toastify'
-import {  Link, useParams } from 'react-router-dom';
+import {  Link, useNavigate, useParams } from 'react-router-dom';
 import * as Icon from 'react-feather';
 import Swal from 'sweetalert2'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -17,6 +17,7 @@ import EditQuote from '../../components/tender/EditQuoteModal';
 import EditLineItemModal from '../../components/tender/EditLineItemModal';
 // import GeneratePDFPrint from '../../components/tender/GeneratePDFPrint';
 // import ViewLineItemModal from '../../components/tender/ViewLineItemModal';
+import AttachmentModal from '../../components/tender/AttachmentModal';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
@@ -52,11 +53,8 @@ const TenderEdit = () => {
     const [addLineItemModal, setAddLineItemModal] = useState(false);
     const [editLineModelItem, setEditLineModelItem] = useState(null)
     const {id} = useParams()
-
+    const navigate = useNavigate()
     
-    const attachmentToggle = () => {
-      setAttachmentModal(!attachmentModal);
-      };
     const viewLineToggle = () => {
       setViewLineModal(!viewLineModal);
       };
@@ -164,6 +162,7 @@ const TenderEdit = () => {
       api.get('/tender/projectIncharge')
       .then((res)=> {
          setIncharge(res.data.data)
+         console.log(res.data.data)
       })
       .catch(() => {
         message('No Incharge found','info')
@@ -196,6 +195,9 @@ const TenderEdit = () => {
       .then(()=> {
         
         message('Record editted successfully','success')
+        setTimeout(() => {
+          window.location.reload()
+        }, 300);
 
       })
         .catch(() => {
@@ -1260,7 +1262,7 @@ const TenderEdit = () => {
                             <option value="" selected="selected">Please Select</option>
                            {incharge && incharge.map((e)=>{
                             return(
-                              <option value={e.company_id} key={e.first_name}>{e.first_name}</option>
+                              <option value={e.employee_id} key={e.first_name}>{e.first_name}</option>
                             )
                            })} 
                          </Input>
@@ -1277,7 +1279,8 @@ const TenderEdit = () => {
                         <FormGroup>
                         <Label> Status <span className='required'> *</span></Label>
                         <Input value={tenderDetails && tenderDetails.status} type="select" onChange={handleInputs} name="status">
-                            <option value="">Please Select</option><option value="In Progress">In Progress</option>
+                            <option value="">Please Select</option>
+                            <option value="In Progress">In Progress</option>
                             <option value="Waiting for Approval">Waiting for Approval</option>
                             <option value="Submitted">Submitted</option>
                             <option value="Follow-up">Follow-up</option>
@@ -1314,7 +1317,9 @@ const TenderEdit = () => {
                         }} type="button" className="btn btn-success mr-2">
                         Save & Continue
                         </Button>
-                        <Button type="submit" className="btn btn-dark">
+                        <Button onClick={()=>{
+                          navigate(-1)
+                        }} type="button" className="btn btn-dark">
                         Cancel
                         </Button>
                      </div>
@@ -1597,26 +1602,17 @@ const TenderEdit = () => {
                 <Row>
                 <Col xs="12" md="3">
                     <ComponentCard title="Attachments">
-                        <Button color="primary" onClick={attachmentToggle.bind(null)}>
+                        <Button color="primary" onClick={()=>{setAttachmentModal(true)}}>
                             Add
                         </Button>
-                        <Modal isOpen={attachmentModal} toggle={attachmentToggle.bind(null)}>
-                            <ModalHeader toggle={attachmentToggle.bind(null)}>Upload Media</ModalHeader>
-                            <ModalBody>
-                                <FormGroup>
-                                    <Label htmlFor="exampleFile">Select Files</Label>
-                                    <Input type="file" placeholder="" />
-                                </FormGroup>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="primary" onClick={attachmentToggle.bind(null)}>Upload</Button>
-                            </ModalFooter>
-                        </Modal>
+                        
                     </ComponentCard>
                 </Col>
                 </Row>
-               
-          </TabPane>
+
+               <AttachmentModal attachmentModal={attachmentModal} setAttachmentModal={setAttachmentModal} />
+
+      </TabPane>
           
           </TabContent>
           

@@ -146,14 +146,40 @@ const EditQuoteModal = ({editQuoteModal,setEditQuoteModal,existingQuote}) =>
                         </Col>
                         <Col md="3">
                         <Label>Show Project Manager</Label>
-                            <FormGroup check>
-                            <Input name="show_project_manager" type="radio" value="1" defaultValue={quoteData && quoteData.show_project_manager} onChange={handleData}/>{' '}
-                            <Label check>Yes</Label>
-                            </FormGroup>
-                            <FormGroup check>
-                                <Input name="show_project_manager" type="radio" value="0" defaultValue={quoteData && quoteData.show_project_manager} onChange={handleData}/>{' '}
-                                <Label check> No </Label>
-                            </FormGroup>
+
+                            <Form inline>
+                                <div className="form-check form-check-inline">
+                                <Input
+                                    className="form-check-input"
+                                    id="inlineradio1"
+                                    type="radio"
+                                    name="show_project_manager"
+                                    value="1"
+                                    defaultValue={quoteData && quoteData.show_project_manager} onChange={handleData}
+                                />
+                                <Label for="inlineradio1">yes</Label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                <Input
+                                    className="form-check-input"
+                                    id="inlineradio2"
+                                    type="radio"
+                                    name="show_project_manager"
+                                    value="0"
+                                    defaultValue={quoteData && quoteData.show_project_manager} onChange={handleData}
+                                />
+                                <Label for="inlineradio2">No</Label>
+                                </div>
+                            </Form>
+{/* <FormGroup check>
+<Input name="show_project_manager" type="radio" value="1" defaultValue={quoteData && quoteData.show_project_manager} onChange={handleData}/>{' '}
+<Label check>Yes</Label>
+</FormGroup>
+<FormGroup check>
+    <Input name="show_project_manager" type="radio" value="0" defaultValue={quoteData && quoteData.show_project_manager} onChange={handleData}/>{' '}
+    <Label check> No </Label>
+</FormGroup> */}
+
                         </Col>
                         </Row>
                         <Row>

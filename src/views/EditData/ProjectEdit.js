@@ -1,33 +1,42 @@
-import React, { useState } from 'react';
-import { Card,
-    CardBody,
-    CardTitle,Row,Col,Form,FormGroup,Label,Input,TabContent,TabPane,Nav, NavItem,NavLink,Button,Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter, } from 'reactstrap';
+import React, { useState,useEffect } from 'react';
+import { Row,Col,Form,FormGroup,Label,Input,TabContent,TabPane,Nav, NavItem,NavLink,Button,Modal,ModalHeader,ModalBody,ModalFooter, } from 'reactstrap';
 import {ToastContainer} from 'react-toastify'
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import * as Icon from 'react-feather';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
-import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
+import DuctingCostModal from '../../components/ProjectModal/DuctingCostModal';
 import TransportCharges from '../../components/ProjectModal/TransportCharges';
 import TotalLabourChargesModal from '../../components/ProjectModal/TotalLabourChargesModal';
-// import api from '../../constants/api';
+import SalesmanCommissionModal from '../../components/ProjectModal/SalesmanCommissionModal';
+import FinanceChargesModal from '../../components/ProjectModal/FinanceChargesModal';
+import OfficeOverheadsModal from '../../components/ProjectModal/OfficeOverheadsModal';
+import OtherChargesModal from '../../components/ProjectModal/OtherChargesModal';
+import ViewQuoteLogModal from '../../components/ProjectModal/ViewQuoteLogModal';
+import ViewLineItemModal from '../../components/ProjectModal/ViewLineItemModal';
+import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
+import api from '../../constants/api';
 
 const ProjectEdit = () => {
 
-  // const {project_id} = useParams(id)
+  //  const {projectId} = useParams()
 
     const [activeTab, setActiveTab] = useState('1');
     // const [editCostingSummaryModel, setEditCostingSummaryModel] = useState(false);
-    const [quotationsModal, setquotationsModal] = useState(false);
-    const [attachmentModal, setAttachmentModal] = useState(false);
-    const [viewLineModal, setViewLineModal] = useState(false);
-    const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
+    const [addDuctingCostModal, setAddDuctingCostModal] = useState(false);
     const [addTransportChargesModal, setAddTransportChargesModal] = useState(false);
     const [addTotalLabourChargesModal, setTotalLabourChargesModal] = useState(false);
-    
+    const [addSalesmanCommissionModal, setAddSalesmanCommissionModal] = useState(false);
+    const [addFinanceChargesModal, setAddFinanceChargesModal] = useState(false);
+    const [addOfficeOverheadsModal, setAddOfficeOverheadsModal] = useState(false);
+    const [addOtherChargesModal, setAddOtherChargesModal] = useState(false);
+    const [viewQuotationsModal, setViewQuotationsModal] = useState(false);
+    const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
+    const [viewLineModal, setViewLineModal] = useState(false);
+    const [attachmentModal, setAttachmentModal] = useState(false);
+
+
+    const [getCostingSummary, setGetCostingSummary] = useState('');
 
     const toggle = (tab) => {
         if (activeTab !== tab) setActiveTab(tab);
@@ -35,20 +44,21 @@ const ProjectEdit = () => {
     // const editCostingSummaryToggle = () => {
     //   setEditCostingSummaryModel(!editCostingSummaryModel);
     //   };
-      const quotationstoggle = () => {
-        setquotationsModal(!quotationsModal);
-      };
-    const attachmentToggle = () => {
-      setAttachmentModal(!attachmentModal);
-      };
-    const viewLineToggle = () => {
-      setViewLineModal(!viewLineModal);
-      };
-   
 
-      // useEffect(() => {
-      //   api.post('/projecttabcostingsummary/getTabCostingSummary',{project_id})
-      // }, [])
+      const attachmentToggle = () => {
+        setAttachmentModal(!attachmentModal);
+        };
+
+      
+      useEffect(() => {
+
+        api.post('/projecttabcostingsummary/getTabCostingSummary',{project_id:6})
+        .then((res) => {
+          setGetCostingSummary(res.data.data)
+          console.log(res.data.data);
+        })
+       
+      }, [])
       
 
   return (
@@ -147,7 +157,9 @@ const ProjectEdit = () => {
                 </Col>
                 <Col md="3">
                     <FormGroup>
-                    <Label>Ducting Cost (OR) <Link to="" color="primary"><b><u>Add</u></b></Link></Label>
+                    <Label>Ducting Cost (OR) <Link to="" color="primary">
+                      <span onClick={()=>setAddDuctingCostModal(true)}><b><u>Add</u></b></span>
+                    </Link></Label>
                     <Input type="text" disabled value=""  name="actual_submission_date"/>
                     </FormGroup>
                 </Col>
@@ -391,38 +403,20 @@ const ProjectEdit = () => {
     </Modal>  */}
 
 
-    <Modal isOpen={quotationsModal} toggle={quotationstoggle.bind(null)}>
-      <ModalHeader toggle={quotationstoggle.bind(null)}>Quote History</ModalHeader>
-      <ModalBody>
-        <Row>
-        <Col md="12">
-          <Card>
-            <CardTitle tag="h4" className="border-bottom bg-primary p-3 mb-0 text-white">
-              Quote History
-            </CardTitle>
-            <CardBody>
-             
-            </CardBody>
-          </Card>
-        </Col>
-        </Row>  
-      </ModalBody>
-      <ModalFooter>
-        <Button color="primary" onClick={quotationstoggle.bind(null)}>
-          Submit
-        </Button>
-        <Button color="secondary" onClick={quotationstoggle.bind(null)}>
-          Cancel
-        </Button>
-      </ModalFooter>
-    </Modal> 
-
 {/* Call Modal's */}
 
+    <DuctingCostModal addDuctingCostModal={addDuctingCostModal} setAddDuctingCostModal={setAddDuctingCostModal} />
     <AddPurchaseOrderModal addPurchaseOrderModal={addPurchaseOrderModal} setAddPurchaseOrderModal={setAddPurchaseOrderModal}/>
     <TransportCharges addTransportChargesModal={addTransportChargesModal} setAddTransportChargesModal={setAddTransportChargesModal}/>
     <TotalLabourChargesModal addTotalLabourChargesModal={addTotalLabourChargesModal} setTotalLabourChargesModal={setTotalLabourChargesModal} />
-        
+    <SalesmanCommissionModal addSalesmanCommissionModal={addSalesmanCommissionModal} setAddSalesmanCommissionModal={setAddSalesmanCommissionModal}  />   
+    <FinanceChargesModal addFinanceChargesModal={addFinanceChargesModal} setAddFinanceChargesModal={setAddFinanceChargesModal} />
+    <OfficeOverheadsModal addOfficeOverheadsModal={addOfficeOverheadsModal} setAddOfficeOverheadsModal={setAddOfficeOverheadsModal} />
+    <OtherChargesModal addOtherChargesModal={addOtherChargesModal} setAddOtherChargesModal={setAddOtherChargesModal} />
+    <ViewQuoteLogModal viewQuotationsModal={viewQuotationsModal} setViewQuotationsModal={setViewQuotationsModal} />
+    <ViewLineItemModal viewLineModal={viewLineModal} setViewLineModal={setViewLineModal} />
+
+
         <Nav tabs>
 
           <NavItem>
@@ -531,6 +525,7 @@ const ProjectEdit = () => {
 {/* Tab 1 */}
 
         <TabContent className="p-4" activeTab={activeTab}>
+
           <TabPane tabId="1">
             {/* <Row>
               <Col md="12" className='mb-4'>
@@ -540,9 +535,9 @@ const ProjectEdit = () => {
             <Row>
               <Col md="3"><FormGroup><h3>Costing Summary</h3> </FormGroup></Col>
               <Col md="2"><FormGroup><Label>Total Cost : test</Label> </FormGroup></Col>
-              <Col md="2"><FormGroup><Label>PO Price (S$ W/o GST) : test</Label> </FormGroup></Col>
+              <Col md="2"><FormGroup><Label>PO Price (S$ W/o GST) : <b>{getCostingSummary && getCostingSummary[0].po_price}</b></Label> </FormGroup></Col>
               <Col md="3"><FormGroup><Label> Invoiced Price (S$ W/o GST) :</Label> </FormGroup></Col>
-              <Col md="2"><FormGroup><Label>Profit Margin : test %</Label> </FormGroup></Col>
+              <Col md="2"><FormGroup><Label>Profit Margin : <b>{getCostingSummary && getCostingSummary[0].profit_percentage}</b> %</Label> </FormGroup></Col>
             </Row>
             <hr/>
             <Row>
@@ -550,29 +545,35 @@ const ProjectEdit = () => {
                 <FormGroup>
                 <Label>Total Material</Label>
                 <br/>
-                <span>test</span>
+                <span>{getCostingSummary && getCostingSummary[0].total_material_price}</span>
                 </FormGroup>
             </Col>
             <Col md="3">
                 <FormGroup>
-                <Label>Transport Charges <Link to="" color="primary"><span onClick={()=>{setAddTransportChargesModal(true)}}><b><u>Add</u></b></span></Link></Label>
+                <Label>Transport Charges <Link to="" color="primary">
+                  <span onClick={()=>{setAddTransportChargesModal(true)}}><b><u>Add</u></b></span>
+                </Link></Label>
                 <br/>
-                <span>test</span>
+                <span>{getCostingSummary && getCostingSummary[0].transport_charges}</span>
                 </FormGroup>
             </Col>
             <Col md="3">
                 <FormGroup>
-                <Label>Total Labour Charges <Link to="" color="primary"><span onClick={()=>{setTotalLabourChargesModal(true)}}><b><u>Add</u></b></span></Link></Label>
+                <Label>Total Labour Charges <Link to="" color="primary">
+                  <span onClick={()=>{setTotalLabourChargesModal(true)}}><b><u>Add</u></b></span>
+                </Link></Label>
                 <br/>
-                <span>test</span>
+                <span>{getCostingSummary && getCostingSummary[0].total_labour_charges}</span>
                 </FormGroup>
             </Col>
-           
+
             <Col md="3">
                 <FormGroup>
-                <Label>Salesman Commission <Link to="" color="primary"><b><u>Add</u></b></Link></Label>
+                <Label>Salesman Commission <Link to="" color="primary">
+                  <span onClick={()=>{setAddSalesmanCommissionModal(true)}}><b><u>Add</u></b></span>
+                </Link></Label>
                 <br/>
-                <span>test</span>
+                <span>{getCostingSummary && getCostingSummary[0].salesman_commission}</span>
                 </FormGroup>
             </Col>
             </Row>
@@ -580,26 +581,31 @@ const ProjectEdit = () => {
             <Row>
             <Col md="3">
                 <FormGroup>
-                <Label> Finance Charges <Link to="" color="primary"><b><u>Add</u></b></Link></Label>
+                <Label> Finance Charges <Link to="" color="primary">
+                  <span onClick={()=>{setAddFinanceChargesModal(true)}}><b><u>Add</u></b></span>
+                </Link></Label>
                 <br/>
-                <span>test</span>
+                <span>{getCostingSummary && getCostingSummary[0].finance_charges}</span>
                 </FormGroup>
             </Col>
             <Col md="3">
                 <FormGroup>
-                <Label>Office Overheads <Link to="" color="primary"><b><u>Add</u></b></Link></Label>
+                <Label>Office Overheads <Link to="" color="primary">
+                  <span onClick={()=>{setAddOfficeOverheadsModal(true)}}><b><u>Add</u></b></span>
+                </Link></Label>
                 <br/>
-                <span>test</span>
+                <span>{getCostingSummary && getCostingSummary[0].office_overheads}</span>
                 </FormGroup>
             </Col>
             <Col md="3">
                 <FormGroup>
-                <Label>Other Charges <Link to="" color="primary"><b><u>Add</u></b></Link></Label>
+                <Label>Other Charges <Link to="" color="primary">
+                  <span onClick={()=>{setAddOtherChargesModal(true)}}><b><u>Add</u></b></span>
+                </Link></Label>
                 <br/>
-                <span>test</span>
+                <span>{getCostingSummary && getCostingSummary[0].other_charges}</span>
                 </FormGroup>
             </Col>
-           
             <Col md="3">
                 <FormGroup>
                 <Label> TOTAL COST </Label>
@@ -617,7 +623,7 @@ const ProjectEdit = () => {
               <Row>
                   <Col md="3" className='mb-4 d-flex justify-content-between'>
                     <h3>Quotations </h3> 
-                    <Button color="primary" onClick={quotationstoggle.bind(null)}>View Quote Log</Button>
+                    <Button color="primary" onClick={()=>{setViewQuotationsModal(true)}}>View Quote Log</Button>
                   </Col>
               </Row>
 
@@ -663,35 +669,7 @@ const ProjectEdit = () => {
                 </Col>
                 <Col>
                   <FormGroup>
-                      <Label><u>View Line Items</u></Label>
-
-                      <Modal isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
-                            <ModalHeader toggle={viewLineToggle.bind(null)}>Line Items</ModalHeader>
-                            <ModalBody>
-                                <FormGroup>
-                                <table className='lineitem'>
-                                  
-                                  <thead>
-                                    <tr>
-                                      <th scope="col">Title	</th>
-                                      <th scope="col">Description	</th>
-                                      <th scope="col">Qty</th>
-                                      <th scope="col">Unit Price</th>
-                                      <th scope="col">Amount</th>
-                                      <th scope="col">Updated By</th>
-                                      <th scope="col">Action</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                   
-                                  </tbody>
-                                </table>
-                                </FormGroup>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="primary" onClick={viewLineToggle.bind(null)}>Submit</Button>
-                            </ModalFooter>
-                      </Modal>
+                      <Label><Link to="" color="primary"><span onClick={()=>{setViewLineModal(true)}}><u>View Line Items</u></span></Link></Label>
                   </FormGroup>
                 </Col>
                 <Col>
