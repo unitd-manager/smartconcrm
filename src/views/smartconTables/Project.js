@@ -38,7 +38,7 @@ const Project = () => {
                 }
             );
             } ,
-            1000
+            2000
             );
     
         getProject()
@@ -159,7 +159,7 @@ const Project = () => {
             {project && project.map((element,i)=>{
                 return (<tr key={element.title}>
                 <td>{i+1}</td>
-                <td><Link to={`/projectEdit/${element.contact_id}`}><Icon.Edit2 /></Link></td>
+                <td><Link to={`/projectEdit/${element.project_id}`}><Icon.Edit2 /></Link></td>
                 <td><Link to=""><span ><Icon.Trash2 /></span></Link></td>
                 <td>{element.opportunity_code}</td>
                 <td>{element.title}</td>

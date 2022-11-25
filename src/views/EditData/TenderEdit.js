@@ -44,6 +44,7 @@ const TenderEdit = () => {
     const [addCompanyModal, setAddCompanyModal] = useState(false);
     const [editQuoteModal, setEditQuoteModal] = useState(false);
     const [editLineModal, setEditLineModal] = useState(false);
+    const [getFile, setGetFile] = React.useState(null);
 
     // const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
     const [contact, setContact] = useState();
@@ -283,12 +284,22 @@ const TenderEdit = () => {
 
     }
 
+       // get Files
+       const getFiles = () => {
+        api.get('/file/getFileList')
+        .then((res)=>{
+          setGetFile(res.data.reverse());
+           console.log("Uploaded File",res.data)
+        })
+    }
+
       useEffect(()=>{
         getCostingbySummary();
         editTenderById();
         getQuote();
         getIncharge();
         getCompany();
+        getFiles();
         console.log(lineItem)
       },[id])
 
@@ -662,6 +673,8 @@ const TenderEdit = () => {
           makePdf(res.data.data)
         })
       }
+
+
   return (
     <>
     <BreadCrumbs heading={tenderDetails && tenderDetails.title} />
@@ -1278,7 +1291,8 @@ const TenderEdit = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label> Status <span className='required'> *</span></Label>
-                        <Input value={tenderDetails && tenderDetails.status} type="select" onChange={handleInputs} name="status">
+                        <Input value={tenderDetails && tenderDetails.status} 
+                        type="select" onChange={handleInputs} name="status">
                             <option value="">Please Select</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Waiting for Approval">Waiting for Approval</option>
@@ -1320,7 +1334,7 @@ const TenderEdit = () => {
                         <Button onClick={()=>{
                           navigate(-1)
                         }} type="button" className="btn btn-dark">
-                        Cancel
+                        Go to List
                         </Button>
                      </div>
                     </Row>
@@ -1600,18 +1614,23 @@ const TenderEdit = () => {
 
       <TabPane tabId="3">
                 <Row>
-                <Col xs="12" md="3">
-                    <ComponentCard title="Attachments">
-                        <Button color="primary" onClick={()=>{setAttachmentModal(true)}}>
-                            Add
-                        </Button>
-                        
-                    </ComponentCard>
+                <Col xs="12" md="3" className='mb-3'>
+                    <Button color="primary" onClick={()=>{setAttachmentModal(true)}}>
+                        Add
+                    </Button>
                 </Col>
                 </Row>
 
-               <AttachmentModal attachmentModal={attachmentModal} setAttachmentModal={setAttachmentModal} />
+               <AttachmentModal opportunityId={id} attachmentModal={attachmentModal} setAttachmentModal={setAttachmentModal} />
 
+               {getFile ? getFile.map(res=>{
+                        return (
+                          <>
+                            <a href={res.url}>{res.name}</a><br></br>
+                        </>
+                        )
+                    }) : (<p>no files uploaded yet</p>)}
+             
       </TabPane>
           
           </TabContent>

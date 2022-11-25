@@ -203,11 +203,6 @@ const ClearValue = (ind) => {
 }
 
 
-// quote_category_id
-// ,description, amount, amount_other, item_type, creation_date, modification_date, title, quote_id, opportunity_id, actual_amount, 
-// supplier_amount, quantity, project_id, created_by, modified_by, unit, remarks, part_no, nationality, ot_rate, ph_rate, 
-// scaffold_code, erection, dismantle, unit_price, drawing_number, drawing_title, drawing_revision
-
   return (
     <>
 

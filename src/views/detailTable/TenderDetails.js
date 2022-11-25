@@ -12,6 +12,7 @@ import {
     Button,Modal, ModalHeader, ModalBody,ModalFooter
   } from 'reactstrap';
   import { ToastContainer } from 'react-toastify';
+  import { useNavigate } from 'react-router-dom';
 
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
@@ -21,9 +22,10 @@ import message from '../../components/Message';
 const BasicForm = () => {
 
 const [company, setCompany] = useState();
-// const [contact, setContact] = useState();
+const [contact, setContact] = useState();
 const [modal, setModal] = useState(false);
 const [modal1, setModal1] = useState(false);
+const navigate = useNavigate()
 const toggle = () => {
   setModal(!modal);
 };
@@ -40,16 +42,17 @@ const getCompany = () =>{
 }
 
 // Api call for getting Contact
-// const getContact = (id) =>{
-//   api.post('/company/getContactByCompanyId',{company_id:id})
-//   .then((res)=> {
-//      setContact(res.data.data)
-//   })
-//   .catch(err => {
-//     setContact([])
-//     console.log(err)
-//   })
-// }
+const getContact = (id) =>{
+  api.post('/company/getContactByCompanyId',{company_id:id})
+  .then((res)=> {
+     setContact(res.data.data)
+     console.log(contact)
+  })
+  .catch(err => {
+    setContact([])
+    console.log(err)
+  })
+}
 
 //Logic for adding company in db
 const [companyInsertData, setCompanyInsertData] = useState({
@@ -152,7 +155,7 @@ const insertTender = () => {
                     <Label>Company Name </Label>
 
                     <Input type="select" name="company_id" onChange={(e)=>{
-                      //getContact(e.target.value)
+                      getContact(e.target.value)
                       handleInputsTenderForms(e)
                     }}>
                     <option value="" selected >Please Select</option>
@@ -181,7 +184,7 @@ const insertTender = () => {
                       })}
                     </Input>
                 </Col>
-                
+                  
                 </Row>
               </FormGroup> */}
               <FormGroup>
@@ -204,8 +207,10 @@ const insertTender = () => {
                           insertTender() }}>
                         Save & Continue
                         </Button>
-                        <Button type="button" className="btn btn-dark">
-                        Cancel
+                        <Button onClick={()=>{
+                          navigate(-1)
+                        }} type="button" className="btn btn-dark">
+                        Go to List
                         </Button>
                      </div>
                 </Row>

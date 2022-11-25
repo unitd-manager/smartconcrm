@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { Row,Col,Form,FormGroup,Label,Input,TabContent,TabPane,Nav, NavItem,NavLink,Button,Modal,ModalHeader,ModalBody,ModalFooter, } from 'reactstrap';
 import {ToastContainer} from 'react-toastify'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import * as Icon from 'react-feather';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
@@ -15,11 +15,16 @@ import OtherChargesModal from '../../components/ProjectModal/OtherChargesModal';
 import ViewQuoteLogModal from '../../components/ProjectModal/ViewQuoteLogModal';
 import ViewLineItemModal from '../../components/ProjectModal/ViewLineItemModal';
 import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
+// import AddMaterialsUsed from '../../components/ProjectModal/AddMaterialsUsed';
+import message from '../../components/Message';
 import api from '../../constants/api';
 
 const ProjectEdit = () => {
 
-  //  const {projectId} = useParams()
+    const {id} = useParams()
+
+    const [projectDetail, setProjectDetail] = useState();
+    const [getCostingSummary, setGetCostingSummary] = useState();
 
     const [activeTab, setActiveTab] = useState('1');
     // const [editCostingSummaryModel, setEditCostingSummaryModel] = useState(false);
@@ -32,11 +37,12 @@ const ProjectEdit = () => {
     const [addOtherChargesModal, setAddOtherChargesModal] = useState(false);
     const [viewQuotationsModal, setViewQuotationsModal] = useState(false);
     const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
+    // const [ addMaterialsUsed, setAddMaterialsUsed ] = useState(false);
     const [viewLineModal, setViewLineModal] = useState(false);
     const [attachmentModal, setAttachmentModal] = useState(false);
 
 
-    const [getCostingSummary, setGetCostingSummary] = useState('');
+    
 
     const toggle = (tab) => {
         if (activeTab !== tab) setActiveTab(tab);
@@ -49,16 +55,34 @@ const ProjectEdit = () => {
         setAttachmentModal(!attachmentModal);
         };
 
-      
-      useEffect(() => {
 
-        api.post('/projecttabcostingsummary/getTabCostingSummary',{project_id:6})
-        .then((res) => {
-          setGetCostingSummary(res.data.data)
-          console.log(res.data.data);
+        // Get Project By Id
+
+        const getProjectById = () => {
+          api.post('/project/getProjectsByID',{project_id:id})
+         .then((res) => {
+          setProjectDetail(res.data.data)
         })
-       
-      }, [])
+        .catch(()=>{
+          message("Costing Summary not found","info")
+        })
+        }
+
+      // Fetch Costing Summary
+      const getCostingbySummary = () => {
+        
+        api.post('/projecttabcostingsummary/getTabCostingSummary',{project_id:id})
+        .then((res) => {
+          console.log(res.data.data)
+          setGetCostingSummary(res.data.data)
+        })
+      }
+      
+
+      useEffect(() => {
+        getCostingbySummary();
+        getProjectById();
+      }, [id])
       
 
   return (
@@ -67,19 +91,23 @@ const ProjectEdit = () => {
       
         <Form >
             <FormGroup>
-            <ComponentCard title="Project Details | Code: O-1045 | Category : Project   | Company : fffuuf   | Status : WIP">
+            <ComponentCard title={`Project Details | 
+            Code: ${projectDetail && projectDetail.opportunity_code} | 
+            Category : ${projectDetail && projectDetail.category} | 
+            Company :  ${projectDetail && projectDetail.company_name}  | 
+            Status : ${projectDetail && projectDetail.status} `}>
                 <Row>
                 <Col md="3">
                     <FormGroup>
                     <Label>Title</Label>
-                    <Input  type="text" value="" name="title" />
+                    <Input  type="text" name="title"  value={projectDetail && projectDetail.title} />
                     </FormGroup>
                 </Col>
                 
                 <Col md="3">
                     <FormGroup>
                     <Label>Category <span className='required'> *</span> </Label>
-                    <Input type="select" value="" name="company_id">
+                    <Input type="select" name="company_id" value={projectDetail && projectDetail.category} >
                         <option value="">Please Select</option>
                         <option value="Project">Project</option>
                         <option selected="selected" value="Maintenance">Maintenance</option>
@@ -92,7 +120,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Status </Label>
-                    <Input type="select"  value="" name="contact_id" >
+                    <Input type="select" name="contact_id" value={projectDetail && projectDetail.status}>
                         <option value="">Please Select</option>
                         <option selected="selected" value="WIP">WIP</option>
                         <option value="Billable">Billable</option>
@@ -107,7 +135,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Company</Label>
-                    <Input type="text" disabled value="" name="office_ref_no"/>
+                    <Input type="text" disabled name="office_ref_no" value={projectDetail && projectDetail.company_name}/>
                     </FormGroup>
                 </Col>
                 </Row>
@@ -117,7 +145,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Contact</Label>
-                    <Input type="select" value=""  name="mode_of_submission" >
+                    <Input type="select" name="mode_of_submission" value={projectDetail && projectDetail.contact_id}>
                         <option value="">Please Select</option>
                     </Input>
                     </FormGroup>
@@ -126,20 +154,21 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Start Date</Label>
-                        <Input type="date"  value="" name="site_show_date"/>
+                        <Input type="date" name="site_show_date" value={projectDetail && projectDetail.start_date}/>
                     </FormGroup>
                 </Col>
                 <Col md="3">
                     <FormGroup>
                     <Label>Estimated Finish Date</Label>
-                    <Input value="" type="date" 
-                      name="project_end_date" />
+                    <Input type="date" 
+                      name="project_end_date" 
+                      value={projectDetail && projectDetail.estimated_finish_date}/>
                     </FormGroup>
                 </Col>
                 <Col md="3">
                     <FormGroup>
                     <Label>Description</Label>
-                    <Input type="text"  value="" name="services"/>
+                    <Input type="text" name="services" value={projectDetail && projectDetail.description}/>
                     </FormGroup>
                 </Col>
                 </Row>
@@ -148,7 +177,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Project Manager</Label>
-                    <Input type="select" value=""  name="site_show_attendee">
+                    <Input type="select" name="site_show_attendee" value={projectDetail && projectDetail.project_manager_id}>
                         <option value="" selected="selected">Please Select</option>
                         
                       </Input>
@@ -160,7 +189,7 @@ const ProjectEdit = () => {
                     <Label>Ducting Cost (OR) <Link to="" color="primary">
                       <span onClick={()=>setAddDuctingCostModal(true)}><b><u>Add</u></b></span>
                     </Link></Label>
-                    <Input type="text" disabled value=""  name="actual_submission_date"/>
+                    <Input type="text" disabled name="actual_submission_date"/>
                     </FormGroup>
                 </Col>
                 </Row>
@@ -415,6 +444,7 @@ const ProjectEdit = () => {
     <OtherChargesModal addOtherChargesModal={addOtherChargesModal} setAddOtherChargesModal={setAddOtherChargesModal} />
     <ViewQuoteLogModal viewQuotationsModal={viewQuotationsModal} setViewQuotationsModal={setViewQuotationsModal} />
     <ViewLineItemModal viewLineModal={viewLineModal} setViewLineModal={setViewLineModal} />
+    {/* <AddMaterialsUsed addMaterialsUsed={addMaterialsUsed} setAddMaterialsUsed={setAddMaterialsUsed}  /> */}
 
 
         <Nav tabs>
@@ -783,6 +813,64 @@ const ProjectEdit = () => {
           </Col>
           </Row>
         </Form> */}
+        </TabPane>
+
+
+        {/* Tab 4 */}
+
+        <TabPane tabId="4">
+
+        <Row>
+            {/* <Col md="3" className='mb-4 d-flex justify-content-between'> </Col> */}
+            <Col md="2"><FormGroup><h3> Materials used </h3> </FormGroup></Col>
+            <Col md="2"><Button color="primary">Print Pdf</Button></Col>
+            <Col md="3"><Button color="primary">Add materials used</Button></Col>
+        </Row>
+
+      <Form class="mt-5">
+          <Row>
+            <Col><FormGroup><Label>Description</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>UoM</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Quantity</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Remarks</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Status</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
+          </Row>
+          <Row>
+          <Col>
+            <FormGroup></FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <span>test</span>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <Label>test</Label>
+            </FormGroup>
+          </Col>
+          <Col >
+            <FormGroup>
+                <Label>test</Label>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <Label>test</Label>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+              <Row>
+                <Col md='2'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
+                <Col md='2'><Label><Link to=""> <span><Icon.Eye /></span> </Link></Label></Col>
+                <Col md='8'><Label><Link to=""><span >Return To Stock</span></Link></Label></Col>
+              </Row>
+            </FormGroup>
+          </Col>
+          </Row>
+        </Form>
         </TabPane>
 
 {/* Start Tab Content 10 */}
