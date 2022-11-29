@@ -66,6 +66,9 @@ const AddPurchaseOrderModal = ({addPurchaseOrderModal,setAddPurchaseOrderModal})
                             </FormGroup>
                         </Col>
                         </Row>
+                        <Row>
+                            <FormGroup className='mt-3'> Total Amount :</FormGroup>
+                        </Row>
                     </Col>
                     </Row>
 
@@ -74,7 +77,7 @@ const AddPurchaseOrderModal = ({addPurchaseOrderModal,setAddPurchaseOrderModal})
                     <tr>
                         <th scope="col">Item</th>
                         <th scope="col">UoM</th>
-                        <th scope="col">Qty</th>
+                        <th scope="col">Quantity</th>
                         <th scope="col">Unit Price</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Remarks</th>
@@ -91,7 +94,7 @@ const AddPurchaseOrderModal = ({addPurchaseOrderModal,setAddPurchaseOrderModal})
                             <td data-label="UoM"><Input type="text" name="uom" /></td>
                             <td data-label="Qty"><Input type="text" name="Quantity" /></td>
                             <td data-label="Unit Price"><Input type="text" name="unitprice" /></td>
-                            <td data-label="Total Price"><Input type="text" name="totalprice" /></td>
+                            <td data-label="Total Price"></td>
                             <td data-label="Remarks"><Input type="textarea" name="remarks" /></td>
                             <td data-label="Action"><Link to=""><span>Clear</span></Link></td>
                         </tr>
@@ -119,7 +122,7 @@ const AddPurchaseOrderModal = ({addPurchaseOrderModal,setAddPurchaseOrderModal})
                         <Row>
                             <FormGroup>
                                 <Row>
-                                    <Label sm="2">Product Name *</Label>
+                                    <Label sm="2">Product Name <span className='required'> *</span></Label>
                                     <Col sm="10">
                                     <Input type="text" name="product_name" />
                                     </Col>
@@ -127,7 +130,7 @@ const AddPurchaseOrderModal = ({addPurchaseOrderModal,setAddPurchaseOrderModal})
                             </FormGroup>
                             <FormGroup>
                                 <Row>
-                                     <Label sm="2">Product Type *</Label>
+                                     <Label sm="2">Product Type <span className='required'> *</span></Label>
                                     <Col sm="10">
                                     <Input type="select" name="product_type">
                                         <option value="">Please Select</option>

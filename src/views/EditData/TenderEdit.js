@@ -288,7 +288,7 @@ const TenderEdit = () => {
        const getFiles = () => {
         api.get('/file/getFileList')
         .then((res)=>{
-          setGetFile(res.data.reverse());
+          setGetFile(res.data);
            console.log("Uploaded File",res.data)
         })
     }
@@ -1626,7 +1626,9 @@ const TenderEdit = () => {
                {getFile ? getFile.map(res=>{
                         return (
                           <>
-                            <a href={res.url}>{res.name}</a><br></br>
+                          {/* <img src={res.url} alt="logos" width="200px" height="150px"/> */}
+                            <p><a href={res.url} target="_blank" rel="noreferrer">{res.name}</a></p>
+                            {/* <p>URL = {res.url}</a></p> */}
                         </>
                         )
                     }) : (<p>no files uploaded yet</p>)}
