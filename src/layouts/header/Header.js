@@ -15,12 +15,13 @@ import {
 } from 'reactstrap';
 import { MessageSquare } from 'react-feather';
 import * as Icon from 'react-feather';
+
 import { ReactComponent as LogoWhite } from '../../assets/images/logos/logo.svg';
 import MessageDD from './MessageDD';
 import MegaDD from './MegaDD';
 import NotificationDD from './NotificationDD';
 import user1 from '../../assets/images/users/user1.jpg';
-
+import { logout } from '../../store/auth/userSlice';
 import { ToggleMiniSidebar, ToggleMobileSidebar } from '../../store/customizer/CustomizerSlice';
 import ProfileDD from './ProfileDD';
 
@@ -146,7 +147,7 @@ const Header = () => {
           <DropdownMenu className="ddWidth">
             <ProfileDD />
             <div className="p-2 px-3">
-              <Button color="danger" size="sm">
+              <Button color="danger" onClick={()=>{ dispatch(logout())}} size="sm">
                 Logout
               </Button>
             </div>
