@@ -3,48 +3,50 @@ import React from 'react';
 import { Button, Label, FormGroup, Container, Row, Col, Card, CardBody, Input } from 'reactstrap';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-
+import { useDispatch,useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import AuthLogo from "../../layouts/logo/AuthLogo";
+import { userLogin } from '../../store/auth/userSlice';
 import { ReactComponent as LeftBg } from '../../assets/images/bg/login-bgleft.svg';
 import { ReactComponent as RightBg } from '../../assets/images/bg/login-bg-right.svg';
 // import {Dashboards} from '../../components/dashboard/classicDashboard';
-import loginApi from '../../constants/api'
+// import loginApi from '../../constants/api'
 
 
 const LoginFormik = ({setToken}) => { 
  
 
   // const [loginData, setLoginData] = useState('');
-  
+  const dispatch=useDispatch();
+  const {userInfo,userToken}=useSelector(state=>state.user);
 
-  const UserLogin = (value) => {
+  // const UserLogin = (value) => {
    
-    loginApi
-      .post('/api/login',value)
-      .then((res) => {
+  //   loginApi
+  //     .post('/api/login',value)
+  //     .then((res) => {
         
-        if(res && res.data.status === '400'){
-          alert('Invalid Username or Password')
-        }else{
+  //       if(res && res.data.status === '400'){
+  //         alert('Invalid Username or Password')
+  //       }else{
           
-          localStorage.setItem('user',JSON.stringify(res.data.data))
-            setToken(res.data.token)
-           window.location.reload()
-        }
-        //navigate('/dashboards/classic');
-        // setLoginData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  //         localStorage.setItem('user',JSON.stringify(res.data.data))
+  //           setToken(res.data.token)
+  //          window.location.reload()
+  //       }
+  //       //navigate('/dashboards/classic');
+  //       // setLoginData(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
   
   
 
   const initialValues = {
-    email: 'admin@gmail.com',
-    password: 'admin@123',
+    email: 'usstesting@gmail.com',
+    password: 'smartcon1600',
   };
 
   const validationSchema = Yup.object().shape({
@@ -72,7 +74,9 @@ const LoginFormik = ({setToken}) => {
                   initialValues={initialValues}
                   validationSchema={validationSchema}
                   onSubmit={(values) => {
-                    UserLogin(values)
+                    dispatch(userLogin(values));
+                    setToken(userToken);
+                    console.log(userInfo)
                   }}
                   
                   render={({ errors, touched }) => (
