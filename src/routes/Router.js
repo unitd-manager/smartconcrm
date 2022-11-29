@@ -3,8 +3,8 @@ import {  Route, Routes} from 'react-router-dom';
 
 import React,{ lazy } from 'react';
 import Loadable from '../layouts/loader/Loadable';
-
-import UserToken from '../components/UserToken'
+import { userToken } from '../store/auth/userSlice';
+// import UserToken from '../components/UserToken'
 // import { Details } from '@material-ui/icons';
 
 
@@ -191,10 +191,10 @@ const ProjectEdit= Loadable(lazy(() => import ('../views/EditData/ProjectEdit'))
 
 
 const Routernew = () => {
-  const { token, setToken } = UserToken();
+  // const { token, setToken } = UserToken();
 
-  if (!token) {
-    return <LoginFormik setToken={setToken} />;
+  if (!userToken) {
+    return <LoginFormik setToken={userToken} />;
   }
   return (
     <div>
