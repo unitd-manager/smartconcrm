@@ -17,7 +17,8 @@ const AddLineItemModal = ({addLineItemModal,setAddLineItemModal,projectInfo}) =>
   }
   // Logic for Add New Item Row
 
-  const [addLineItem, setAddLineItem] = useState([{
+  const [addLineItem, setAddLineItem] = useState(
+    [{
     "id":random.int(1,99),
     "uom": "",
     "qty": "",

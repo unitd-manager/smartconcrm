@@ -14,8 +14,10 @@ import OfficeOverheadsModal from '../../components/ProjectModal/OfficeOverheadsM
 import OtherChargesModal from '../../components/ProjectModal/OtherChargesModal';
 import ViewQuoteLogModal from '../../components/ProjectModal/ViewQuoteLogModal';
 import ViewLineItemModal from '../../components/ProjectModal/ViewLineItemModal';
+import EditQuotation from '../../components/ProjectModal/EditQuotation';
 import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
 import MaterialsusedTab from '../../components/ProjectModal/MaterialsusedTab';
+import EditWorkOrder from '../../components/ProjectModal/EditWorkOrder';
 import message from '../../components/Message';
 import api from '../../constants/api';
 
@@ -36,12 +38,15 @@ const ProjectEdit = () => {
     const [addOfficeOverheadsModal, setAddOfficeOverheadsModal] = useState(false);
     const [addOtherChargesModal, setAddOtherChargesModal] = useState(false);
     const [viewQuotationsModal, setViewQuotationsModal] = useState(false);
-    const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
     const [viewLineModal, setViewLineModal] = useState(false);
+    const [editQuoteModal, setEditQuoteModal] = useState(false);
+    const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
     const [attachmentModal, setAttachmentModal] = useState(false);
     const [claimAttachmentModal, setClaimAttachmentModal] = useState(false);
+    const [editWorkOrderModal, setEditWorkOrderModal] = useState(false);
     const [tabdeliveryorder, setTabdeliveryorder] = useState();
-
+    const [tabPurchaseOrderLineItemTable, setTabPurchaseOrderLineItemTable] = useState();
+    
 
     const toggle = (tab) => {
         if (activeTab !== tab) setActiveTab(tab);
@@ -71,7 +76,6 @@ const ProjectEdit = () => {
         
         api.post('/projecttabcostingsummary/getTabCostingSummary',{project_id:id})
         .then((res) => {
-          console.log(res.data.data)
           setGetCostingSummary(res.data.data)
         })
       }
@@ -84,10 +88,23 @@ const ProjectEdit = () => {
     const UpdateData = () => {
       api.post('/project/edit-Project',projectDetail)
       .then(() => {
-        message('Record editted successfully','success')
+       message('Record editted successfully','success')
         setTimeout(()=>{
           window.location.reload()
         },300);
+      })
+    }
+
+    // Tab PurchaseOrder LineItem Table
+    const TabPurchaseOrderLineItemTable = () =>
+    {
+      api.post('/purchaseorder/TabPurchaseOrderLineItemTable',{project_id:"43"})
+      .then((res)=>{
+        const arrayOfObj = Object.entries(res.data.data).map((e) => ({id: e[0],data: e[1]} ));
+
+        // const entries = Object.entries(res.data.data);
+        setTabPurchaseOrderLineItemTable(arrayOfObj)
+        console.log("Tab PurchaseOrder LineItem Table",arrayOfObj)
       })
     }
 
@@ -97,7 +114,6 @@ const ProjectEdit = () => {
       api.post('/projecttabdeliveryorder/TabDeliveryOrder',{project_id:id})
      .then((res) => {
       setTabdeliveryorder(res.data.data)
-      console.log("TabDeliveryOrder",res.data.data)
     })
     .catch(()=>{
       message("Tab Delivery Order not found","info")
@@ -108,6 +124,7 @@ const ProjectEdit = () => {
         getCostingbySummary();
         getProjectById();
         TabDeliveryOrder();
+        TabPurchaseOrderLineItemTable();
       }, [id])
       
 
@@ -117,11 +134,11 @@ const ProjectEdit = () => {
       
         <Form >
             <FormGroup>
-            <ComponentCard title={`Project Details | 
-            Code: ${projectDetail && projectDetail.opportunity_code} | 
+            <ComponentCard title={`Project Details | Code: ${projectDetail && projectDetail.opportunity_code} | 
             Category : ${projectDetail && projectDetail.category} | 
             Company :  ${projectDetail && projectDetail.company_name}  | 
             Status : ${projectDetail && projectDetail.status} `}>
+              
                 <Row>
                 <Col md="3">
                     <FormGroup>
@@ -133,7 +150,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Category <span className='required'> *</span> </Label>
-                    <Input type="select" name="company_id" 
+                    <Input type="select" name="category" 
                         defaultValue={projectDetail && projectDetail.category} 
                         onChange={handleInputs} >
                         <option value="">Please Select</option>
@@ -148,7 +165,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Status </Label>
-                    <Input type="select" name="contact_id" defaultValue={projectDetail && projectDetail.status}
+                    <Input type="select" name="status" defaultValue={projectDetail && projectDetail.status}
                          onChange={handleInputs}>
                         <option value="">Please Select</option>
                         <option selected="selected" value="WIP">WIP</option>
@@ -164,7 +181,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Company</Label>
-                    <Input type="text" disabled name="office_ref_no" 
+                    <Input type="text" disabled name="company_name" 
                         defaultValue={projectDetail && projectDetail.company_name} 
                         onChange={handleInputs}/>
                     </FormGroup>
@@ -176,7 +193,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Contact</Label>
-                    <Input type="select" name="mode_of_submission" 
+                    <Input type="select" name="contact_id" 
                         defaultValue={projectDetail && projectDetail.contact_id}
                         onChange={handleInputs}>
                         <option value="">Please Select</option>
@@ -187,21 +204,21 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Start Date</Label>
-                        <Input type="date" name="site_show_date" defaultValue={projectDetail && projectDetail.start_date} onChange={handleInputs}/>
+                        <Input type="date" name="start_date" defaultValue={projectDetail && projectDetail.start_date} onChange={handleInputs}/>
                     </FormGroup>
                 </Col>
                 <Col md="3">
                     <FormGroup>
                     <Label>Estimated Finish Date</Label>
                     <Input type="date" 
-                      name="project_end_date" 
+                      name="estimated_finish_date" 
                       defaultValue={projectDetail && projectDetail.estimated_finish_date} onChange={handleInputs}/>
                     </FormGroup>
                 </Col>
                 <Col md="3">
                     <FormGroup>
                     <Label>Description</Label>
-                    <Input type="text" name="services" defaultValue={projectDetail && projectDetail.description} onChange={handleInputs}/>
+                    <Input type="text" name="description" defaultValue={projectDetail && projectDetail.description} onChange={handleInputs}/>
                     </FormGroup>
                 </Col>
                 </Row>
@@ -210,20 +227,20 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Project Manager</Label>
-                    <Input type="select" name="site_show_attendee" defaultValue={projectDetail && projectDetail.project_manager_id} onChange={handleInputs}>
+                    <Input type="select" name="project_manager_id" defaultValue={projectDetail && projectDetail.project_manager_id} onChange={handleInputs}>
                         <option value="" selected="selected">Please Select</option>
                       </Input>
 
                     </FormGroup>
                 </Col>
-                <Col md="3">
+                {/* <Col md="3">
                     <FormGroup>
                     <Label>Ducting Cost (OR) <Link to="" color="primary">
                       <span onClick={()=>setAddDuctingCostModal(true)}><b><u>Add</u></b></span>
                     </Link></Label>
                     <Input type="text" disabled name="actual_submission_date"/>
                     </FormGroup>
-                </Col>
+                </Col> */}
                 </Row>
               
                 <Row>
@@ -243,226 +260,6 @@ const ProjectEdit = () => {
   <ComponentCard title="More Details">
     <ToastContainer></ToastContainer>
 
-    {/* <Modal isOpen={editCostingSummaryModel} toggle={editCostingSummaryToggle.bind(null)}>
-      <ModalHeader toggle={editCostingSummaryToggle.bind(null)}>Edit Costing Summary</ModalHeader>
-      <ModalBody>
-        <Row>
-        <Col md="12">
-          <Card>
-            <CardTitle tag="h4" className="border-bottom bg-primary p-3 mb-0 text-white">
-              Edit Costing Summary
-            </CardTitle>
-            <CardBody>
-              <Form>
-                <Row>
-                  <Col md="4">
-                    <FormGroup>
-                      <Label>No. of Worker Used</Label>
-                      <Input type="text" value=""/>
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <Label>No. of Days Worked</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <Label>Labout Rates Per Day</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <Label>Total Price (S$ W/o GST)</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <Label>Profit Margin %</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <Label>Profit Margin</Label>
-                      <Input type="text" name="profit" class="text" id="fld_profit" value="39909998.00" tabindex="-1"/>
-                    </FormGroup>
-                  </Col>
-                </Row>
-              </Form>
-            </CardBody>
-            <CardBody className="bg-light">
-              <CardTitle tag="h4" className="mb-0">
-                
-              </CardTitle>
-            </CardBody>
-            <CardBody>
-              <Row>
-              <Col md="3">
-                <FormGroup>
-                    <Label>Total Material</Label>
-                    <Input type="text"/>
-                </FormGroup>
-                </Col>
-                <Col md="3">
-                <FormGroup>
-                    <Label>Transport Charges %</Label>
-                    <Input type="text"/>
-                </FormGroup>
-                </Col>
-                <Col md="3">
-                <FormGroup>
-                    <Label>Transport Charges </Label>
-                    <Input type="text" />
-                </FormGroup>
-                </Col>
-                <Col md="3">
-                <FormGroup>
-                    <Label>Total Labour Charges</Label>
-                    <Input type="text" />
-                </FormGroup>
-                </Col>
-              </Row>
-              <Row>
-              <Col md="3">
-                <FormGroup>
-                    <Label>Salesman Commission %</Label>
-                    <Input type="text"/>
-                </FormGroup>
-                </Col>
-                <Col md="3">
-                <FormGroup>
-                    <Label>Salesman Commission </Label>
-                    <Input type="text"/>
-                </FormGroup>
-                </Col>
-                <Col md="3">
-                <FormGroup>
-                    <Label>Finance Charges % </Label>
-                    <Input type="text" />
-                </FormGroup>
-                </Col>
-                <Col md="3">
-                <FormGroup>
-                    <Label>Finance Charges </Label>
-                    <Input type="text" />
-                </FormGroup>
-                </Col>
-              </Row>
-              <Row>
-              <Col md="3">
-                <FormGroup>
-                    <Label>Office Overheads %</Label>
-                    <Input type="text"/>
-                </FormGroup>
-                </Col>
-                <Col md="3">
-                <FormGroup>
-                    <Label>Office Overheads </Label>
-                    <Input type="text"/>
-                </FormGroup>
-                </Col>
-                <Col md="3">
-                <FormGroup>
-                    <Label>Other Charges </Label>
-                    <Input type="text" />
-                </FormGroup>
-                </Col>
-                <Col md="3">
-                <FormGroup>
-                    <Label>TOTAL COST</Label>
-                    <Input type="text" />
-                </FormGroup>
-                </Col>
-              </Row>
-            </CardBody>
-            <CardBody>
-            <CardTitle className="mb-0 bg-light">
-             
-              </CardTitle>
-              <Form>
-
-                 <Row>
-                    <Col><FormGroup><Label>Materials</Label> </FormGroup></Col>
-                    <Col><FormGroup><Label>Supplier</Label> </FormGroup></Col>
-                    <Col><FormGroup><Label>Sub-Con</Label> </FormGroup></Col>
-                   <Col md="1"><FormGroup><Label>UoM</Label> </FormGroup></Col>
-                    <Col md="1"><FormGroup><Label>Qty</Label> </FormGroup></Col>
-                    <Col><FormGroup><Label>Unit Price</Label> </FormGroup></Col>
-                    <Col><FormGroup><Label>Total Cost</Label> </FormGroup></Col>
-            </Row>
-                <Row>
-                  <Col>
-                    <FormGroup><Input type="text" value="BRICKS"/></FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup>
-                      <Input type="select" name="Select Category">
-                          <option value="">Select</option>
-                          <option selected="selected" value="1">ABC Supplier</option>
-                          <option value="2">Supplier 2</option>
-                          <option value="3">ABC New company Pte Ltd</option>
-                          <option value="4">XYZ Factory</option>
-                          <option value="5">Materials Supplier</option>
-                          <option value="6">XYZ ENGINEERING PRIVATE LTD</option>
-                          <option value="7">Kate Williams</option>
-                          <option value="8">Xac Pte Ltd</option>
-                          <option value="9">Jing Shaw Pte Ltd</option>
-                          <option value="10">RAM SAND</option>
-                          <option value="11">abcd</option>
-                          <option value="12">pqrs</option>
-                          <option value="13">Philips Boon</option>
-                          <option value="14">DK Pte Ltd</option>
-                          <option value="15">raj har</option>
-                          <option value="16">New Frame Tech Ltd</option>
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup>
-                      <Input type="text" placeholder='Please type and select'/>
-                    </FormGroup>
-                  </Col>
-                  <Col md="1">
-                    <FormGroup>
-                      <Input type="text" placeholder=''/>
-                    </FormGroup>
-                  </Col>
-                  <Col md="1">
-                    <FormGroup>
-                      <Input type="text" placeholder=''/>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup>
-                      <Input type="text" placeholder='' value="2.00"/>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup>
-                      <Input type="text" placeholder='' value="2.00"/>
-                    </FormGroup>
-                  </Col>
-                </Row>
-              </Form>
-            </CardBody>
-          </Card>
-        </Col>
-        </Row>  
-      </ModalBody>
-      <ModalFooter>
-        <Button color="primary" onClick={editCostingSummaryToggle.bind(null)}>
-          Submit
-        </Button>
-        <Button color="secondary" onClick={editCostingSummaryToggle.bind(null)}>
-          Cancel
-        </Button>
-      </ModalFooter>
-    </Modal>  */}
-
 
 {/* Call Modal's */}
 
@@ -476,6 +273,8 @@ const ProjectEdit = () => {
     <OtherChargesModal addOtherChargesModal={addOtherChargesModal} setAddOtherChargesModal={setAddOtherChargesModal} />
     <ViewQuoteLogModal viewQuotationsModal={viewQuotationsModal} setViewQuotationsModal={setViewQuotationsModal} />
     <ViewLineItemModal viewLineModal={viewLineModal} setViewLineModal={setViewLineModal} />
+    <EditQuotation editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} />
+    <EditWorkOrder editWorkOrderModal={editWorkOrderModal} setEditWorkOrderModal={setEditWorkOrderModal}/>
 
         <Nav tabs>
 
@@ -738,9 +537,9 @@ const ProjectEdit = () => {
                   <FormGroup>
                     <Row>
               
-                      <Col md='4'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
+                      <Col md='4'><Label><Link to=""><span onClick={()=>{setEditQuoteModal(true)}}><Icon.Edit /></span></Link></Label></Col>
                       <Col md='4'><Label><Link to=""><span ><Icon.Printer/></span></Link></Label></Col>
-                      <Col md='4'><Label><Link to=""> <span><Icon.PlusCircle /></span> </Link></Label></Col>
+                      {/* <Col md='4'><Label><Link to=""> <span><Icon.PlusCircle /></span> </Link></Label></Col> */}
                     </Row>
                   </FormGroup>
                 </Col>
@@ -757,8 +556,10 @@ const ProjectEdit = () => {
             <Col md="3"><Button color="primary">Create Delivery Order</Button></Col>
             <Col md="3"><Button color="success">Add all Qty to Stock</Button></Col>
           </Row>
-          <Row>
-            <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> Materials Purchased </CardTitle>
+          {tabPurchaseOrderLineItemTable && tabPurchaseOrderLineItemTable.map((e)=>{
+  return (  <>  
+  <Row>
+            <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> {e.data[0].company_name}</CardTitle>
           </Row>
 
         <Form className='mt-4'>
@@ -772,78 +573,65 @@ const ProjectEdit = () => {
             <Col><FormGroup><Label></Label> Remarks</FormGroup></Col>
             <Col><FormGroup><Label></Label> </FormGroup></Col>
           </Row>
-          <Row>
-          <Col>
-            <FormGroup></FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <span>test</span>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col >
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col md="1">
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col md="1">
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label></Label>
 
-                {/* <Modal isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
-                      <ModalHeader toggle={viewLineToggle.bind(null)}>Line Items</ModalHeader>
-                      <ModalBody>
-                          <FormGroup>
-                          <table className='lineitem'>
-                            
-                            <thead>
-                              <tr>
-                                <th scope="col">Title	</th>
-                                <th scope="col">Description	</th>
-                                <th scope="col">Qty</th>
-                                <th scope="col">Unit Price</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Updated By</th>
-                                <th scope="col">Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                            
-                            </tbody>
-                          </table>
-                          </FormGroup>
-                      </ModalBody>
-                      <ModalFooter>
-                          <Button color="primary" onClick={viewLineToggle.bind(null)}>Submit</Button>
-                      </ModalFooter>
-                  </Modal> */}
 
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-              <Row>
-                <u>Transfer</u>
-              </Row>
-            </FormGroup>
-          </Col>
-          </Row>
-        </Form>
+
+ {e.data.map(item=>{
+  return <Row>
+  <Col>
+    <FormGroup>
+      <span>{item.item_title}</span>
+    </FormGroup>
+  </Col>
+  <Col>
+    <FormGroup>
+        <span>{item.unit}</span>
+    </FormGroup>
+  </Col>
+  <Col>
+    <FormGroup>
+        <span>{item.qty}</span>
+    </FormGroup>
+  </Col>
+  <Col >
+    <FormGroup>
+      <span>{item.cost_price}</span>
+    </FormGroup>
+  </Col>
+  <Col md="1">
+    <FormGroup>
+      <span>{item.amount}</span>
+    </FormGroup>
+  </Col>
+  <Col md="1">
+    <FormGroup>
+      <span>{item.status}</span>
+    </FormGroup>
+  </Col>
+  <Col>
+    <FormGroup>
+        <Label>{item.description}</Label>
+    </FormGroup>
+  </Col>
+  <Col>
+    <FormGroup>
+      <Row>
+        <u>Transfer</u>
+      </Row>
+    </FormGroup>
+  </Col>
+</Row>
+ })}
+  
+  
+  </Form>
+  </> 
+  
+  )})}
+          
+         
+          
+        
         </TabPane>
 
 
@@ -983,7 +771,7 @@ const ProjectEdit = () => {
         <Col>
           <FormGroup>
             <Row>
-              <Col md='2'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
+              <Col md='2'><Label><Link to=""><span onClick={()=>{setEditWorkOrderModal(true)}}><Icon.Edit /></span></Link></Label></Col>
               <Col md='2'><Label><Link to=""> <span><Icon.Eye /></span> </Link></Label></Col>
               <Col md='2'><Label><Link to=""><span ><Icon.PlusCircle /></span></Link></Label></Col>
             </Row>

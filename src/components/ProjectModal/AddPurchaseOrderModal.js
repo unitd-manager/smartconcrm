@@ -1,8 +1,12 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { Row,Col,FormGroup,Input,Button,Modal,ModalHeader,ModalBody, ModalFooter,Label } from 'reactstrap';
 import {  Link } from 'react-router-dom';
-// import * as $ from "jquery";
 import PropTypes from 'prop-types'
+import * as $ from "jquery";
+import random from 'random'
+import Select from 'react-select';
+import api from '../../constants/api';
+import message from '../Message';
 
 const AddPurchaseOrderModal = ({addPurchaseOrderModal,setAddPurchaseOrderModal}) => {
 
@@ -12,14 +16,144 @@ const AddPurchaseOrderModal = ({addPurchaseOrderModal,setAddPurchaseOrderModal})
       }
 
       const [ addNewProductModal, setAddNewProductModal] = useState(false)
-      const [addMoreItem, setMoreItem] = useState(2)
-      const AddMoreItem = () => {
-        setMoreItem(addMoreItem + 1)
+      const [ getSupplierValue, setGetSupplierValue] = useState()
+      const [tabMaterialsPurchased, setTabMaterialsPurchased] = useState();
+      //const [selectedOption, setSelectedOption] = useState(null);
+      const [addMoreItem, setMoreItem] = useState(
+        [{
+            "id":random.int(1,99),
+            "itemId":"",
+            "uom": "",
+            "qty": "",
+            "unitprice": "",
+            "totalprice": "",
+            "remarks": "",
+            "item":"",
+            "description":""
+        },{
+          "id":random.int(0,9999),
+          "itemId":"",
+          "uom": "",
+          "qty": "",
+          "unitprice": "",
+          "totalprice": "",
+          "remarks": "",
+          "item":"",
+          "description":""
+        },{
+          "id":random.int(0,9999),
+          "itemId":"",
+          "uom": "",
+          "qty": "",
+          "unitprice": "",
+          "totalprice": "",
+          "remarks": "",
+          "item":"",
+          "description":""
+        }]
+      )
+      const [ totalAmount, setTotalAmount ] = useState(0);
+
+      const AddNewLineItem = () => {
+        //setMoreItem(addMoreItem + 1)
+        setMoreItem([...addMoreItem,{
+            "id": random.int(0,9999),
+            "itemId":"",
+            "uom": "",
+            "qty": "",
+            "unitprice": "",
+            "totalprice": "",
+            "remarks": "",
+            "item":"",
+            "description":""
+        }])
       } 
+
+
+    //   Get Supplier
+    const getSupplier = () => {
+        api.get('/purchaseorder/suppliers')
+        .then((res)=>{
+        setGetSupplierValue(res.data.data)
+        console.log("Supplier",res)
+      })
+    }
+          
+    // Materials Purchased
+
+    const TabMaterialsPurchased = () => {
+        api.get('/purchaseorder/TabPurchaseOrderLineItem')
+       .then((res) => {
+        const items = res.data.data
+        const finaldat = []
+        items.forEach(item=>{
+            finaldat.push({ value: item.product_id, label: item.title})
+        })
+        setTabMaterialsPurchased(finaldat)
+      })
+      .catch(()=>{
+        message("Tab Purchase Order not found","info")
+      })
+      }
+
+//  calculate Total
+      const calculateTotal = () => {
+       const oldArray = addMoreItem
+        let totalValue = 0
+        const result = [];
+        $(".lineitem tbody tr").each(function() {
+          const allValues = {}; 
+          $(this).find("input").each(function() {
+           
+
+              const fieldName = $(this).attr("name");
+             
+              allValues[fieldName] = $(this).val();
+              allValues.totalprice = allValues.qty * allValues.unitprice
+              
+          });
+          result.push(allValues);
+      })  
+      result.forEach(obj=>{
+        if(obj.id){
+            const objId = parseInt(obj.id,10)
+            const foundObj = oldArray.find(el => el.id === objId)
+            if(foundObj){
+                obj.item = foundObj.item
+                obj.itemId = foundObj.itemId
+            }
+           
+        }
+       
+       
+      })
+      result.forEach(e=>{
+        if(e.totalprice)
+        {
+          totalValue += parseFloat(e.totalprice)
+        }
+      })
+      console.log(result)
+      setMoreItem(result)
+      setTotalAmount(totalValue)
+      }
+      
+    useEffect(() => {
+        getSupplier();
+        TabMaterialsPurchased();
+    }, [])
+    const onchangeItem = (str,itemId) =>{
+      
+        const element = addMoreItem.find(el => el.id === itemId)
+element.item = str.label
+element.itemId = str.value
+console.log(addMoreItem)
+setMoreItem(addMoreItem)
+    }
 
   return (
     <>
-         <Modal isOpen={addPurchaseOrderModal}>
+         <Modal size="xl" isOpen={addPurchaseOrderModal}>
             <ModalHeader>Add Purchase Order</ModalHeader>
             
             <ModalBody>
@@ -31,7 +165,7 @@ const AddPurchaseOrderModal = ({addPurchaseOrderModal,setAddPurchaseOrderModal})
                             <Button color="primary" onClick={()=>{setAddNewProductModal(true)}}>Add New Product</Button>
                         </Col>
                         <Col md="3">
-                            <Button color="primary" onClick={AddMoreItem}>Add More Items</Button>
+                            <Button color="primary" onClick={()=>{AddNewLineItem()}}>Add More Items</Button>
                         </Col>
                         </Row>
                         <br/>
@@ -40,19 +174,20 @@ const AddPurchaseOrderModal = ({addPurchaseOrderModal,setAddPurchaseOrderModal})
                             <Label>Supplier</Label>
                             <Input type="select" name="supplier">
                                 <option value="" selected="selected">Please Select</option>
-                                <option value="1">abc </option>
-                                <option value="2">ABC New company Pte Ltd</option>
-                                <option value="3">ABC Supplier</option>
-                                <option value="4">dairyui</option>
+
+                                {getSupplierValue && getSupplierValue.map((res)=>{
+                                    return <option value={res.supplier_id}>{res.company_name}</option>
+                                })}
+
                             </Input>
                         </Col>
                         <Col md="3">
                             <Label>PO Date</Label>
-                            <Input type="date" name="supplier" />
+                            <Input type="date" name="po_date" />
                         </Col>
                         <Col md="3">
                             <Label>PO No.</Label>
-                            <Input type="text" name="supplier" />
+                            <Input type="text" name="po_no" />
                         </Col>
                         <Col md="3">
                             <Label>GST</Label>
@@ -67,40 +202,55 @@ const AddPurchaseOrderModal = ({addPurchaseOrderModal,setAddPurchaseOrderModal})
                         </Col>
                         </Row>
                         <Row>
-                            <FormGroup className='mt-3'> Total Amount :</FormGroup>
+                            <FormGroup className='mt-3'> Total Amount : {totalAmount} </FormGroup>
                         </Row>
                     </Col>
                     </Row>
 
                 <table className='lineitem'>
                     <thead>
-                    <tr>
-                        <th scope="col">Item</th>
+                    <tr className=''>
+                        <th width="20%" scope="col">Item</th>
                         <th scope="col">UoM</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Unit Price</th>
                         <th scope="col">Amount</th>
-                        <th scope="col">Remarks</th>
+                        <th width="25%" scope="col">Remarks</th>
                         <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
 
-                    
-                    {[...Array(addMoreItem)].map(() => {
+                    {addMoreItem.map((item) => {
                         return (
-                        <tr>
-                            <td data-label="Item"><Input type="text" name="item" /></td>
-                            <td data-label="UoM"><Input type="text" name="uom" /></td>
-                            <td data-label="Qty"><Input type="text" name="Quantity" /></td>
-                            <td data-label="Unit Price"><Input type="text" name="unitprice" /></td>
-                            <td data-label="Total Price"></td>
-                            <td data-label="Remarks"><Input type="textarea" name="remarks" /></td>
-                            <td data-label="Action"><Link to=""><span>Clear</span></Link></td>
+                        <tr key={item.id}>
+                            <td data-label="Item"  key={item.id}>                     
+
+                                 <Select
+                                 key={item.id}
+                                    defaultValue={{value:item.itemId,label:item.item}}
+                                    onChange={(e)=>{
+                                        onchangeItem(e,item.id)
+                                    }}
+                                    options={tabMaterialsPurchased}
+                                />
+                                <Input defaultValue={item.item} type="hidden" name="item"></Input>
+                                <Input defaultValue={item.itemId} type="hidden" name="itemId"></Input>
+                            </td>
+                            <td data-label="UoM"><Input defaultValue={item.uom} type="text" name="uom" /></td>
+                            <td data-label="Qty"><Input defaultValue={item.qty} type="number" name="qty" /></td>
+                            <td data-label="Unit Price" ><Input defaultValue={item.unitprice} type="number" onBlur={()=>{
+                                    calculateTotal()
+                                  }} name="unitprice" /></td>
+                            <td data-label="Total Price"><Input type="hidden" defaultValue={item.totalprice} name="totalprice" />{item.totalprice}</td>
+                            <td data-label="Remarks"><Input type="input" defaultValue={item.description} name="remarks" /></td>
+                            <td data-label="Action"> <Input defaultValue={item.id} type="hidden" name="id"></Input><Link to=""><span>Clear</span></Link></td>
                         </tr>
                         );
                     })}
+
                     </tbody>
+
                 </table>
                 </FormGroup>
             </ModalBody>
@@ -155,3 +305,12 @@ const AddPurchaseOrderModal = ({addPurchaseOrderModal,setAddPurchaseOrderModal})
 }
 
 export default AddPurchaseOrderModal
+
+
+
+
+// {tabMaterialsPurchased && tabMaterialsPurchased.map((res)=>{
+//     return  
+//   })
+  
+//   }

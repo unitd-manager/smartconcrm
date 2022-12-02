@@ -286,11 +286,37 @@ const TenderEdit = () => {
 
        // get Files
        const getFiles = () => {
-        api.get('/file/getFileList')
+        api.post('/file/getFileList',{record_id:id})
         .then((res)=>{
-          setGetFile(res.data);
-           console.log("Uploaded File",res.data)
+          setGetFile(res.data.data);
         })
+    }
+
+
+    const deleteFile = (fileId) =>{
+      Swal.fire({
+        title: `Are you sure?`,
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          api.post('/file/deleteFile',{media_id:fileId}).then((res)=>{
+            console.log(res)
+            Swal.fire(
+              'Deleted!',
+              'Media has been deleted.',
+              'success'
+            )
+            setViewLineModal(false)
+          }).catch(()=>{
+            message("Unable to Delete Media","info")
+          })
+        }
+      })
     }
 
       useEffect(()=>{
@@ -1622,17 +1648,21 @@ const TenderEdit = () => {
                 </Row>
 
                <AttachmentModal opportunityId={id} attachmentModal={attachmentModal} setAttachmentModal={setAttachmentModal} />
-
+               <table>
                {getFile ? getFile.map(res=>{
                         return (
                           <>
-                          {/* <img src={res.url} alt="logos" width="200px" height="150px"/> */}
-                            <p><a href={res.url} target="_blank" rel="noreferrer">{res.name}</a></p>
-                            {/* <p>URL = {res.url}</a></p> */}
+                          
+                            <tr>
+                              <th> <p><a href={`http://43.228.126.245/smartco-api/storage/uploads/${res.file_name}`} target="_blank" rel="noreferrer">{res.file_name}</a> </p></th>
+                              <th width="5%"></th>
+                              <th> <button type="button" className="btn btn-secondary" onClick={()=>{deleteFile(res.media_id)}}> X </button></th>
+                            </tr>
+                          
                         </>
                         )
                     }) : (<p>no files uploaded yet</p>)}
-             
+             </table>
       </TabPane>
           
           </TabContent>
