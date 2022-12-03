@@ -148,7 +148,7 @@ const ClientDetailsTable = Loadable(lazy(() => import ('../views/detailTable/Cli
 const BookingDetails = Loadable(lazy(() => import ('../views/detailTable/BookingDetails')))
 const TimesheetDetailsTable = Loadable(lazy(() => import ('../views/detailTable/TimesheetDetails')))
 // Finance Admin
-
+const FinanceTable = Loadable(lazy(() => import ('../views/smartconTables/Finance')))
 const SupplierTable = Loadable(lazy(() => import ('../views/smartconTables/Supplier')))
 const SupplierDetailsTable = Loadable(lazy(() => import ('../views/detailTable/SupplierDetails')))
 const SubConTable = Loadable(lazy(() => import ('../views/smartconTables/Subcon')))
@@ -297,6 +297,7 @@ const Routernew = () => {
         <Route path="/Timesheet" name="clienttdata" element={<TimesheetTable />}></Route>
         <Route path="/TimesheetDetails" name="clienttdata" element={<TimesheetDetailsTable />}></Route>
 
+        <Route path="/Finance" name="clienttdata" element={<FinanceTable />}></Route>
         <Route path="/Supplier" name="clienttdata" element={<SupplierTable />}></Route>
         <Route path="/SupplierDetails" name="clienttdata" element={<SupplierDetailsTable />}></Route>
         <Route path="/Subcon" name="clienttdata" element={<SubConTable />}></Route>
