@@ -11,7 +11,7 @@ const EditQuotation = ({editQuoteModal, setEditQuoteModal}) => {
 
   return (
     <>
-         <Modal isOpen={editQuoteModal}>
+         <Modal size="lg" isOpen={editQuoteModal}>
             <ModalHeader>Edit Quote Display </ModalHeader>
             <ModalBody>
                 <FormGroup>

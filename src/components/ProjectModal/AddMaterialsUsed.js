@@ -38,7 +38,7 @@ const AddMaterialsUsed = ({addMaterialsUsed,setAddMaterialsUsed}) => {
   return (
     <>
 
-           <Modal isOpen={addMaterialsUsed}>
+           <Modal size="xl" isOpen={addMaterialsUsed}>
               <ModalHeader>Add Materials</ModalHeader>
               
               <ModalBody>

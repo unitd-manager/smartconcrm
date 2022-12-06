@@ -208,8 +208,12 @@ const ClearValue = (ind) => {
     <>
 
            {/* Add Line Item Modal */}
-           <Modal isOpen={addLineItemModal}>
-              <ModalHeader>Add Line Item</ModalHeader>
+           <Modal size="xl" isOpen={addLineItemModal}>
+              <ModalHeader>Add Line Item
+              <Button color="secondary" onClick={()=>{
+                    setAddLineItemModal(false)
+                  }}>X</Button>
+              </ModalHeader>
               
               <ModalBody>
                   <FormGroup>

@@ -80,8 +80,10 @@ const EditQuoteModal = ({editQuoteModal,setEditQuoteModal,existingQuote}) =>
   return (
     <>
      {/*  Edit Quote Modal */}
-     <Modal isOpen={editQuoteModal}>
-        <ModalHeader>Edit Quote </ModalHeader>
+     <Modal size="lg" isOpen={editQuoteModal}>
+        <ModalHeader>Edit Quote 
+        <Button color="secondary" onClick={()=>{setEditQuoteModal(false) }}>X</Button>
+        </ModalHeader>
         <ModalBody>
             <FormGroup>
                 <Form>
