@@ -13,7 +13,7 @@ const ViewQuoteLogModal = ({viewQuotationsModal,setViewQuotationsModal}) => {
       }
   return (
     <>
-         <Modal isOpen={viewQuotationsModal}>
+         <Modal size="xl" isOpen={viewQuotationsModal}>
             <ModalHeader>
                 <div>Quote History</div>
                 <Button color="secondary" onClick={()=>{setViewQuotationsModal(false)}}> X </Button>

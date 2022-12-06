@@ -9,7 +9,7 @@ const ViewLineItemModal = ({viewLineModal,setViewLineModal}) => {
       }
   return (
     <>
-        <Modal isOpen={viewLineModal}>
+        <Modal size="xl" isOpen={viewLineModal}>
             <ModalHeader>Line Items</ModalHeader>
             <ModalBody>
                 <FormGroup>

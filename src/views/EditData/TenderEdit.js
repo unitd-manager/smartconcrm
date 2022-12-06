@@ -6,10 +6,8 @@ import * as Icon from 'react-feather';
 import Swal from 'sweetalert2'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss'
-
 import pdfMake from "pdfmake"
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-
 import EditCostingSummaryModal from '../../components/tender/EditCostingSummaryModal';
 import ViewQuoteLogModal from '../../components/tender/ViewQuoteLogModal';
 import AddLineItemModal from '../../components/tender/AddLineItemModal';
@@ -312,6 +310,7 @@ const TenderEdit = () => {
               'success'
             )
             setViewLineModal(false)
+            window.location.reload();
           }).catch(()=>{
             message("Unable to Delete Media","info")
           })
@@ -736,7 +735,7 @@ const TenderEdit = () => {
 
                     })}
 
-          <Modal isOpen={addCompanyModal} toggle={addCompanyToggle.bind(null)}>
+          <Modal size="xl" isOpen={addCompanyModal} toggle={addCompanyToggle.bind(null)}>
                 <ModalHeader toggle={addCompanyToggle.bind(null)}>New Opportunity</ModalHeader>
                 <ModalBody>
                   <Row>
@@ -1177,7 +1176,7 @@ const TenderEdit = () => {
 
                       })}
 
-                        <Modal isOpen={addContactModal} toggle={addContactToggle.bind(null)}>
+                        <Modal size="lg" isOpen={addContactModal} toggle={addContactToggle.bind(null)}>
                           <ModalHeader toggle={addContactToggle.bind(null)}>New Contact</ModalHeader>
                           <ModalBody>
                             <Row>
@@ -1567,7 +1566,7 @@ const TenderEdit = () => {
                       FechedlineItem={lineItem}/> */}
 
 
-                      <Modal isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
+                      <Modal size="xl" isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
                             <ModalHeader toggle={viewLineToggle.bind(null)}>Line Items</ModalHeader>
                             <ModalBody>
                                 <FormGroup>
@@ -1624,7 +1623,6 @@ const TenderEdit = () => {
 
                 <Col>
                   <FormGroup>
-
                     <Row>
                       <Col md='4'><Label><Link to=""><span onClick={()=>{setEditQuoteModal(true) }}><Icon.Edit /></span></Link></Label></Col>
                       <Col md='4'>{quote && (<Label><Link to=""><span onClick={()=>{GeneratePdf(quote.quote_id)}}><Icon.Printer/></span></Link></Label>)}</Col>

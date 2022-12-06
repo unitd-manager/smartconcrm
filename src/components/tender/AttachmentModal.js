@@ -47,9 +47,9 @@ const AttachmentModal = ({attachmentModal,setAttachmentModal,opportunityId}) => 
                 }).catch(()=>{
                     setAttachmentModal(false)
                     message('Unable to upload File','error')
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 400);
+                    // setTimeout(() => {
+                    //     window.location.reload()
+                    // }, 400);
                 })
             }else{
                 message('No files selected','info')
