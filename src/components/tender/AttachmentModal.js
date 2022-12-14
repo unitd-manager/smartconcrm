@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import { FormGroup,Button,Modal,ModalHeader,ModalBody, ModalFooter } from 'reactstrap';
 import PropTypes from 'prop-types'
 import { FileUploader } from "react-drag-drop-files";
@@ -14,29 +14,40 @@ const AttachmentModal = ({attachmentModal,setAttachmentModal,opportunityId}) => 
       }
         const fileTypes = ["JPG", "PNG", "GIF", "PDF"];
 
-        const [file, setFile] = React.useState(null);
+        const [file, setFile] = useState([]);
+        const [ handleValue, setHandleValue ] = useState()
        
-
         const handleChange = (fiels) => {
-            // setFile(e);
-            //console.log(fiels)
-            // const arrayOfObj = Object.entries(fiels).map((e) => ( e[1]  ));
-            // console.log(arrayOfObj)
-            setFile(fiels);
+          
+            const arrayOfObj = Object.entries(fiels).map((e) => ( e[1]  ));
 
+            setFile(fiels);
+            setHandleValue(arrayOfObj);
+            console.log(fiels)
         };
 
 
         const uploadFile = () =>{
+            
             if(file){
+
                // getFiles();
+            
+          
                 const data = new FormData() 
-                data.append('file', file)
+                const arrayOfObj = Object.entries(file).map((e) => (  e[1] ));
+
+                arrayOfObj.forEach((ele) => {
+                    console.log(ele)
+                    data.append(`files`, ele);
+                  });
+                //data.append('file', file)
                 data.append('record_id', opportunityId) //opportunity_id
                 data.append('room_name', 'opportunity')
                 data.append('alt_tag_data', 'Image for Opportunity')
                 data.append('description', 'Image for Opportunity')
-                api.post('/file/uploadFile',data,{'Content-Type':'multipart/form-data'}).then(()=>{
+
+                api.post('/file/uploadFiles',data).then(()=>{
 
                     setAttachmentModal(false)
                     message('Files Uploaded Successfully','success')
@@ -65,15 +76,23 @@ const AttachmentModal = ({attachmentModal,setAttachmentModal,opportunityId}) => 
             <ModalHeader>Upload Media</ModalHeader>
             <ModalBody>
                 <FormGroup>
-                    {/* <Label htmlFor="exampleFile">Select Files</Label>
-                    <Input type="file" placeholder="" /> */}
-
+                  
                     <FileUploader
-                        multiple={false}
+                        multiple
                         handleChange={handleChange}
                         name="file"
                         types={fileTypes}
                     />
+
+                    {handleValue ? (
+                        handleValue.map((e) => (
+                        <div>
+                            <span> Name: {e.name} </span>
+                        </div>
+                        ))
+                    ) : (
+                        <span>No file selected</span>
+                    )}
 
                 </FormGroup>
             </ModalBody>

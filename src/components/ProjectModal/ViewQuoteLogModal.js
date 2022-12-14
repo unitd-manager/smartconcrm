@@ -1,8 +1,9 @@
-import React from 'react'
+import React,{useState} from 'react'
 import { Row,Col,Form,FormGroup,Label,Button,Modal,ModalHeader,ModalBody,Card,CardBody,CardTitle} from 'reactstrap';
 import { Link} from 'react-router-dom';
 import PropTypes from 'prop-types'
 import * as Icon from 'react-feather';
+import QuoteLogViewLineItems from './QuoteLogViewLineItems';
 
 
 const ViewQuoteLogModal = ({viewQuotationsModal,setViewQuotationsModal}) => {
@@ -11,6 +12,9 @@ const ViewQuoteLogModal = ({viewQuotationsModal,setViewQuotationsModal}) => {
         viewQuotationsModal: PropTypes.bool,
         setViewQuotationsModal: PropTypes.func
       }
+
+    const [quoteLogViewLineItems, setQuoteLogViewLineItems]= useState(false);
+
   return (
     <>
          <Modal size="xl" isOpen={viewQuotationsModal}>
@@ -70,7 +74,8 @@ const ViewQuoteLogModal = ({viewQuotationsModal,setViewQuotationsModal}) => {
                 </Col>
                 <Col>
                   <FormGroup>
-                      <Label><Link to="" color="primary"><span><u>View Line Items</u></span></Link></Label>
+                      <Label><Link to="" color="primary"><span onClick={()=>{setQuoteLogViewLineItems(true)}}><u>View Line Items</u></span></Link></Label>
+                      <QuoteLogViewLineItems quoteLogViewLineItems={quoteLogViewLineItems} setQuoteLogViewLineItems={setQuoteLogViewLineItems} />
                   </FormGroup>
                 </Col>
                 <Col>

@@ -19,8 +19,13 @@ import EditQuotation from '../../components/ProjectModal/EditQuotation';
 import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
 import MaterialsusedTab from '../../components/ProjectModal/MaterialsusedTab';
 import EditWorkOrder from '../../components/ProjectModal/EditWorkOrder';
+import EditDeliveryOrder from '../../components/ProjectModal/EditDeliveryOrder';
+import EditPoModal from '../../components/ProjectModal/EditPoModal';
+import EditPOLineItemsModal from '../../components/ProjectModal/EditPOLineItemsModal';
+import WorkOrderViewLineItem from '../../components/ProjectModal/WorkOrderViewLineItem';
 import message from '../../components/Message';
 import api from '../../constants/api';
+
 
 const ProjectEdit = () => {
 
@@ -45,10 +50,14 @@ const ProjectEdit = () => {
     const [attachmentModal, setAttachmentModal] = useState(false);
     const [claimAttachmentModal, setClaimAttachmentModal] = useState(false);
     const [editWorkOrderModal, setEditWorkOrderModal] = useState(false);
+    const [ workOrderViewLineItem, setWorkOrderViewLineItem] = useState(false);
     const [tabdeliveryorder, setTabdeliveryorder] = useState();
     const [tabPurchaseOrderLineItemTable, setTabPurchaseOrderLineItemTable] = useState();
-    // const [checkId, setCheckId] = useState([]);
-    
+    const [checkId, setCheckId] = useState([]);
+    const [ editDeliveryOrder, setEditDeliveryOrder] = useState(false);
+    const [ editPo, setEditPo ]= useState(false);
+    const [ editPOLineItemsModal, setEditPOLineItemsModal ]= useState(false);
+
 
     const toggle = (tab) => {
         if (activeTab !== tab) setActiveTab(tab);
@@ -67,6 +76,7 @@ const ProjectEdit = () => {
           api.post('/project/getProjectsByID',{project_id:id})
          .then((res) => {
           setProjectDetail(res.data.data)
+          console.log(res.data.data)
         })
         .catch(()=>{
           message("Costing Summary not found","info")
@@ -125,6 +135,7 @@ const ProjectEdit = () => {
 
     // Delete Purchase Order
     const deletePurchaseOrder = (deletePurchaseOrderId) => {
+
       Swal.fire({
         title: `Are you sure? `,
         text: "You won't be able to revert this!",
@@ -153,19 +164,75 @@ const ProjectEdit = () => {
 
     // handleCheck
 
-    const handleCheck = (e,pId) => {
-      const isChecked = e.target.checked;
-      const allCheckedValue = [];
+    const handleCheck = (e) => {
 
-      if(isChecked){
-        allCheckedValue.push(pId)
-        console.log(allCheckedValue);
+      let updatedList = [...checkId];
+
+      if(e.target.checked) {
+        updatedList = [...checkId, e.target.value];
+      } else {
+        updatedList.splice(checkId.indexOf(e.target.value), 1);
+      }
+      setCheckId(updatedList);
+      
+      console.log(updatedList);
+    }
+
+    const insertDeliveryHistoryOrder = (proId,deliveryOrderId) => {
+      api.post('/projecttabdeliveryorder/insertDeliveryHistoryOrder',{
+        product_id:proId,
+        purchase_order_id:null,
+        delivery_order_id:deliveryOrderId,
+        status:"1",
+        quantity:"1",
+        creation_date:"2022-10-21",
+        modification_date:"2022-10-21",
+        remarks:"test"
+      })
+      .then((res)=>{
+        console.log(res.data.data)
+       message('Delivery Order Item Inserted','success')
+      
+      }).catch(()=>{
+        message('Unable to add Delivery Order Item','error')
+      })
+    }
+
+    const insertDelivery = () => {
+
+      const isEmpty = Object.keys(checkId).length === 0;
+
+      if(isEmpty)
+      {
+        Swal.fire('Please select atleast one product!')
       }
       else{
-        allCheckedValue.pop(pId)
-        console.log(allCheckedValue)
+        api.post('/projecttabdeliveryorder/insertdelivery_order',{
+          project_id:id,
+          company_id:projectDetail.company_id,
+          purchase_order_id:"",
+          date:"2022-10-21",
+          created_by:"1",
+          creation_date:"2022-10-21",
+          modified_by:"1",
+          modification_date:"2022-10-21",
+        })
+        .then((res)=>{
+
+        console.log(res.data)
+        const selectedProducts = checkId
+        setCheckId([])
+        selectedProducts.forEach(element => {
+          insertDeliveryHistoryOrder(res.data.insertId,element)
+        });
+        }).catch(()=>{
+          message('Unable to add delivery order.','error')
+        })
       }
-    }
+
+      }
+     
+
 
       useEffect(() => {
         getCostingbySummary();
@@ -173,6 +240,7 @@ const ProjectEdit = () => {
         TabDeliveryOrder();
         TabPurchaseOrderLineItemTable();
       }, [id])
+
       useEffect(() => {
         setTimeout(() => {
           TabPurchaseOrderLineItemTable()
@@ -334,6 +402,11 @@ const ProjectEdit = () => {
     <ViewLineItemModal viewLineModal={viewLineModal} setViewLineModal={setViewLineModal} />
     <EditQuotation editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} />
     <EditWorkOrder editWorkOrderModal={editWorkOrderModal} setEditWorkOrderModal={setEditWorkOrderModal}/>
+    <EditDeliveryOrder editDeliveryOrder={editDeliveryOrder} setEditDeliveryOrder={setEditDeliveryOrder}  />
+    <EditPoModal editPo={editPo} setEditPo={setEditPo} />
+    <EditPOLineItemsModal editPOLineItemsModal={editPOLineItemsModal} setEditPOLineItemsModal={setEditPOLineItemsModal}  />
+    <WorkOrderViewLineItem workOrderViewLineItem={workOrderViewLineItem} setWorkOrderViewLineItem={setWorkOrderViewLineItem} />
+
 
         <Nav tabs>
 
@@ -606,13 +679,13 @@ const ProjectEdit = () => {
             </Form>
           </TabPane>
 
-{/* Tab 3 */}
+{/* Tab 3 Materials Purchased */}
 
         <TabPane tabId="3">
 
         <Row  className='mb-4'>
             <Col md="3"><Button color="primary" onClick={()=>{setAddPurchaseOrderModal(true)}}>Add Purchase Order</Button></Col>
-            <Col md="3"><Button color="primary">Create Delivery Order</Button></Col>
+            <Col md="3"><Button color="primary" onClick={()=>{insertDelivery()}}>Create Delivery Order</Button></Col>
             <Col md="3"><Button color="success">Add all Qty to Stock</Button></Col>
           </Row>
           {tabPurchaseOrderLineItemTable && tabPurchaseOrderLineItemTable.map((e)=>{
@@ -622,8 +695,8 @@ const ProjectEdit = () => {
             <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">
               <Row>
                 <Col>{e.data[0].company_name}</Col>
-                <Col><span><u> Edit Po </u></span></Col> 
-                <Col><span><u> Edit Line Items </u></span></Col> 
+                <Col><Link to="" style={{color:"#fff"}}><span onClick={()=>{setEditPo(true)}}><u> Edit Po </u></span></Link></Col> 
+                <Col><Link to="" style={{color:"#fff"}}><span onClick={()=>{setEditPOLineItemsModal(true)}}><u> Edit Line Items </u></span></Link></Col> 
                 <Col><span><u> print pdf </u></span></Col> 
                 <Col> Total : {getTotalOfPurchase(e.data)}</Col> 
                 <Col className='d-flex justify-content-end'><Button color="primary" onClick={()=>{deletePurchaseOrder(e.id)}}>X</Button></Col> 
@@ -646,12 +719,11 @@ const ProjectEdit = () => {
           </Row>
 
 
-
         {e.data.map(item=>{
           return <Row>
             <Col md="1">
               <FormGroup check>
-                <Input type="checkbox" value={item.purchase_order_id} onChange={(ch)=>{handleCheck(ch,item.purchase_order_id)}}/>
+                <Input type="checkbox" value={item.purchase_order_id} onChange={(ch)=>{handleCheck(ch)}}/>
               </FormGroup>
             </Col>
 
@@ -757,7 +829,7 @@ const ProjectEdit = () => {
       </TabPane>
 
 
-{/* Start Tab Content 6 */}
+{/* Start Tab Content 6  Delivery Order */}
       <TabPane tabId="6">
           <Row  className='mb-4'>
             <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">Delivery Order</CardTitle>
@@ -767,6 +839,7 @@ const ProjectEdit = () => {
                   <Col><FormGroup><Label>Date</Label> </FormGroup></Col>
                   <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
                 </Row>
+
                 {tabdeliveryorder && tabdeliveryorder.map((res)=>{
                       return  <Row>
                 
@@ -774,7 +847,7 @@ const ProjectEdit = () => {
                       <Col>
                         <FormGroup>
                             <Row>
-                              <Col md='1'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
+                              <Col md='1'><Label><Link to=""><span onClick={()=>{setEditDeliveryOrder(true)}}><Icon.Edit /></span></Link></Label></Col>
                               <Col md='1'><Label><Link to=""><span ><Icon.Printer/></span></Link></Label></Col>
                             </Row>
                         </FormGroup>
@@ -809,6 +882,7 @@ const ProjectEdit = () => {
           <Col><FormGroup><Label>Due Date</Label> </FormGroup></Col>
           <Col><FormGroup><Label>Completed Date</Label> </FormGroup></Col>
           <Col><FormGroup><Label>Amount</Label> </FormGroup></Col>
+          <Col></Col>
           <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
         </Row>
         <Row>
@@ -847,10 +921,15 @@ const ProjectEdit = () => {
         </Col>
         <Col>
           <FormGroup>
+              <Label><Link to=""><span onClick={()=>{setWorkOrderViewLineItem(true)}}>View Line Items</span></Link></Label>
+          </FormGroup>
+        </Col>
+        <Col>
+          <FormGroup>
             <Row>
               <Col md='2'><Label><Link to=""><span onClick={()=>{setEditWorkOrderModal(true)}}><Icon.Edit /></span></Link></Label></Col>
-              <Col md='2'><Label><Link to=""> <span><Icon.Eye /></span> </Link></Label></Col>
-              <Col md='2'><Label><Link to=""><span ><Icon.PlusCircle /></span></Link></Label></Col>
+              <Col md='2'><Label><Link to=""><span ><Icon.Printer /></span></Link></Label></Col>
+             <Col md='2'><Label><Link to=""> <span><Icon.PlusCircle /></span> </Link></Label></Col>
             </Row>
           </FormGroup>
         </Col>

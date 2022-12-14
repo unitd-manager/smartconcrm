@@ -489,12 +489,3 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
 }
 
 export default AddPurchaseOrderModal
-
-
-
-
-// {tabMaterialsPurchased && tabMaterialsPurchased.map((res)=>{
-//     return  
-//   })
-  
-//   }
