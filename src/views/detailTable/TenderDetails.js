@@ -219,7 +219,7 @@ const insertTender = () => {
           </ComponentCard>
         </Col>
       </Row>
-      <Modal isOpen={modal} toggle={toggle.bind(null)}>
+      <Modal size='xl' isOpen={modal} toggle={toggle.bind(null)}>
       <ModalHeader toggle={toggle.bind(null)}>New Opportunity</ModalHeader>
       <ModalBody>
         <Row>
@@ -647,6 +647,7 @@ const insertTender = () => {
         </Button>
       </ModalFooter>
     </Modal> 
+
    <Modal isOpen={modal1} toggle={toggle1.bind(null)}>
       <ModalHeader toggle={toggle1.bind(null)}>New Opportunity</ModalHeader>
       <ModalBody>

@@ -3,6 +3,7 @@ import {CardTitle,Table, Row,Col,Form,FormGroup,Label,Input,TabContent,TabPane,N
 import {ToastContainer} from 'react-toastify'
 import { Link, useParams } from 'react-router-dom';
 import * as Icon from 'react-feather';
+import Swal from 'sweetalert2'
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import DuctingCostModal from '../../components/ProjectModal/DuctingCostModal';
@@ -18,8 +19,15 @@ import EditQuotation from '../../components/ProjectModal/EditQuotation';
 import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
 import MaterialsusedTab from '../../components/ProjectModal/MaterialsusedTab';
 import EditWorkOrder from '../../components/ProjectModal/EditWorkOrder';
+import EditDeliveryOrder from '../../components/ProjectModal/EditDeliveryOrder';
+import EditPoModal from '../../components/ProjectModal/EditPoModal';
+import EditPOLineItemsModal from '../../components/ProjectModal/EditPOLineItemsModal';
+import WorkOrderViewLineItem from '../../components/ProjectModal/WorkOrderViewLineItem';
+import AttachmentModal from '../../components/tender/AttachmentModal';
+import ViewFileComponent from '../../components/ProjectModal/ViewFileComponent';
 import message from '../../components/Message';
 import api from '../../constants/api';
+
 
 const ProjectEdit = () => {
 
@@ -44,9 +52,15 @@ const ProjectEdit = () => {
     const [attachmentModal, setAttachmentModal] = useState(false);
     const [claimAttachmentModal, setClaimAttachmentModal] = useState(false);
     const [editWorkOrderModal, setEditWorkOrderModal] = useState(false);
+    const [workOrderViewLineItem, setWorkOrderViewLineItem] = useState(false);
     const [tabdeliveryorder, setTabdeliveryorder] = useState();
     const [tabPurchaseOrderLineItemTable, setTabPurchaseOrderLineItemTable] = useState();
-    
+    const [checkId, setCheckId] = useState([]);
+    const [ editDeliveryOrder, setEditDeliveryOrder] = useState(false);
+    const [ editPo, setEditPo ]= useState(false);
+    const [ editPOLineItemsModal, setEditPOLineItemsModal ]= useState(false);
+    const [ deliveryData, setDeliveryData ]= useState('');
+
 
     const toggle = (tab) => {
         if (activeTab !== tab) setActiveTab(tab);
@@ -55,9 +69,6 @@ const ProjectEdit = () => {
     //   setEditCostingSummaryModel(!editCostingSummaryModel);
     //   };
 
-      const attachmentToggle = () => {
-        setAttachmentModal(!attachmentModal);
-        };
 
     // Get Project By Id
 
@@ -65,6 +76,7 @@ const ProjectEdit = () => {
           api.post('/project/getProjectsByID',{project_id:id})
          .then((res) => {
           setProjectDetail(res.data.data)
+          console.log(res.data.data)
         })
         .catch(()=>{
           message("Costing Summary not found","info")
@@ -85,6 +97,7 @@ const ProjectEdit = () => {
     const handleInputs = (e) => {
       setProjectDetail({...projectDetail, [e.target.name]: e.target.value}) 
     }
+
     const UpdateData = () => {
       api.post('/project/edit-Project',projectDetail)
       .then(() => {
@@ -98,12 +111,12 @@ const ProjectEdit = () => {
     // Tab PurchaseOrder LineItem Table
     const TabPurchaseOrderLineItemTable = () =>
     {
-      api.post('/purchaseorder/TabPurchaseOrderLineItemTable',{project_id:"43"})
+      api.post('/purchaseorder/TabPurchaseOrderLineItemTable',{project_id:id})
       .then((res)=>{
-        const arrayOfObj = Object.entries(res.data.data).map((e) => ({id: e[0],data: e[1]} ));
-
-        // const entries = Object.entries(res.data.data);
+        let arrayOfObj = Object.entries(res.data.data).map((e) => ({id: e[0],data: e[1]} ));
+        arrayOfObj = arrayOfObj.reverse()
         setTabPurchaseOrderLineItemTable(arrayOfObj)
+
         console.log("Tab PurchaseOrder LineItem Table",arrayOfObj)
       })
     }
@@ -113,6 +126,7 @@ const ProjectEdit = () => {
     const TabDeliveryOrder = () => {
       api.post('/projecttabdeliveryorder/TabDeliveryOrder',{project_id:id})
      .then((res) => {
+      console.log("Tab delivery order",res.data.data)
       setTabdeliveryorder(res.data.data)
     })
     .catch(()=>{
@@ -120,14 +134,179 @@ const ProjectEdit = () => {
     })
     }
 
+    // Delete Purchase Order
+    const deletePurchaseOrder = (deletePurchaseOrderId) => {
+
+      Swal.fire({
+        title: `Are you sure? `,
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          api.post('/purchaseorder/deletePurchaseOrder',{purchase_order_id:deletePurchaseOrderId}).then((res)=>{
+            console.log(res)
+            Swal.fire(
+              'Deleted!',
+              'Purchase Order has been deleted.',
+              'success'
+            )
+            setViewLineModal(false)
+          }).catch(()=>{
+            message("Unable to Delete Purchase Order","info")
+          })
+        }
+      })
+    }
+
+
+    // handleCheck
+
+    const handleCheck = (e,item) => {
+
+      let updatedList = [...checkId];
+ 
+      if(e.target.checked) {
+        //[{id:'',qty:''},{id:'',qty:''}]        
+        updatedList = [...checkId,{id:item.po_product_id,qty:item.qty}];
+       
+      } else {
+        const indexOfObject = updatedList.findIndex(object => {
+          return object.id === item.po_product_id;
+        });
+
+        updatedList.splice(indexOfObject, 1);        
+      }
+      setCheckId(updatedList);
+    }
+
+
+//     const handleCheck = (e,item) => {
+
+//       let updatedList = [...checkId,{}];
+
+//       if(e.target.checked) {
+//  //[{id:'',qty:''},{id:'',qty:''}]        
+//         updatedList = [...checkId, {id:item.po_product_id,qty:item.qty}];
+//       } 
+//       else {
+//         updatedList.splice([...checkId, {id:item.po_product_id,qty:item.qty}].indexOf(checkId), 1);
+//       }
+//       setCheckId(updatedList);
+//       console.log(updatedList);
+//     }
+
+
+    const insertDeliveryHistoryOrder = (proId,deliveryOrderId) => {
+      api.post('/projecttabdeliveryorder/insertDeliveryHistoryOrder',{
+        product_id:proId.id,
+        purchase_order_id:null,
+        delivery_order_id:deliveryOrderId,
+        status:"1",
+        quantity:proId.qty,
+        creation_date:"2022-10-21",
+        modification_date:"2022-10-21",
+        remarks:"test"
+      })
+      .then(()=>{
+       message('Delivery Order Item Inserted','success')
+      
+      }).catch(()=>{
+        message('Unable to add Delivery Order Item','error')
+      })
+    }
+
+    const insertDelivery = () => {
+
+      const isEmpty = Object.keys(checkId).length === 0;
+
+      if(isEmpty)
+      {
+        Swal.fire('Please select atleast one product!')
+      }
+      else{
+        api.post('/projecttabdeliveryorder/insertdelivery_order',{
+          project_id:id,
+          company_id:projectDetail.company_id,
+          purchase_order_id:"",
+          date:"2022-10-21",
+          created_by:"1",
+          creation_date:"2022-10-21",
+          modified_by:"1",
+          modification_date:"2022-10-21",
+        })
+        .then((res)=>{
+
+        console.log(res.data.data.insertId)
+        
+        const selectedProducts = checkId
+        setCheckId([])
+        selectedProducts.forEach(element => {
+          console.log("this is new",element)
+          insertDeliveryHistoryOrder(element,res.data.data.insertId)
+        });
+        }).catch(()=>{
+          message('Unable to add delivery order.','error')
+        })
+      }
+
+      }
+     
+// deleteDeliveryOrder
+
+const deleteDeliveryOrder = (deliveryOrderId) => {
+  Swal.fire({
+    title: `Are you sure?`,
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      api.post('/projecttabdeliveryorder/deletedelivery_order',{delivery_order_id:deliveryOrderId}).then((res)=>{
+        console.log(res)
+        Swal.fire(
+          'Deleted!',
+          'Delivery Order has been deleted.',
+          'success'
+        )
+        //setViewLineModal(false)
+
+        window.location.reload();
+      }).catch(()=>{
+        message("Unable to Delete Delivery Order","info")
+      })
+    }
+  })
+}
+
+
       useEffect(() => {
         getCostingbySummary();
         getProjectById();
         TabDeliveryOrder();
         TabPurchaseOrderLineItemTable();
       }, [id])
-      
 
+      useEffect(() => {
+        setTimeout(() => {
+          TabPurchaseOrderLineItemTable()
+        }, 2000);
+        
+      }, [addPurchaseOrderModal])
+      
+      const getTotalOfPurchase = pItems => {
+        let total = 0;
+        pItems.forEach(a => {
+               total+= parseInt(a.qty,10) * parseFloat(a.cost_price,10);
+          });
+     return total;
+  }
   return (
     <>
     <BreadCrumbs />
@@ -264,7 +443,7 @@ const ProjectEdit = () => {
 {/* Call Modal's */}
 
     <DuctingCostModal addDuctingCostModal={addDuctingCostModal} setAddDuctingCostModal={setAddDuctingCostModal} />
-    <AddPurchaseOrderModal addPurchaseOrderModal={addPurchaseOrderModal} setAddPurchaseOrderModal={setAddPurchaseOrderModal}/>
+    <AddPurchaseOrderModal projectId={id} addPurchaseOrderModal={addPurchaseOrderModal} setAddPurchaseOrderModal={setAddPurchaseOrderModal}/>
     <TransportCharges addTransportChargesModal={addTransportChargesModal} setAddTransportChargesModal={setAddTransportChargesModal}/>
     <TotalLabourChargesModal addTotalLabourChargesModal={addTotalLabourChargesModal} setTotalLabourChargesModal={setTotalLabourChargesModal} />
     <SalesmanCommissionModal addSalesmanCommissionModal={addSalesmanCommissionModal} setAddSalesmanCommissionModal={setAddSalesmanCommissionModal}  />   
@@ -275,6 +454,11 @@ const ProjectEdit = () => {
     <ViewLineItemModal viewLineModal={viewLineModal} setViewLineModal={setViewLineModal} />
     <EditQuotation editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} />
     <EditWorkOrder editWorkOrderModal={editWorkOrderModal} setEditWorkOrderModal={setEditWorkOrderModal}/>
+    <EditDeliveryOrder editDeliveryOrder={editDeliveryOrder} setEditDeliveryOrder={setEditDeliveryOrder} data={deliveryData} />
+    <EditPoModal editPo={editPo} setEditPo={setEditPo} />
+    <EditPOLineItemsModal editPOLineItemsModal={editPOLineItemsModal} setEditPOLineItemsModal={setEditPOLineItemsModal}  />
+    <WorkOrderViewLineItem workOrderViewLineItem={workOrderViewLineItem} setWorkOrderViewLineItem={setWorkOrderViewLineItem} />
+
 
         <Nav tabs>
 
@@ -547,84 +731,100 @@ const ProjectEdit = () => {
             </Form>
           </TabPane>
 
-{/* Tab 3 */}
+{/* Tab 3 Materials Purchased */}
 
         <TabPane tabId="3">
 
         <Row  className='mb-4'>
             <Col md="3"><Button color="primary" onClick={()=>{setAddPurchaseOrderModal(true)}}>Add Purchase Order</Button></Col>
-            <Col md="3"><Button color="primary">Create Delivery Order</Button></Col>
+            <Col md="3"><Button color="primary" onClick={()=>{insertDelivery()}}>Create Delivery Order</Button></Col>
             <Col md="3"><Button color="success">Add all Qty to Stock</Button></Col>
           </Row>
           {tabPurchaseOrderLineItemTable && tabPurchaseOrderLineItemTable.map((e)=>{
   return (  <>  
-  <Row>
-            <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> {e.data[0].company_name}</CardTitle>
+
+          <Row>
+            <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">
+              <Row>
+                <Col>{e.data[0].company_name}</Col>
+                <Col><Link to="" style={{color:"#fff"}}><span onClick={()=>{setEditPo(true)}}><u> Edit Po </u></span></Link></Col> 
+                <Col><Link to="" style={{color:"#fff"}}><span onClick={()=>{setEditPOLineItemsModal(true)}}><u> Edit Line Items </u></span></Link></Col> 
+                <Col><span><u> print pdf </u></span></Col> 
+                <Col> Total : {getTotalOfPurchase(e.data)}</Col> 
+                <Col className='d-flex justify-content-end'><Button color="primary" onClick={()=>{deletePurchaseOrder(e.id)}}>X</Button></Col> 
+              </Row>
+            </CardTitle>
           </Row>
 
         <Form className='mt-4'>
           <Row className='border-bottom mb-3'>
+            <Col md="1"><FormGroup><Label></Label> </FormGroup></Col>
             <Col><FormGroup><Label>Title</Label> </FormGroup></Col>
             <Col><FormGroup><Label>UoM</Label> </FormGroup></Col>
             <Col><FormGroup><Label>Quantity</Label> </FormGroup></Col>
             <Col><FormGroup><Label>Unit Price</Label> </FormGroup></Col>
             <Col md="1"><FormGroup><Label>Amount</Label> </FormGroup></Col>
             <Col md="1"><FormGroup><Label>Status</Label> </FormGroup></Col>
-            <Col><FormGroup><Label></Label> Remarks</FormGroup></Col>
+            <Col><FormGroup><Label></Label>Remarks</FormGroup></Col>
             <Col><FormGroup><Label></Label> </FormGroup></Col>
           </Row>
 
 
+        {e.data.map(item=>{
+          return <Row>
+            <Col md="1">
+              <FormGroup check>
+                <Input type="checkbox" value={item.purchase_order_id} onChange={(ch)=>{handleCheck(ch,item)}}/>
+              </FormGroup>
+            </Col>
 
- {e.data.map(item=>{
-  return <Row>
-  <Col>
-    <FormGroup>
-      <span>{item.item_title}</span>
-    </FormGroup>
-  </Col>
-  <Col>
-    <FormGroup>
-        <span>{item.unit}</span>
-    </FormGroup>
-  </Col>
-  <Col>
-    <FormGroup>
-        <span>{item.qty}</span>
-    </FormGroup>
-  </Col>
-  <Col >
-    <FormGroup>
-      <span>{item.cost_price}</span>
-    </FormGroup>
-  </Col>
-  <Col md="1">
-    <FormGroup>
-      <span>{item.amount}</span>
-    </FormGroup>
-  </Col>
-  <Col md="1">
-    <FormGroup>
-      <span>{item.status}</span>
-    </FormGroup>
-  </Col>
-  <Col>
-    <FormGroup>
-        <Label>{item.description}</Label>
-    </FormGroup>
-  </Col>
-  <Col>
-    <FormGroup>
-      <Row>
-        <u>Transfer</u>
-      </Row>
-    </FormGroup>
-  </Col>
-</Row>
- })}
-  
-  
-  </Form>
+            <Col>
+            <FormGroup>
+              <span>{item.item_title}</span>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <span>{item.unit}</span>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <span>{item.qty}</span>
+            </FormGroup>
+          </Col>
+          <Col >
+            <FormGroup>
+              <span>{item.cost_price}</span>
+            </FormGroup>
+          </Col>
+          <Col md="1">
+            <FormGroup>
+              <span>{item.amount}</span>
+            </FormGroup>
+          </Col>
+          <Col md="1">
+            <FormGroup>
+              <span>{item.status}</span>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <Label>{item.description}</Label>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+              <Row>
+                <u>Transfer</u>
+              </Row>
+            </FormGroup>
+          </Col>
+        </Row>
+        })}
+          
+          
+          </Form>
   </> 
   
   )})}
@@ -680,7 +880,7 @@ const ProjectEdit = () => {
       </TabPane>
 
 
-{/* Start Tab Content 6 */}
+{/* Start Tab Content 6  Delivery Order */}
       <TabPane tabId="6">
           <Row  className='mb-4'>
             <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">Delivery Order</CardTitle>
@@ -690,6 +890,7 @@ const ProjectEdit = () => {
                   <Col><FormGroup><Label>Date</Label> </FormGroup></Col>
                   <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
                 </Row>
+
                 {tabdeliveryorder && tabdeliveryorder.map((res)=>{
                       return  <Row>
                 
@@ -697,8 +898,13 @@ const ProjectEdit = () => {
                       <Col>
                         <FormGroup>
                             <Row>
-                              <Col md='1'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
+                              <Col md='1'><Label><Link to=""><span onClick={()=>{
+                                setDeliveryData(res.delivery_order_id)
+                                setEditDeliveryOrder(true)
+                               // setDeliveryData(res.delivery_order_id)
+                                }}><Icon.Edit /></span></Link></Label></Col>
                               <Col md='1'><Label><Link to=""><span ><Icon.Printer/></span></Link></Label></Col>
+                              <Col md='1'><Label><Link to=""><span onClick={()=>{deleteDeliveryOrder(res.delivery_order_id)}}><Icon.Delete/></span></Link></Label></Col>
                             </Row>
                         </FormGroup>
                       </Col>
@@ -732,6 +938,7 @@ const ProjectEdit = () => {
           <Col><FormGroup><Label>Due Date</Label> </FormGroup></Col>
           <Col><FormGroup><Label>Completed Date</Label> </FormGroup></Col>
           <Col><FormGroup><Label>Amount</Label> </FormGroup></Col>
+          <Col></Col>
           <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
         </Row>
         <Row>
@@ -770,10 +977,15 @@ const ProjectEdit = () => {
         </Col>
         <Col>
           <FormGroup>
+              <Label><Link to=""><span onClick={()=>{setWorkOrderViewLineItem(true)}}>View Line Items</span></Link></Label>
+          </FormGroup>
+        </Col>
+        <Col>
+          <FormGroup>
             <Row>
               <Col md='2'><Label><Link to=""><span onClick={()=>{setEditWorkOrderModal(true)}}><Icon.Edit /></span></Link></Label></Col>
-              <Col md='2'><Label><Link to=""> <span><Icon.Eye /></span> </Link></Label></Col>
-              <Col md='2'><Label><Link to=""><span ><Icon.PlusCircle /></span></Link></Label></Col>
+              <Col md='2'><Label><Link to=""><span ><Icon.Printer /></span></Link></Label></Col>
+             <Col md='2'><Label><Link to=""> <span><Icon.PlusCircle /></span> </Link></Label></Col>
             </Row>
           </FormGroup>
         </Col>
@@ -1141,26 +1353,16 @@ const ProjectEdit = () => {
 
       <TabPane tabId="10">
           <Row>
-            <Col xs="12" md="3">
-                <ComponentCard title="Attachments">
-                    <Button color="primary" onClick={attachmentToggle.bind(null)}>
-                        Add
-                    </Button>
-                    <Modal isOpen={attachmentModal} toggle={attachmentToggle.bind(null)}>
-                        <ModalHeader toggle={attachmentToggle.bind(null)}>Upload Media</ModalHeader>
-                        <ModalBody>
-                            <FormGroup>
-                                <Label htmlFor="exampleFile">Select Files</Label>
-                                <Input type="file" placeholder="" />
-                            </FormGroup>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="primary" onClick={attachmentToggle.bind(null)}>Upload</Button>
-                        </ModalFooter>
-                    </Modal>
-                </ComponentCard>
+            <Col xs="12" md="3" className='mb-3'>
+                <Button color="primary" onClick={()=>{setAttachmentModal(true)}}>
+                    Add
+                </Button>
             </Col>
-          </Row> 
+            </Row>
+
+        <AttachmentModal opportunityId={id} attachmentModal={attachmentModal} setAttachmentModal={setAttachmentModal}  />
+        <ViewFileComponent opportunityId={id} />
+
       </TabPane>
 
 {/* End Tab Content 10 */}

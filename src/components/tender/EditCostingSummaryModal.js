@@ -36,8 +36,13 @@ const EditCostingSummaryModal = ({editCostingSummaryModel,setEditCostingSummaryM
 
   return (
     <>
-        <Modal isOpen={editCostingSummaryModel}>
-            <ModalHeader>Edit Costing Summary</ModalHeader>
+        <Modal size="lg" isOpen={editCostingSummaryModel}>
+            <ModalHeader>Edit Costing Summary
+            <Button color="secondary" onClick={()=>{setEditCostingSummaryModel(false)}}>
+                X
+              </Button>
+            </ModalHeader>
+
             <ModalBody>
               <Row>
               <Col md="12">

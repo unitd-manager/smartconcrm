@@ -12,7 +12,7 @@ const ViewQuoteLogModal = ({quotationsModal,setquotationsModal}) => {
       
   return (
     <>
-        <Modal isOpen={quotationsModal}>
+        <Modal size="lg" isOpen={quotationsModal}>
             <ModalHeader>Quote History</ModalHeader>
             <ModalBody>
                 <Row>

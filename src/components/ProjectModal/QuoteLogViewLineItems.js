@@ -2,15 +2,15 @@ import React from 'react'
 import { FormGroup,Button,Modal,ModalHeader,ModalBody, ModalFooter } from 'reactstrap';
 import PropTypes from 'prop-types'
 
-const ViewLineItemModal = ({viewLineModal,setViewLineModal}) => {
-    ViewLineItemModal.propTypes = {
-        viewLineModal: PropTypes.bool,
-        setViewLineModal: PropTypes.func
+const QuoteLogViewLineItems = ({quoteLogViewLineItems,setQuoteLogViewLineItems}) => {
+    QuoteLogViewLineItems.propTypes = {
+        quoteLogViewLineItems: PropTypes.bool,
+        setQuoteLogViewLineItems: PropTypes.func
       }
   return (
     <>
-        <Modal size="xl" isOpen={viewLineModal}>
-            <ModalHeader>Line Items</ModalHeader>
+        <Modal size="xl" isOpen={quoteLogViewLineItems}>
+            <ModalHeader>View Quote Log Line Items</ModalHeader>
             <ModalBody>
                 <FormGroup>
                 <table className='lineitem'>
@@ -33,11 +33,11 @@ const ViewLineItemModal = ({viewLineModal,setViewLineModal}) => {
                 </FormGroup>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={()=>{setViewLineModal(false)}}>Cancel</Button>
+                <Button color="primary" onClick={()=>{setQuoteLogViewLineItems(false)}}>Cancel</Button>
             </ModalFooter>
         </Modal>
     </>
   )
 }
 
-export default ViewLineItemModal
+export default QuoteLogViewLineItems

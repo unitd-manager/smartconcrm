@@ -11,7 +11,7 @@ const EditWorkOrder = ({editWorkOrderModal, setEditWorkOrderModal}) => {
 
   return (
     <>
-        <Modal isOpen={editWorkOrderModal} >
+        <Modal size="xl" isOpen={editWorkOrderModal} >
             <ModalHeader>
                 Edit Work Order Display
                 <Button color="secondary" onClick={()=>{setEditWorkOrderModal(false)}}> X </Button>

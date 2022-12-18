@@ -6,10 +6,8 @@ import * as Icon from 'react-feather';
 import Swal from 'sweetalert2'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss'
-
 import pdfMake from "pdfmake"
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-
 import EditCostingSummaryModal from '../../components/tender/EditCostingSummaryModal';
 import ViewQuoteLogModal from '../../components/tender/ViewQuoteLogModal';
 import AddLineItemModal from '../../components/tender/AddLineItemModal';
@@ -18,11 +16,11 @@ import EditLineItemModal from '../../components/tender/EditLineItemModal';
 // import GeneratePDFPrint from '../../components/tender/GeneratePDFPrint';
 // import ViewLineItemModal from '../../components/tender/ViewLineItemModal';
 import AttachmentModal from '../../components/tender/AttachmentModal';
+import ViewFileComponent from '../../components/ProjectModal/ViewFileComponent';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
-
 
 const TenderEdit = () => {
 
@@ -44,8 +42,6 @@ const TenderEdit = () => {
     const [addCompanyModal, setAddCompanyModal] = useState(false);
     const [editQuoteModal, setEditQuoteModal] = useState(false);
     const [editLineModal, setEditLineModal] = useState(false);
-    const [getFile, setGetFile] = React.useState(null);
-
     // const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
     const [contact, setContact] = useState();
     const [company, setCompany] = useState();
@@ -284,48 +280,13 @@ const TenderEdit = () => {
 
     }
 
-       // get Files
-       const getFiles = () => {
-        api.post('/file/getFileList',{record_id:id})
-        .then((res)=>{
-          setGetFile(res.data.data);
-        })
-    }
-
-
-    const deleteFile = (fileId) =>{
-      Swal.fire({
-        title: `Are you sure?`,
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          api.post('/file/deleteFile',{media_id:fileId}).then((res)=>{
-            console.log(res)
-            Swal.fire(
-              'Deleted!',
-              'Media has been deleted.',
-              'success'
-            )
-            setViewLineModal(false)
-          }).catch(()=>{
-            message("Unable to Delete Media","info")
-          })
-        }
-      })
-    }
-
       useEffect(()=>{
         getCostingbySummary();
         editTenderById();
         getQuote();
         getIncharge();
         getCompany();
-        getFiles();
+       // getFiles();
         console.log(lineItem)
       },[id])
 
@@ -736,7 +697,7 @@ const TenderEdit = () => {
 
                     })}
 
-          <Modal isOpen={addCompanyModal} toggle={addCompanyToggle.bind(null)}>
+          <Modal size="xl" isOpen={addCompanyModal} toggle={addCompanyToggle.bind(null)}>
                 <ModalHeader toggle={addCompanyToggle.bind(null)}>New Opportunity</ModalHeader>
                 <ModalBody>
                   <Row>
@@ -1177,7 +1138,7 @@ const TenderEdit = () => {
 
                       })}
 
-                        <Modal isOpen={addContactModal} toggle={addContactToggle.bind(null)}>
+                        <Modal size="lg" isOpen={addContactModal} toggle={addContactToggle.bind(null)}>
                           <ModalHeader toggle={addContactToggle.bind(null)}>New Contact</ModalHeader>
                           <ModalBody>
                             <Row>
@@ -1567,7 +1528,7 @@ const TenderEdit = () => {
                       FechedlineItem={lineItem}/> */}
 
 
-                      <Modal isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
+                      <Modal size="xl" isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
                             <ModalHeader toggle={viewLineToggle.bind(null)}>Line Items</ModalHeader>
                             <ModalBody>
                                 <FormGroup>
@@ -1624,7 +1585,6 @@ const TenderEdit = () => {
 
                 <Col>
                   <FormGroup>
-
                     <Row>
                       <Col md='4'><Label><Link to=""><span onClick={()=>{setEditQuoteModal(true) }}><Icon.Edit /></span></Link></Label></Col>
                       <Col md='4'>{quote && (<Label><Link to=""><span onClick={()=>{GeneratePdf(quote.quote_id)}}><Icon.Printer/></span></Link></Label>)}</Col>
@@ -1647,22 +1607,9 @@ const TenderEdit = () => {
                 </Col>
                 </Row>
 
-               <AttachmentModal opportunityId={id} attachmentModal={attachmentModal} setAttachmentModal={setAttachmentModal} />
-               <table>
-               {getFile ? getFile.map(res=>{
-                        return (
-                          <>
-                          
-                            <tr>
-                              <th> <p><a href={`http://43.228.126.245/smartco-api/storage/uploads/${res.file_name}`} target="_blank" rel="noreferrer">{res.file_name}</a> </p></th>
-                              <th width="5%"></th>
-                              <th> <button type="button" className="btn btn-secondary" onClick={()=>{deleteFile(res.media_id)}}> X </button></th>
-                            </tr>
-                          
-                        </>
-                        )
-                    }) : (<p>no files uploaded yet</p>)}
-             </table>
+               <AttachmentModal opportunityId={id} attachmentModal={attachmentModal} setAttachmentModal={setAttachmentModal}  />
+               <ViewFileComponent opportunityId={id} />
+
       </TabPane>
           
           </TabContent>
