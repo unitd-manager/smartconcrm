@@ -14,12 +14,12 @@ import { Link } from 'react-router-dom';
 import api from '../../constants/api';
 
 
-const Leaves = () => {
-    const [leaves,setLeaves] = useState(null);
-    const getLeave = () =>{
-      api.get('/leave/getLeave')
+const Accounts = () => {
+    const [accounts,setAccounts] = useState(null);
+    const getAccounts = () =>{
+      api.get('/accounts/getAccounts')
         .then((res)=> {
-          setLeaves(res.data.data)
+          setAccounts(res.data.data)
             console.log(res.data.data)
         })
     }
@@ -40,7 +40,7 @@ const Leaves = () => {
             1000
             );
     
-            getLeave()
+            getAccounts()
 
     }, [])
     
@@ -48,7 +48,7 @@ const Leaves = () => {
    const columns = [
         {
           name: "id",
-          selector: "leave_id",
+          selector: "expense_id",
           grow:0,
           wrap: true,
           width:'4%'
@@ -71,8 +71,8 @@ const Leaves = () => {
             wrap: true
         },
         {
-          name: "Employee Name",
-          selector: "employee_id",
+          name: "Date",
+          selector: "date",
           sortable: true,
           grow:0,
           wrap: true
@@ -85,45 +85,45 @@ const Leaves = () => {
           wrap: true
         },
         {
-          name: "Status",
-          selector: "status",
+          name: "Amount",
+          selector: "amount",
           sortable: true,
           grow:0,
         },
         {
-            name: "From date",
-            selector: "from_date",
+            name: "Type",
+            selector: "type",
             sortable: true,
             width:'auto',
             grow:3,
             // cell: d => <span>{d.closing.join(", ")}</span>
           },
           {
-            name: "To date",
-            selector: "	to_date",
+            name: "Head",
+            selector: "group",
             sortable: true,
             grow:2,
             width:'auto',
             // cell: d => <span>{d.closing.join(", ")}</span>
           },
           {
-            name: "No of Days(Current Month)",
-            selector: "no_of_days",
+            name: "Sub Head",
+            selector: "sub_group",
             sortable: true,
             grow:2,
             wrap: true,
             // cell: d => <span>{d.closing.join(", ")}</span>
           },
           {
-            name: "No of Days(Next Month)",
-            selector: "no_of_days_next_month",
+            name: "Status",
+            selector: "payment_status",
             sortable: true,
             width:'auto',
             // cell: d => <span>{d.closing.join(", ")}</span>
           },
           {
-            name: "Leave Type",
-            selector: "leave_type",
+            name: "Updated By",
+            selector: "modified_by",
             sortable: true,
             width:'auto',
             // cell: d => <span>{d.closing.join(", ")}</span>
@@ -144,14 +144,14 @@ const Leaves = () => {
           confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
           if (result.isConfirmed) {
-            api.post('/leave/deleteLeave',{leave_id:id}).then(res=>{
+            api.post('/accounts/deleteExpense',{expense_id:id}).then(res=>{
               console.log(res)
               Swal.fire(
                 'Deleted!',
-                'Your Leave has been deleted.',
+                'Your Tender has been deleted.',
                 'success'
               )
-              getLeave()
+              getAccounts()
 
             })
           }
@@ -176,7 +176,7 @@ const Leaves = () => {
 
     <Row>
           <Col md="6">
-            <Link to="/LeavesDetails">
+            <Link to="/TenderDetails">
               <Button  color="primary" className="my-3">
                 Add New
               </Button>
@@ -195,19 +195,19 @@ const Leaves = () => {
               </tr>
           </thead>
           <tbody>
-            {leaves && leaves.map(element=>{
-                return (<tr key={element.leave_id}>
-                <td>{element.leave_id}</td>
-                <td><Link to={`/LeavesEdit/${element.leave_id}`} ><Icon.Edit2 /></Link></td>
-                <td><Link to=""><span onClick={()=>deleteRecord(element.leave_id)}><Icon.Trash2 /></span></Link></td>
-                <td>{element.employee_id}</td>
+            {accounts && accounts.map(element=>{
+                return (<tr key={element.expense_id}>
+                <td>{element.expense_id}</td>
+                <td><Link to={`/TenderEdit/${element.expense_id}`} ><Icon.Edit2 /></Link></td>
+                <td><Link to=""><span onClick={()=>deleteRecord(element.expense_id)}><Icon.Trash2 /></span></Link></td>
+                <td>{element.date}</td>
                 <td>{element.description}</td>
-                <td>{element.status}</td>
-                <td>{element.from_date}</td>
-                <td>{element.to_date}</td>
-                <td>{element.no_of_days}</td>
-                <td>{element.no_of_days_next_month}</td>
-                <td>{element.leave_type}</td>
+                <td>{element.amount}</td>
+                <td>{element.type}</td>
+                <td>{element.group}</td>
+                <td>{element.sub_group}</td>
+                <td>{element.payment_status}</td>
+                <td>{element.modified_by}</td>
                 </tr>)
             })}
           </tbody>
@@ -223,4 +223,4 @@ const Leaves = () => {
     </div>)
 }
 
-export default Leaves;
+export default Accounts;

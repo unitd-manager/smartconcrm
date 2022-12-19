@@ -14,12 +14,12 @@ import { Link } from 'react-router-dom';
 import api from '../../constants/api';
 
 
-const Leaves = () => {
-    const [leaves,setLeaves] = useState(null);
-    const getLeave = () =>{
-      api.get('/leave/getLeave')
+const Claints = () => {
+    const [clients,setClients] = useState(null);
+    const getClients = () =>{
+      api.get('/clients/getClients')
         .then((res)=> {
-          setLeaves(res.data.data)
+            setClients(res.data.data)
             console.log(res.data.data)
         })
     }
@@ -40,7 +40,7 @@ const Leaves = () => {
             1000
             );
     
-            getLeave()
+        getClients()
 
     }, [])
     
@@ -48,7 +48,7 @@ const Leaves = () => {
    const columns = [
         {
           name: "id",
-          selector: "leave_id",
+          selector: "company_id",
           grow:0,
           wrap: true,
           width:'4%'
@@ -71,15 +71,15 @@ const Leaves = () => {
             wrap: true
         },
         {
-          name: "Employee Name",
-          selector: "employee_id",
+          name: "Name",
+          selector: "company_name",
           sortable: true,
           grow:0,
           wrap: true
         },
         {
-          name: "Description",
-          selector: "description",
+          name: "Email",
+          selector: "email",
           sortable: true,
           grow:2,
           wrap: true
@@ -91,44 +91,14 @@ const Leaves = () => {
           grow:0,
         },
         {
-            name: "From date",
-            selector: "from_date",
+            name: "Phone",
+            selector: "phone",
             sortable: true,
             width:'auto',
             grow:3,
-            // cell: d => <span>{d.closing.join(", ")}</span>
+    
           },
-          {
-            name: "To date",
-            selector: "	to_date",
-            sortable: true,
-            grow:2,
-            width:'auto',
-            // cell: d => <span>{d.closing.join(", ")}</span>
-          },
-          {
-            name: "No of Days(Current Month)",
-            selector: "no_of_days",
-            sortable: true,
-            grow:2,
-            wrap: true,
-            // cell: d => <span>{d.closing.join(", ")}</span>
-          },
-          {
-            name: "No of Days(Next Month)",
-            selector: "no_of_days_next_month",
-            sortable: true,
-            width:'auto',
-            // cell: d => <span>{d.closing.join(", ")}</span>
-          },
-          {
-            name: "Leave Type",
-            selector: "leave_type",
-            sortable: true,
-            width:'auto',
-            // cell: d => <span>{d.closing.join(", ")}</span>
-          },
-      ]
+          ]
       
       const deleteRecord = (id) => {
       
@@ -144,23 +114,23 @@ const Leaves = () => {
           confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
           if (result.isConfirmed) {
-            api.post('/leave/deleteLeave',{leave_id:id}).then(res=>{
+            api.post('/clients/deleteCompany',{company_id:id}).then(res=>{
               console.log(res)
               Swal.fire(
                 'Deleted!',
-                'Your Leave has been deleted.',
+                'Your Tender has been deleted.',
                 'success'
               )
-              getLeave()
+              getClients()
 
             })
           }
         })
 
 
-        // api.get(`/tender/deleteExpense/${expense_id}`)
+        // api.get(`/tender/deleteTender/${opportunity_id}`)
         //  .then((res)=> {
-        //      setAccounts(res.data.data)
+        //      setTenders(res.data.data)
         //  })
 
       }
@@ -176,7 +146,7 @@ const Leaves = () => {
 
     <Row>
           <Col md="6">
-            <Link to="/LeavesDetails">
+            <Link to="/ClientsDetails">
               <Button  color="primary" className="my-3">
                 Add New
               </Button>
@@ -195,19 +165,15 @@ const Leaves = () => {
               </tr>
           </thead>
           <tbody>
-            {leaves && leaves.map(element=>{
-                return (<tr key={element.leave_id}>
-                <td>{element.leave_id}</td>
-                <td><Link to={`/LeavesEdit/${element.leave_id}`} ><Icon.Edit2 /></Link></td>
-                <td><Link to=""><span onClick={()=>deleteRecord(element.leave_id)}><Icon.Trash2 /></span></Link></td>
-                <td>{element.employee_id}</td>
-                <td>{element.description}</td>
+            {clients && clients.map(element=>{
+                return (<tr key={element.company_id}>
+                <td>{element.company_id}</td>
+                <td><Link to={`/ClientsEdit/${element.company_id}`} ><Icon.Edit2 /></Link></td>
+                <td><Link to=""><span onClick={()=>deleteRecord(element.company_id)}><Icon.Trash2 /></span></Link></td>
+                <td>{element.company_name}</td>
+                <td>{element.email}</td>
                 <td>{element.status}</td>
-                <td>{element.from_date}</td>
-                <td>{element.to_date}</td>
-                <td>{element.no_of_days}</td>
-                <td>{element.no_of_days_next_month}</td>
-                <td>{element.leave_type}</td>
+                <td>{element.phone}</td>
                 </tr>)
             })}
           </tbody>
@@ -223,4 +189,4 @@ const Leaves = () => {
     </div>)
 }
 
-export default Leaves;
+export default Claints;
