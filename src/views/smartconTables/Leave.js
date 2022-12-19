@@ -6,12 +6,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
 import $ from 'jquery'; 
+import moment from 'moment'; 
 import "datatables.net-buttons/js/buttons.colVis"
 import "datatables.net-buttons/js/buttons.flash"
 import "datatables.net-buttons/js/buttons.html5"
 import "datatables.net-buttons/js/buttons.print"
 import { Link } from 'react-router-dom';
 import api from '../../constants/api';
+
 
 
 const Leaves = () => {
@@ -203,8 +205,8 @@ const Leaves = () => {
                 <td>{element.employee_name}</td>
                 <td>{element.designation}</td>
                 <td>{element.status}</td>
-                <td>{element.from_date}</td>
-                <td>{element.to_date}</td>
+                <td>{moment(element.from_date).format('YYYY-MM-DD')}</td>
+                <td>{moment(element.to_date).format('YYYY-MM-DD')}</td>
                 <td>{element.no_of_days}</td>
                 <td>{element.no_of_days_next_month}</td>
                 <td>{element.leave_type}</td>
