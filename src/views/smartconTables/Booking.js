@@ -1,5 +1,6 @@
 import React,{useEffect,useState} from 'react';
 import * as Icon from 'react-feather';
+import moment from 'moment';
 import {Row,Col,Button } from 'reactstrap';
 import Swal from 'sweetalert2'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -86,7 +87,7 @@ const Test = () => {
         },
         {
           name: "CustomerName",
-          selector: "company_name",
+          selector: "c_company_name",
           sortable: true,
           grow:0,
         },
@@ -155,7 +156,7 @@ const Test = () => {
 
     <Row>
           <Col md="6">
-            <Link to="/">
+            <Link to="/BookingDetails">
               <Button  color="primary" className="my-3">
                 Add New
               </Button>
@@ -175,13 +176,13 @@ const Test = () => {
           </thead>
           <tbody>
             {bookings && bookings.map(element=>{
-                return (<tr key={element.date}>
+                return (<tr key={element.booking_id}>
                 <td>{element.booking_id}</td>
                 <td><Link to={`/BookingEdit/${element.booking_id}`} ><Icon.Edit2 /></Link></td>
                 <td><Link to=""><span onClick={()=>deleteRecord(element.booking_id)}><Icon.Trash2 /></span></Link></td>
-                <td>{element.booking_date}</td>
+                <td>{moment(element.booking_date).format('YYYY-MM-DD')}</td>
                 <td>{element.assign_time}</td>
-                <td>{element.company_name}</td>
+                <td>{element.c_company_name}</td>
                 <td>{element.first_name}</td>
                 <td>{element.address_flat}</td>
                 </tr>)
