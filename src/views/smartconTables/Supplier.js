@@ -16,10 +16,13 @@ import api from '../../constants/api';
 const Test = () => {
   const [supplier,setSupplier] = useState(null);
   const getSupplier = () =>{
+    
     api.get('/supplier/getSupplier')
       .then((res)=> {
           setSupplier(res.data.data)
           console.log(res.data.data)
+      }).catch(err=>{
+        console.log(err)
       })
   }
 
@@ -96,7 +99,7 @@ const Test = () => {
     
        // console.log(id)
       
-      Swal.fire({
+       Swal.fire({
         title: `Are you sure? ${id}`,
         text: "You won't be able to revert this!",
         icon: 'warning',
@@ -110,7 +113,7 @@ const Test = () => {
             console.log(res)
             Swal.fire(
               'Deleted!',
-              'Your Supplier has been deleted.',
+              'Your supplier has been deleted.',
               'success'
             )
             getSupplier()
@@ -118,7 +121,6 @@ const Test = () => {
           })
         }
       })
-
 
       // api.get(`/supplier/deleteSupplier/${supplier_id}`)
       //  .then((res)=> {
@@ -138,7 +140,7 @@ return (
 
   <Row>
         <Col md="6">
-          <Link to="/TenderDetails">
+          <Link to="/SupplierDetails">
             <Button  color="primary" className="my-3">
               Add New
             </Button>
@@ -158,9 +160,9 @@ return (
         </thead>
         <tbody>
           {supplier && supplier.map(element=>{
-              return (<tr key={element.title}>
+              return (<tr key={element.company_name}>
               <td>{element.supplier_id}</td>
-              <td><Link to={`/TenderEdit/${element.opportunity_id}`} ><Icon.Edit2 /></Link></td>
+              <td><Link to={`/SupplierEdit/${element.supplier_id}`} ><Icon.Edit2 /></Link></td>
               <td><Link to=""><span onClick={()=>deleteRecord(element.supplier_id)}><Icon.Trash2 /></span></Link></td>
               <td>{element.company_name}</td>
               <td>{element.email}</td>
