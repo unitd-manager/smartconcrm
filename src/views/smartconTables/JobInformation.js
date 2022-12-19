@@ -13,6 +13,7 @@ import "datatables.net-buttons/js/buttons.html5"
 import "datatables.net-buttons/js/buttons.print"
 import { Link } from 'react-router-dom';
 import api from '../../constants/api';
+import moment from 'moment';
 
 const JobInformation= () => {
   const [jobInformation,setJobInformation] = useState(null);
