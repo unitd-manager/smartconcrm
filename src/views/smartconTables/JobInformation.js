@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
 import $ from 'jquery'; 
+import moment from 'moment';
 import "datatables.net-buttons/js/buttons.colVis"
 import "datatables.net-buttons/js/buttons.flash"
 import "datatables.net-buttons/js/buttons.html5"
@@ -214,7 +215,7 @@ return (
             <td>{element.spass_no}</td>
             <td>{element.fin_no}</td>
             <td>{element.nric_no}</td>
-            <td>{moment[element.date_of_birth][YYYY-MM-DD]}</td>
+            <td>{moment(element.date_of_birth.follow_up_date).format('YYYY-MM-DD')}</td>
             <td>{element.basic_pay}</td>
             <td>{element.citizen}</td>
 
