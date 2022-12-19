@@ -20,8 +20,10 @@ const Test = () => {
       .then((res)=> {
           setSubCon(res.data.data)
           console.log(res.data.data)
-      })
-  }
+        }).catch(err=>{
+          console.log(err)
+        })
+    }
 
   useEffect(() => {
       setTimeout(() => {
@@ -85,7 +87,7 @@ const Test = () => {
       },
       {
         name: "Telehone",
-        selector: "mobile",
+        selector: "phone",
         sortable: true,
         grow:0,
       },
@@ -106,7 +108,7 @@ const Test = () => {
         confirmButtonText: 'Yes, delete it!'
       }).then((result) => {
         if (result.isConfirmed) {
-          api.delete('/subcon/deleteSub_Con',{supplier_id:id}).then(res=>{
+          api.post('/subcon/deleteSub_Con',{sub_con_id:id}).then(res=>{
             console.log(res)
             Swal.fire(
               'Deleted!',
@@ -164,7 +166,7 @@ return (
               <td><Link to=""><span onClick={()=>deleteRecord(element.sub_con_id)}><Icon.Trash2 /></span></Link></td>
               <td>{element.company_name}</td>
               <td>{element.email}</td>
-              <td>{element.mobile}</td>
+              <td>{element.phone}</td>
               </tr>)
           })}
         </tbody>

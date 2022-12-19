@@ -88,7 +88,7 @@ const Test = () => {
       },
       {
         name: "Telehone",
-        selector: "mobile",
+        selector: "phone",
         sortable: true,
         grow:0,
       },
@@ -166,7 +166,7 @@ return (
               <td><Link to=""><span onClick={()=>deleteRecord(element.supplier_id)}><Icon.Trash2 /></span></Link></td>
               <td>{element.company_name}</td>
               <td>{element.email}</td>
-              <td>{element.mobile}</td>
+              <td>{element.phone}</td>
               </tr>)
           })}
         </tbody>
