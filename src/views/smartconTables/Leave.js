@@ -72,14 +72,14 @@ const Leaves = () => {
         },
         {
           name: "Employee Name",
-          selector: "employee_id",
+          selector: "employee_name",
           sortable: true,
           grow:0,
           wrap: true
         },
         {
-          name: "Description",
-          selector: "description",
+          name: "Designation",
+          selector: "designation",
           sortable: true,
           grow:2,
           wrap: true
@@ -176,7 +176,7 @@ const Leaves = () => {
 
     <Row>
           <Col md="6">
-            <Link to="/LeavesDetails">
+            <Link to="/LeaveDetails">
               <Button  color="primary" className="my-3">
                 Add New
               </Button>
@@ -200,8 +200,8 @@ const Leaves = () => {
                 <td>{element.leave_id}</td>
                 <td><Link to={`/LeavesEdit/${element.leave_id}`} ><Icon.Edit2 /></Link></td>
                 <td><Link to=""><span onClick={()=>deleteRecord(element.leave_id)}><Icon.Trash2 /></span></Link></td>
-                <td>{element.employee_id}</td>
-                <td>{element.description}</td>
+                <td>{element.employee_name}</td>
+                <td>{element.designation}</td>
                 <td>{element.status}</td>
                 <td>{element.from_date}</td>
                 <td>{element.to_date}</td>
