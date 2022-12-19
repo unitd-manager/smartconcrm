@@ -215,7 +215,7 @@ return (
             <td>{element.spass_no}</td>
             <td>{element.fin_no}</td>
             <td>{element.nric_no}</td>
-            <td>{moment(element.date_of_birth.follow_up_date).format('YYYY-MM-DD')}</td>
+            <td>{moment(element.date_of_birth.follow_up_dade).format('YYYY-MM-DD')}</td>
             <td>{element.basic_pay}</td>
             <td>{element.citizen}</td>
 

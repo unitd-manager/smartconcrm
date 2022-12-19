@@ -5,7 +5,8 @@ import Swal from 'sweetalert2'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
-import $ from 'jquery'; 
+import $ from 'jquery';
+import moment from 'moment'; 
 import "datatables.net-buttons/js/buttons.colVis"
 import "datatables.net-buttons/js/buttons.flash"
 import "datatables.net-buttons/js/buttons.html5"
@@ -176,7 +177,7 @@ const Accounts = () => {
 
     <Row>
           <Col md="6">
-            <Link to="/TenderDetails">
+            <Link to="/AccountDetails">
               <Button  color="primary" className="my-3">
                 Add New
               </Button>
@@ -198,9 +199,9 @@ const Accounts = () => {
             {accounts && accounts.map(element=>{
                 return (<tr key={element.expense_id}>
                 <td>{element.expense_id}</td>
-                <td><Link to={`/TenderEdit/${element.expense_id}`} ><Icon.Edit2 /></Link></td>
+                <td><Link to={`/AccountsEdit/${element.expense_id}`} ><Icon.Edit2 /></Link></td>
                 <td><Link to=""><span onClick={()=>deleteRecord(element.expense_id)}><Icon.Trash2 /></span></Link></td>
-                <td>{element.date}</td>
+                <td>{moment(element.date.follow_up_date).format('YYYY-MM-DD')}</td>
                 <td>{element.description}</td>
                 <td>{element.amount}</td>
                 <td>{element.type}</td>
