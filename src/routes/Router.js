@@ -193,6 +193,7 @@ const BookingEdit= Loadable(lazy(() => import ('../views/EditData/BookingEdit'))
 const LoanEdit= Loadable(lazy(() => import ('../views/EditData/LoanEdit')))
 
 
+
 const Routernew = () => {
   const { token, setToken } = UserToken();
 
@@ -217,6 +218,7 @@ const Routernew = () => {
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
         <Route path="/BookingEdit/:id" name="clienttdata" element={<BookingEdit />}></Route>
         <Route path="/LoanEdit/:id" name="clienttdata" element={<LoanEdit />}></Route>
+
 
         <Route path="/pdf/:id" name="pdfData" element={<PdfData />}></Route>
         <Route path="/pdfnext" name="pdfData" element={<PdfNext />}></Route>
