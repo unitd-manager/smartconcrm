@@ -214,7 +214,7 @@ return (
             <td>{element.spass_no}</td>
             <td>{element.fin_no}</td>
             <td>{element.nric_no}</td>
-            <td>{element.date_of_birth}</td>
+            <td>{moment[element.date_of_birth][YYYY-MM-DD]}</td>
             <td>{element.basic_pay}</td>
             <td>{element.citizen}</td>
 
