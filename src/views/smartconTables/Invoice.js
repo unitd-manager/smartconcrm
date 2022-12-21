@@ -4,13 +4,21 @@ import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
 import $ from 'jquery'; 
 import "datatables.net-buttons/js/buttons.colVis"
+<<<<<<< HEAD
+=======
+import moment from 'moment';
+>>>>>>> d9101644551bd1d8f38c9223115f354d90aa1980
 import "datatables.net-buttons/js/buttons.flash"
 import "datatables.net-buttons/js/buttons.html5"
 import "datatables.net-buttons/js/buttons.print"
 import api from '../../constants/api';
 
 
+<<<<<<< HEAD
 const Test = () => {
+=======
+const InvoiceData = () => {
+>>>>>>> d9101644551bd1d8f38c9223115f354d90aa1980
     const [invoice,setInvoice] = useState(null);
     const getInvoice = () =>{
       api.get('/invoice/getMainInvoice')
@@ -112,6 +120,7 @@ const Test = () => {
             selector: "invoice_type",
             sortable: true,
             width:'auto',
+<<<<<<< HEAD
             // cell: d => <span>{d.closing.join(", ")}</span>
           },
       ]
@@ -152,6 +161,10 @@ const Test = () => {
       // }
       
 
+=======
+          },
+      ]
+>>>>>>> d9101644551bd1d8f38c9223115f354d90aa1980
   return (
     <div className="MainDiv">
     {/* <div className="jumbotron text-center bg-sky">
@@ -173,6 +186,7 @@ const Test = () => {
             {invoice && invoice.map(element=>{
                 return (<tr key={element.invoice_id}>
                 <td>{element.invoice_id}</td>
+<<<<<<< HEAD
   
                 {/* <td><Link to=""><span onClick={()=>deleteRecord(element.opportunity_id)}><Icon.Trash2 /></span></Link></td> */}
                 <td>{element.invoice_code}</td>
@@ -181,6 +195,14 @@ const Test = () => {
                 <td>{element.invoice_date}</td>
                 <td>{element.invoice_amount}</td>
                 <td>{element.invoice_due_date}</td>
+=======
+                <td>{element.invoice_code}</td>
+                <td>{element.title}</td>
+                <td>{element.company_name}</td>
+                <td>{moment(element.invoice_date.follow_up_date).format('YYYY-MM-DD')}</td>
+                <td>{element.invoice_amount}</td>
+                <td>{moment(element.invoice_due_date.follow_up_date).format('YYYY-MM-DD')}</td>
+>>>>>>> d9101644551bd1d8f38c9223115f354d90aa1980
                 <td>{element.age}</td>
                 <td>{element.status}</td>
                 <td>{element.invoice_type}</td>
@@ -200,4 +222,8 @@ const Test = () => {
     </div>)
 }
 
+<<<<<<< HEAD
 export default Test;
+=======
+export default InvoiceData;
+>>>>>>> d9101644551bd1d8f38c9223115f354d90aa1980

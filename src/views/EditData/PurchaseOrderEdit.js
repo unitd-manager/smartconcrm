@@ -1,6 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
-import { useParams } from 'react-router-dom';
+import {
+  Row,
+  Col,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from 'reactstrap';
+import * as Icon from 'react-feather';
+import { useParams, Link } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
 import moment from 'moment';
@@ -8,10 +21,24 @@ import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
+import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
 
 const PurchaseOrderEdit = () => {
   const [purchaseOrderDetails, setPurchaseOrderDetails] = useState();
+  const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
   const { id } = useParams();
+  const [products, setProducts] = useState(null);
+  const [attachmentModal, setAttachmentModal] = useState(false);
+  const getPurchaseOrder = () => {
+    api.get('/product/getProducts').then((res) => {
+      setProducts(res.data.data);
+      console.log(res.data.data);
+    });
+  };
+
+  const attachmentToggle = () => {
+    setAttachmentModal(!attachmentModal);
+  };
 
   const handleInputs = (e) => {
     setPurchaseOrderDetails({ ...purchaseOrderDetails, [e.target.name]: e.target.value });
@@ -31,133 +58,134 @@ const PurchaseOrderEdit = () => {
 
   useEffect(() => {
     editPurchaseOrderById();
+    getPurchaseOrder();
   }, [id]);
-  
+
   const columns = [
     {
-      name: "",
-      selector: "po_code",
-      grow:0,
+      name: '',
+      selector: 'po_code',
+      grow: 0,
       wrap: true,
-      width:'4%'
+      width: '4%',
     },
     {
-        name: 'D.O.',
-        selector: "edit",
-        grow:0,
-        width:'auto',
-        button:true,
-        sortable:false,
+      name: 'D.O.',
+      selector: 'edit',
+      grow: 0,
+      width: 'auto',
+      button: true,
+      sortable: false,
     },
     {
-        name:'S.No',
-        selector: "delete",
-        grow:0,
-        width:'auto',
-        wrap: true
+      name: 'S.No',
+      selector: 'delete',
+      grow: 0,
+      width: 'auto',
+      wrap: true,
     },
     {
-      name: "Product Code",
-      selector: "po_code",
+      name: 'Product Code',
+      selector: 'po_code',
       sortable: true,
-      grow:0,
-      wrap: true
+      grow: 0,
+      wrap: true,
     },
     {
-      name: "Product Title",
-      selector: "title",
+      name: 'Product Title',
+      selector: 'title',
       sortable: true,
-      grow:2,
-      wrap: true
+      grow: 2,
+      wrap: true,
     },
     {
-      name: "Cost Price",
-      selector: "payment",
+      name: 'Cost Price',
+      selector: 'payment',
       sortable: true,
-      grow:0,
+      grow: 0,
     },
     {
-        name: "Selling Price",
-        selector: "status",
-        sortable: true,
-        width:'auto',
-        grow:3,
-      },
-      {
-        name: "GST%",
-        selector: "po_date",
-        sortable: true,
-        grow:2,
-        width:'auto',
-      },
-      {
-        name: "Stock",
-        selector: "supplier_inv_code",
-        sortable: true,
-        grow:2,
-        wrap: true,
-      },
-      {
-        name: "Qty",
-        selector: "creation_date",
-        sortable: true,
-        width:'auto',
-      },
-      {
-        name: "Damaged Qty",
-        selector: "creation_date",
-        sortable: true,
-        width:'auto',
-      },
-      {
-        name: "Added to Stock",
-        selector: "creation_date",
-        sortable: true,
-        width:'auto',
-      },
-      {
-        name: "Qty Balance",
-        selector: "creation_date",
-        sortable: true,
-        width:'auto',
-      },
-      {
-        name: "Status",
-        selector: "creation_date",
-        sortable: true,
-        width:'auto',
-      },
-      {
-        name: "Total Amount",
-        selector: "creation_date",
-        sortable: true,
-        width:'auto',
-      },
-      {
-        name: "Actual Total Amount",
-        selector: "creation_date",
-        sortable: true,
-        width:'auto',
-      },
-      {
-        name: "Edit",
-        selector: "creation_date",
-        sortable: true,
-        width:'auto',
-      },
-      {
-        name: "History",
-        selector: "creation_date",
-        sortable: true,
-        width:'auto',
-      },
-      {
-        name: "Delete",
-        selector: "creation_date",
-        sortable: true,
-        width:'auto',
-      },                           
-  ]
+      name: 'Selling Price',
+      selector: 'status',
+      sortable: true,
+      width: 'auto',
+      grow: 3,
+    },
+    {
+      name: 'GST%',
+      selector: 'po_date',
+      sortable: true,
+      grow: 2,
+      width: 'auto',
+    },
+    {
+      name: 'Stock',
+      selector: 'supplier_inv_code',
+      sortable: true,
+      grow: 2,
+      wrap: true,
+    },
+    {
+      name: 'Qty',
+      selector: 'creation_date',
+      sortable: true,
+      width: 'auto',
+    },
+    {
+      name: 'Damaged Qty',
+      selector: 'creation_date',
+      sortable: true,
+      width: 'auto',
+    },
+    {
+      name: 'Added to Stock',
+      selector: 'creation_date',
+      sortable: true,
+      width: 'auto',
+    },
+    {
+      name: 'Qty Balance',
+      selector: 'creation_date',
+      sortable: true,
+      width: 'auto',
+    },
+    {
+      name: 'Status',
+      selector: 'creation_date',
+      sortable: true,
+      width: 'auto',
+    },
+    {
+      name: 'Total Amount',
+      selector: 'creation_date',
+      sortable: true,
+      width: 'auto',
+    },
+    {
+      name: 'Actual Total Amount',
+      selector: 'creation_date',
+      sortable: true,
+      width: 'auto',
+    },
+    {
+      name: 'Edit',
+      selector: 'creation_date',
+      sortable: true,
+      width: 'auto',
+    },
+    {
+      name: 'History',
+      selector: 'creation_date',
+      sortable: true,
+      width: 'auto',
+    },
+    {
+      name: 'Delete',
+      selector: 'creation_date',
+      sortable: true,
+      width: 'auto',
+    },
+  ];
   return (
     <>
       <BreadCrumbs heading={purchaseOrderDetails && purchaseOrderDetails.title} />
@@ -195,11 +223,13 @@ const PurchaseOrderEdit = () => {
               <Col md="3">
                 <FormGroup>
                   <Label>Status</Label>
-                  <Input type="select" name="status" onChange={handleInputs} value={purchaseOrderDetails && purchaseOrderDetails.status}>
-                    <option
-                      value=""
-                      selected="selected"
-                    >
+                  <Input
+                    type="select"
+                    name="status"
+                    onChange={handleInputs}
+                    value={purchaseOrderDetails && purchaseOrderDetails.status}
+                  >
+                    <option value="" selected="selected">
                       Please Select
                     </option>
                     <option value="inprogress">Inprogress</option>
@@ -241,7 +271,10 @@ const PurchaseOrderEdit = () => {
                 <FormGroup>
                   <Label>PO Date</Label>
                   <Input
-                    value={purchaseOrderDetails && moment(purchaseOrderDetails.purchase_order_date).format('YYYY-MM-DD')}
+                    value={
+                      purchaseOrderDetails &&
+                      moment(purchaseOrderDetails.purchase_order_date).format('YYYY-MM-DD')
+                    }
                     type="date"
                     onChange={handleInputs}
                     name="purchase_order_date"
@@ -254,7 +287,10 @@ const PurchaseOrderEdit = () => {
                   <Input
                     type="date"
                     onChange={handleInputs}
-                    value={purchaseOrderDetails && moment(purchaseOrderDetails.follow_up_date).format('YYYY-MM-DD')}
+                    value={
+                      purchaseOrderDetails &&
+                      moment(purchaseOrderDetails.follow_up_date).format('YYYY-MM-DD')
+                    }
                     name="follow_up_date"
                   />
                 </FormGroup>
@@ -324,85 +360,167 @@ const PurchaseOrderEdit = () => {
               </Col>
             </Row>
           </ComponentCard>
+          <ComponentCard></ComponentCard>
           <ComponentCard title="Product Linked">
-            <Row>
-              <Col md="2">
-              <Button className="btn btn-primary" onClick={()=>{
-
+            <AddPurchaseOrderModal
+              addPurchaseOrderModal={addPurchaseOrderModal}
+              setAddPurchaseOrderModal={setAddPurchaseOrderModal}
+            />
+            <Row className="mb-4">
+              <Col md="3">
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    setAddPurchaseOrderModal(true);
                   }}
-              >Add Product</Button>
+                >
+                  Add Purchase Order
+                </Button>
               </Col>
-              <Col md="2">
-              <Button className="btn btn-success" onClick={()=>{
-
-              }}
-              >Add all Qty to Stock</Button>
+              <Col md="3">
+                <Button color="primary">Create Delivery Order</Button>
               </Col>
-              <Col md="2">
-              <Button className="btn btn-info" onClick={()=>{
-
-              }}
-              >Delivery Order</Button>
+              <Col md="3">
+                <Button color="success">Add all Qty to Stock</Button>
               </Col>
-
             </Row>
-
             <Row>
-                <div className="MainDiv">
-                  <div className="container">
-                    <table id="example" className="display">
-                        <thead>
-                            <tr>
-                                {columns.map(cell=>{
-                                  return (<td key={cell.name}>{cell.name}</td>)
-                                })}
+              <div className="MainDiv">
+                <div className="container">
+                  <table border="1" id="example" className="table w-auto text-xsmall">
+                    <thead>
+                      <tr>
+                        {columns.map((cell) => {
+                          return <td key={cell.name}>{cell.name}</td>;
+                        })}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {products &&
+                        products.map((element) => {
+                          return (
+                            <tr key={element.product_id}>
+                              <td></td>
+                              <td>
+                                <input
+                                  type="checkbox"
+                                  id="dno"
+                                  name="do"
+                                  value={element.product_id}
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="checkbox"
+                                  id="sno"
+                                  name="sno"
+                                  value={element.product_id}
+                                />
+                              </td>
+                              <td>{element.product_id}</td>
+                              <td>{element.title}</td>
+                              <td>{element.price}</td>
+                              <td>{element.mrp}</td>
+                              <td>{element.gst}</td>
+                              <td>{element.qty_in_stock}</td>
+                              <td>{element.damaged_qty}</td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td>
+                                <Link to={`/PurchaseOrderEdit/${element.purchase_order_id}`}>
+                                  <Icon.Edit2 />
+                                </Link>
+                              </td>
+                              <td>
+                                <Link to="" color="primary" onClick={() => {}}>
+                                  <b>
+                                    <u>View History</u>
+                                  </b>
+                                </Link>
+                              </td>
+                              <td>
+                                <Link to="">
+                                  <span>
+                                    <Icon.Trash2 />
+                                  </span>
+                                </Link>
+                              </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                        <tfoot>
-                        </tfoot>          
-                    </table>
-                  </div>
+                          );
+                        })}
+                    </tbody>
+                    <tfoot></tfoot>
+                  </table>
                 </div>
+              </div>
             </Row>
           </ComponentCard>
           <ComponentCard title="Delivery Order">
-            <Row>
+            <Row></Row>
 
-            </Row>
-
-            <Row>
-
-            </Row>
-          </ComponentCard>         
+            <Row></Row>
+          </ComponentCard>
           <ComponentCard title="Add a note">
             <Row>
-
+              <textarea id="note" name="note" rows="4" cols="50" />
             </Row>
-
-            <Row>
-
+            <Row className="mb-2">
             </Row>
-          </ComponentCard>  
+            <Row className="mb-1">
+              <Col md="1">
+              <button type="button" className="btn btn-primary btn-sm">Submit</button>
+              </Col>
+              <Col md="1">
+              <button type="button" className="btn btn-warning btn-sm">Cancel</button>
+              </Col>
+            </Row>
+          </ComponentCard>
           <ComponentCard title="Picture">
             <Row>
-
+              <Button color="primary" onClick={attachmentToggle.bind(null)}>
+                Add
+              </Button>
+              <Modal isOpen={attachmentModal} toggle={attachmentToggle.bind(null)}>
+                <ModalHeader toggle={attachmentToggle.bind(null)}>Upload Media</ModalHeader>
+                <ModalBody>
+                  <FormGroup>
+                    <Label htmlFor="exampleFile">Select Files</Label>
+                    <Input type="file" placeholder="" />
+                  </FormGroup>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="primary" onClick={attachmentToggle.bind(null)}>
+                    Upload
+                  </Button>
+                </ModalFooter>
+              </Modal>
             </Row>
-
-            <Row>
-
-            </Row>
-          </ComponentCard> 
+          </ComponentCard>
           <ComponentCard title="Attachments">
             <Row>
-
+              <Button color="primary" onClick={attachmentToggle.bind(null)}>
+                Add
+              </Button>
+              <Modal isOpen={attachmentModal} toggle={attachmentToggle.bind(null)}>
+                <ModalHeader toggle={attachmentToggle.bind(null)}>Upload Media</ModalHeader>
+                <ModalBody>
+                  <FormGroup>
+                    <Label htmlFor="exampleFile">Select Files</Label>
+                    <Input type="file" placeholder="" />
+                  </FormGroup>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="primary" onClick={attachmentToggle.bind(null)}>
+                    Upload
+                  </Button>
+                </ModalFooter>
+              </Modal>
             </Row>
-
-            <Row>
-
-            </Row>
-          </ComponentCard>                                          
+          </ComponentCard>
         </FormGroup>
       </Form>
     </>
