@@ -18,13 +18,13 @@ import ViewLineItemModal from '../../components/ProjectModal/ViewLineItemModal';
 import EditQuotation from '../../components/ProjectModal/EditQuotation';
 import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
 import MaterialsusedTab from '../../components/ProjectModal/MaterialsusedTab';
-import EditWorkOrder from '../../components/ProjectModal/EditWorkOrder';
 import EditDeliveryOrder from '../../components/ProjectModal/EditDeliveryOrder';
 import EditPoModal from '../../components/ProjectModal/EditPoModal';
 import EditPOLineItemsModal from '../../components/ProjectModal/EditPOLineItemsModal';
-import WorkOrderViewLineItem from '../../components/ProjectModal/WorkOrderViewLineItem';
 import AttachmentModal from '../../components/tender/AttachmentModal';
 import ViewFileComponent from '../../components/ProjectModal/ViewFileComponent';
+import SubConWorkOrderPortal from '../../components/ProjectModal/SubConWorkOrderPortal';
+import SubconWorkPaymentHistory from '../../components/ProjectModal/SubconWorkPaymentHistory';
 import message from '../../components/Message';
 import api from '../../constants/api';
 
@@ -51,8 +51,6 @@ const ProjectEdit = () => {
     const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
     const [attachmentModal, setAttachmentModal] = useState(false);
     const [claimAttachmentModal, setClaimAttachmentModal] = useState(false);
-    const [editWorkOrderModal, setEditWorkOrderModal] = useState(false);
-    const [workOrderViewLineItem, setWorkOrderViewLineItem] = useState(false);
     const [tabdeliveryorder, setTabdeliveryorder] = useState();
     const [tabPurchaseOrderLineItemTable, setTabPurchaseOrderLineItemTable] = useState();
     const [checkId, setCheckId] = useState([]);
@@ -60,6 +58,7 @@ const ProjectEdit = () => {
     const [ editPo, setEditPo ]= useState(false);
     const [ editPOLineItemsModal, setEditPOLineItemsModal ]= useState(false);
     const [ deliveryData, setDeliveryData ]= useState('');
+    const [ POId, setPOId ]= useState('');
 
 
     const toggle = (tab) => {
@@ -76,7 +75,6 @@ const ProjectEdit = () => {
           api.post('/project/getProjectsByID',{project_id:id})
          .then((res) => {
           setProjectDetail(res.data.data)
-          console.log(res.data.data)
         })
         .catch(()=>{
           message("Costing Summary not found","info")
@@ -184,22 +182,6 @@ const ProjectEdit = () => {
     }
 
 
-//     const handleCheck = (e,item) => {
-
-//       let updatedList = [...checkId,{}];
-
-//       if(e.target.checked) {
-//  //[{id:'',qty:''},{id:'',qty:''}]        
-//         updatedList = [...checkId, {id:item.po_product_id,qty:item.qty}];
-//       } 
-//       else {
-//         updatedList.splice([...checkId, {id:item.po_product_id,qty:item.qty}].indexOf(checkId), 1);
-//       }
-//       setCheckId(updatedList);
-//       console.log(updatedList);
-//     }
-
-
     const insertDeliveryHistoryOrder = (proId,deliveryOrderId) => {
       api.post('/projecttabdeliveryorder/insertDeliveryHistoryOrder',{
         product_id:proId.id,
@@ -207,8 +189,8 @@ const ProjectEdit = () => {
         delivery_order_id:deliveryOrderId,
         status:"1",
         quantity:proId.qty,
-        creation_date:"2022-10-21",
-        modification_date:"2022-10-21",
+        creation_date:"2022-12-17",
+        modification_date:"2022-12-17",
         remarks:"test"
       })
       .then(()=>{
@@ -453,11 +435,9 @@ const deleteDeliveryOrder = (deliveryOrderId) => {
     <ViewQuoteLogModal viewQuotationsModal={viewQuotationsModal} setViewQuotationsModal={setViewQuotationsModal} />
     <ViewLineItemModal viewLineModal={viewLineModal} setViewLineModal={setViewLineModal} />
     <EditQuotation editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} />
-    <EditWorkOrder editWorkOrderModal={editWorkOrderModal} setEditWorkOrderModal={setEditWorkOrderModal}/>
     <EditDeliveryOrder editDeliveryOrder={editDeliveryOrder} setEditDeliveryOrder={setEditDeliveryOrder} data={deliveryData} />
-    <EditPoModal editPo={editPo} setEditPo={setEditPo} />
+    <EditPoModal editPo={editPo} setEditPo={setEditPo} data={POId} />
     <EditPOLineItemsModal editPOLineItemsModal={editPOLineItemsModal} setEditPOLineItemsModal={setEditPOLineItemsModal}  />
-    <WorkOrderViewLineItem workOrderViewLineItem={workOrderViewLineItem} setWorkOrderViewLineItem={setWorkOrderViewLineItem} />
 
 
         <Nav tabs>
@@ -747,7 +727,11 @@ const deleteDeliveryOrder = (deliveryOrderId) => {
             <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">
               <Row>
                 <Col>{e.data[0].company_name}</Col>
-                <Col><Link to="" style={{color:"#fff"}}><span onClick={()=>{setEditPo(true)}}><u> Edit Po </u></span></Link></Col> 
+                <Col><Link to="" style={{color:"#fff"}}><span onClick={()=>{
+                  setEditPo(true)
+                  setPOId(e)
+                }}
+                  ><u> Edit Po </u></span></Link></Col> 
                 <Col><Link to="" style={{color:"#fff"}}><span onClick={()=>{setEditPOLineItemsModal(true)}}><u> Edit Line Items </u></span></Link></Col> 
                 <Col><span><u> print pdf </u></span></Col> 
                 <Col> Total : {getTotalOfPurchase(e.data)}</Col> 
@@ -901,7 +885,6 @@ const deleteDeliveryOrder = (deliveryOrderId) => {
                               <Col md='1'><Label><Link to=""><span onClick={()=>{
                                 setDeliveryData(res.delivery_order_id)
                                 setEditDeliveryOrder(true)
-                               // setDeliveryData(res.delivery_order_id)
                                 }}><Icon.Edit /></span></Link></Label></Col>
                               <Col md='1'><Label><Link to=""><span ><Icon.Printer/></span></Link></Label></Col>
                               <Col md='1'><Label><Link to=""><span onClick={()=>{deleteDeliveryOrder(res.delivery_order_id)}}><Icon.Delete/></span></Link></Label></Col>
@@ -917,7 +900,7 @@ const deleteDeliveryOrder = (deliveryOrderId) => {
       </TabPane>
 
 
-{/* Start Tab Content 7 */}
+{/* Start Tab Content 7  Subcon Work Order */}
 
       <TabPane tabId="7">
 
@@ -929,101 +912,8 @@ const deleteDeliveryOrder = (deliveryOrderId) => {
           <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> Work Orders </CardTitle>
       </Row>
 
-      <Form className='mt-4'>
-        <Row className='border-bottom mb-3'>
-          <Col><FormGroup><Label>WO Code</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Sub Con</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Status</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Due Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Completed Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Amount</Label> </FormGroup></Col>
-          <Col></Col>
-          <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
-        </Row>
-        <Row>
-        <Col>
-          <FormGroup></FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <span>test</span>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label><Link to=""><span onClick={()=>{setWorkOrderViewLineItem(true)}}>View Line Items</span></Link></Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-            <Row>
-              <Col md='2'><Label><Link to=""><span onClick={()=>{setEditWorkOrderModal(true)}}><Icon.Edit /></span></Link></Label></Col>
-              <Col md='2'><Label><Link to=""><span ><Icon.Printer /></span></Link></Label></Col>
-             <Col md='2'><Label><Link to=""> <span><Icon.PlusCircle /></span> </Link></Label></Col>
-            </Row>
-          </FormGroup>
-        </Col>
-        </Row>
-      </Form>
-
-      <Row className='mt-4'>
-          <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> Payment History </CardTitle>
-      </Row>
-
-      <Form className='mt-4'>
-        <Row className='border-bottom mb-3'>
-          <Col><FormGroup><Label>Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>SubCon Name</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Amount</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Mode of Payment</Label> </FormGroup></Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormGroup></FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <span>test</span>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-        </Row>
-      </Form>
+      <SubConWorkOrderPortal projectId={id} />
+      <SubconWorkPaymentHistory projectId={id}/>
 
       </TabPane>
 
