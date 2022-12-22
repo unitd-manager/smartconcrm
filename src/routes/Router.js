@@ -197,6 +197,8 @@ const JobInformationEdit= Loadable(lazy(() => import ('../views/EditData/JobInfo
 
 
 
+
+
 const Routernew = () => {
   const { token, setToken } = UserToken();
 
@@ -221,7 +223,8 @@ const Routernew = () => {
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
         <Route path="/SubConEdit/:id" name="clienttdata" element={<SubConEdit />}></Route>
         <Route path="/SupplierEdit/:id" name="clienttdata" element={<SupplierEdit />}></Route>
-        <Route path="/JobInformatonEdit/:id" name="clienttdata" element={<JobInformationEdit />}></Route>
+        <Route path="/JobInformationEdit/:id" name="clienttdata" element={<JobInformationEdit />}></Route>
+
 
 
 
