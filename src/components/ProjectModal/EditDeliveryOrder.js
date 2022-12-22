@@ -13,18 +13,16 @@ const EditDeliveryOrder = ({editDeliveryOrder, setEditDeliveryOrder,data
         data: PropTypes.string
       }
 
-
       const[ deliveryHistory, setDeliveryHistory] = useState();
 
       const TabDeliveryOrderHistory = () => {
         api.post('/projecttabdeliveryorder/TabDeliveryOrderHistory',{delivery_order_id:data})
         .then((res)=>{
           setDeliveryHistory(res.data.data)
-          
-       
+         message('Delivery Order Item Inserted','success')
         
         }).catch(()=>{
-          message('Unable to find Delivery Order Item','error')
+          message('Unable to add Delivery Order Item','error')
         })
 
        }
@@ -32,6 +30,7 @@ const EditDeliveryOrder = ({editDeliveryOrder, setEditDeliveryOrder,data
       useEffect(()=>{
         
         TabDeliveryOrderHistory(data)
+        console.log("Hello Data",deliveryHistory);
       
       },[data])
 
@@ -81,7 +80,8 @@ const EditDeliveryOrder = ({editDeliveryOrder, setEditDeliveryOrder,data
                   </table>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={()=>{setEditDeliveryOrder(false)}}> Close </Button>
+                <Button color="primary" onClick={()=>{setEditDeliveryOrder(false)}}> Submit </Button>
+                <Button color="secondary" onClick={()=>{setEditDeliveryOrder(false)}}> Close </Button>
             </ModalFooter>
         </Modal>
        
