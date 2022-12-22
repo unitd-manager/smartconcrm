@@ -189,21 +189,13 @@ const UserGroupDetails= Loadable(lazy(() => import ('../views/detailTable/UserGr
 // Table Edit's
 const TenderEdit= Loadable(lazy(() => import ('../views/EditData/TenderEdit')))
 const ProjectEdit= Loadable(lazy(() => import ('../views/EditData/ProjectEdit')))
-<<<<<<< HEAD
 const SubConEdit= Loadable(lazy(() => import ('../views/EditData/SubConEdit')))
 const SupplierEdit= Loadable(lazy(() => import ('../views/EditData/SupplierEdit')))
 const JobInformationEdit= Loadable(lazy(() => import ('../views/EditData/JobInformationEdit')))
 
-
-
-
-
-
-=======
 const PurchaseOrderEdit= Loadable(lazy(() => import ('../views/EditData/PurchaseOrderEdit')))
 const PurchaseOrderAdd= Loadable(lazy(() => import ('../views/EditData/PurchaseOrderAdd')))
 const TimesheetEdit= Loadable(lazy(() => import ('../views/EditData/TimesheetEdit')))
->>>>>>> 12719e56a39e6fcbe6ff216c833dd78cff40255e
 
 const Routernew = () => {
   const { token, setToken } = UserToken();
