@@ -193,9 +193,9 @@ const SubConEdit= Loadable(lazy(() => import ('../views/EditData/SubConEdit')))
 const SupplierEdit= Loadable(lazy(() => import ('../views/EditData/SupplierEdit')))
 const JobInformationEdit= Loadable(lazy(() => import ('../views/EditData/JobInformationEdit')))
 
-
-
-
+const PurchaseOrderEdit= Loadable(lazy(() => import ('../views/EditData/PurchaseOrderEdit')))
+const PurchaseOrderAdd= Loadable(lazy(() => import ('../views/EditData/PurchaseOrderAdd')))
+const TimesheetEdit= Loadable(lazy(() => import ('../views/EditData/TimesheetEdit')))
 
 const Routernew = () => {
   const { token, setToken } = UserToken();
@@ -219,9 +219,20 @@ const Routernew = () => {
       {/* Table Edit's */}
         <Route path="/TenderEdit/:id" name="clienttdata" element={<TenderEdit />}></Route>
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
+<<<<<<< HEAD
+=======
+        <Route path="/SubConEdit/:id" name="clienttdata" element={<SubConEdit />}></Route>
+        <Route path="/SupplierEdit/:id" name="clienttdata" element={<SupplierEdit />}></Route>
+        <Route path="/JobInformationEdit/:id" name="clienttdata" element={<JobInformationEdit />}></Route>
+>>>>>>> 7549565bc88324753b35e26552233866b126d897
 
 
 
+
+
+        <Route path="/PurchaseOrderEdit/:id" name="clienttdata" element={<PurchaseOrderEdit />}></Route>
+        <Route path="/PurchaseOrderAdd/:cname" name="clienttdata" element={<PurchaseOrderAdd />}></Route>
+        <Route path="/TimesheetEdit/:id" name="clienttdata" element={<TimesheetEdit />}></Route>
 
         <Route path="/pdf/:id" name="pdfData" element={<PdfData />}></Route>
         <Route path="/pdfnext" name="pdfData" element={<PdfNext />}></Route>

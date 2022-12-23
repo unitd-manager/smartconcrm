@@ -13,7 +13,7 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import * as Icon from 'react-feather';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
 import moment from 'moment';
@@ -26,10 +26,11 @@ import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrde
 const PurchaseOrderEdit = () => {
   const [purchaseOrderDetails, setPurchaseOrderDetails] = useState();
   const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
-  const { id } = useParams();
+  //const [searchParams, setSearchParams] = useSearchParams();
+
+  const { cname } = useParams();
   const [products, setProducts] = useState(null);
   const [attachmentModal, setAttachmentModal] = useState(false);
-  const navigate = useNavigate();
   const getPurchaseOrder = () => {
     api.get('/product/getProducts').then((res) => {
       setProducts(res.data.data);
@@ -47,7 +48,7 @@ const PurchaseOrderEdit = () => {
 
   const editPurchaseOrderById = () => {
     api
-      .post('/purchaseorder/getPurchaseOrderByPurchaseOrderId', { purchase_order_id: id })
+      .post('/purchaseorder/getPurchaseOrderByPurchaseOrderId', { purchase_order_id: cname })
       .then((res) => {
         setPurchaseOrderDetails(res.data.data[0]);
         console.log(res.data.data[0]);
@@ -57,22 +58,12 @@ const PurchaseOrderEdit = () => {
       });
   };
 
-  const editPurchaseOrderData = () => {
-    api.post('/purchaseorder/editPurchaseOrderDetails', purchaseOrderDetails)
-      .then(() => {
-        message('Record editted successfully', 'success');
-/*         setTimeout(() => {
-          window.location.reload();
-        }, 300); */
-      })
-      .catch(() => {
-        message('Unable to edit record.', 'error');
-      });
-  };  
   useEffect(() => {
     editPurchaseOrderById();
     getPurchaseOrder();
-  }, [id]);
+    //setSearchParams();
+    console.log("cname",cname);
+  }, [cname]);
 
   const columns = [
     {
@@ -201,13 +192,13 @@ const PurchaseOrderEdit = () => {
   ];
   return (
     <>
-      <BreadCrumbs heading={purchaseOrderDetails && purchaseOrderDetails.title} />
+      <BreadCrumbs />
 
       <Form>
         <FormGroup>
           <ComponentCard
-            title={`Purchase Order Details | Code: ${
-              purchaseOrderDetails && purchaseOrderDetails.purchase_order_id
+            title={`Purchase Order Details | Company Name: ${
+              cname
             }`}
           >
             <Row>
@@ -218,7 +209,7 @@ const PurchaseOrderEdit = () => {
                     type="text"
                     onChange={handleInputs}
                     value={purchaseOrderDetails && purchaseOrderDetails.po_code}
-                    name="po_code" readOnly
+                    name="title"
                   />
                 </FormGroup>
               </Col>
@@ -228,7 +219,7 @@ const PurchaseOrderEdit = () => {
                   <Input
                     type="text"
                     onChange={handleInputs}
-                    value={purchaseOrderDetails && purchaseOrderDetails.title}
+                    value={cname}
                     name="title"
                   />
                 </FormGroup>
@@ -371,29 +362,27 @@ const PurchaseOrderEdit = () => {
                   />
                 </FormGroup>
               </Col>
+              <Row>
+              <Col>
+              <FormGroup>
+              <Button
+                          color="primary"
+                          onClick={() => {
+                            //insertCompany();
+                            //alert("Hi");
+                            console.log("insert process");
+                          }}
+                        >
+                          Save & Continue
+                        </Button>
+                        <Button color="secondary" onClick={ //alert("Canceled")
+                        console.log("cancel process")}>
+                          Cancel
+                        </Button>
+              </FormGroup>
+              </Col>
+              </Row>
             </Row>
-            <Row>
-              <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-                <Button
-                  onClick={() => {
-                    editPurchaseOrderData();
-                  }}
-                  type="button"
-                  className="btn btn-success mr-2"
-                >
-                  Save & Continue
-                </Button>
-                <Button
-                  onClick={() => {
-                    navigate(-1);
-                  }}
-                  type="button"
-                  className="btn btn-dark"
-                >
-                  Go to List
-                </Button>
-              </div>
-            </Row>            
           </ComponentCard>
           <ComponentCard title="Product Linked">
             <AddPurchaseOrderModal
