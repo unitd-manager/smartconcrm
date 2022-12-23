@@ -219,9 +219,6 @@ const Routernew = () => {
       {/* Table Edit's */}
         <Route path="/TenderEdit/:id" name="clienttdata" element={<TenderEdit />}></Route>
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
-        <Route path="/SubConEdit/:id" name="clienttdata" element={<SubConEdit />}></Route>
-        <Route path="/SupplierEdit/:id" name="clienttdata" element={<SupplierEdit />}></Route>
-        <Route path="/JobInformatonEdit/:id" name="clienttdata" element={<JobInformationEdit />}></Route>
 
 
 
