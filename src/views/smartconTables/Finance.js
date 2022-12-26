@@ -180,7 +180,7 @@ const Test = () => {
                     <td><Link to=""><span onClick={()=>deleteRecord(element.order_id)}><Icon.Trash2 /></span></Link></td>
                     <td>{element.order_id}</td>
                     <td>{element.shipping_first_name}</td>
-                    <td>{moment(element.creation_date.follow_up_date).format('YYYY-MM-DD')}</td>
+                    <td>{moment(element.creation_date).format('YYYY-MM-DD')}</td>
                     <td>{element.project_type}</td>
                     <td>{element.order_amount}</td>
                     <td>{element.order_status}</td>

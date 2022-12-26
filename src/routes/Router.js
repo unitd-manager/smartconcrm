@@ -187,7 +187,9 @@ const CPFCalculatorDetails = Loadable(lazy(() => import ('../views/detailTable/C
 
 // Admin
 const StaffTable = Loadable(lazy(() => import ('../views/smartconTables/Staff')))
+const Content = Loadable(lazy(() => import ('../views/smartconTables/Content')))
 const StaffDetailsTable = Loadable(lazy(() => import ('../views/detailTable/StaffDetails')))
+const ContentDetailsTable = Loadable(lazy(() => import ('../views/detailTable/ContentDetails')))
 const ValuelistTable= Loadable(lazy(() => import ('../views/smartconTables/Valuelist')))
 const ValuelistDetailsTable = Loadable(lazy(() => import ('../views/detailTable/ValuelistDetails')))
 const SettingTable= Loadable(lazy(() => import ('../views/smartconTables/Setting')))
@@ -202,6 +204,8 @@ const ProjectEdit= Loadable(lazy(() => import ('../views/EditData/ProjectEdit'))
 const FinanceEdit= Loadable(lazy(() => import ('../views/EditData/FinanceEdit')))
 const TrainingEdit= Loadable(lazy(() => import ('../views/EditData/TrainingEdit')))
 const TrainingUpdate= Loadable(lazy(() => import ('../views/EditData/TrainingUpdate')))
+const ContentEdit= Loadable(lazy(() => import ('../views/EditData/ContentEdit')))
+const ContentUpdate= Loadable(lazy(() => import ('../views/EditData/ContentUpdate')))
 const Routernew = () => {
   const { token, setToken } = UserToken();
 
@@ -226,10 +230,12 @@ const Routernew = () => {
           <Route path="/createnote" name="createnote" element={<CreateNote/>}></Route>
       {/* Table Edit's */}
         <Route path="/TenderEdit/:id" name="clienttdata" element={<TenderEdit />}></Route>
+        <Route path="/ContentEdit/:title" name="clienttdata" element={<ContentEdit />}></Route>
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
         <Route path="/FinanceEdit/:id" name="clienttdata" element={<FinanceEdit />}></Route>
         <Route path="/TrainingEdit/:id" name="clienttdata" element={<TrainingEdit />}></Route>
         <Route path="/TrainingUpdate/:id" name="clienttdata" element={<TrainingUpdate />}></Route>
+        <Route path="/ContentUpdate/:id" name="clienttdata" element={<ContentUpdate />}></Route>
         <Route path="/pdf/:id" name="pdfData" element={<PdfData />}></Route>
         <Route path="/pdfnext" name="pdfData" element={<PdfNext />}></Route>
         <Route path="/TicketsComponent" name="pdfData" element={<TicketsComponent />}></Route>
@@ -349,6 +355,8 @@ const Routernew = () => {
         <Route path="/Employee" name="clienttdata" element={<Employee />}></Route>
         <Route path="/EmployeeDetails" name="clienttdata" element={<EmployeeDetailsTable />}></Route>
         <Route path="/EmployeeDetailsData" name="clienttdata" element={<EmployeeDetailsData />}></Route>
+        <Route path="/Content" name="clienttdata" element={<Content />}></Route>
+        <Route path="/ContentDetails" name="clienttdata" element={<ContentDetailsTable />}></Route>
         <Route path="/test" name="clienttdata" element={<TestTable />}></Route>
 
         

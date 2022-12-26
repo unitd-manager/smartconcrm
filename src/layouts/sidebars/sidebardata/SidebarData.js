@@ -125,6 +125,20 @@ const SidebarData = [
     collapisble: true,
     children: [
       {
+        title: 'Finance',
+        href: '/Finance',
+        icon: <Icon.Airplay />,
+        id: 2.5,
+        collapisble: false,
+      },
+      {
+        title: 'Invoice',
+        href: '/Invoice',
+        icon: <Icon.Disc />,
+        id: 1.1,
+        collapisble: false,
+      },
+      {
         title: 'Supplier',
         href: '/Supplier',
         icon: <Icon.Disc />,
@@ -230,6 +244,13 @@ const SidebarData = [
     icon: <Icon.Users />,
     collapisble: true,
     children: [
+      {
+        title: 'Content',
+        href: '/Content',
+        icon: <Icon.Disc />,
+        id: 1.1,
+        collapisble: false,
+      },
       {
         title: 'Staff',
         href: '/Staff',

@@ -15,13 +15,13 @@ import { Link } from 'react-router-dom';
 import api from '../../constants/api';
 
 
-const Training = () => {
-    const [training,setTraining] = useState(null);
-    const getTraining = () =>{
+const Content = () => {
+    const [content,setContent] = useState(null);
+    const getContent = () =>{
       
-      api.get('/training/getTraining')
+      api.get('/content/getContent')
         .then((res)=> {
-          setTraining(res.data.data)
+          setContent(res.data.data)
             console.log(res.data.data)
         })
     }
@@ -41,7 +41,7 @@ const Training = () => {
         } ,
         1000
         );
-        getTraining()
+        getContent()
 
     }, [])
     
@@ -49,7 +49,7 @@ const Training = () => {
    const columns = [
     {
       name: "id",
-      selector: "training_id",
+      selector: "content_id",
       grow:0,
       wrap: true,
       width:'4%'
@@ -79,19 +79,65 @@ const Training = () => {
       wrap: true
     },
     {
-      name: "Trainer",
-      selector: "trainer",
+      name: "Order",
+      selector: "sort_order",
       sortable: true,
       grow:0,
     },
     {
-        name: "Date",
-        selector: "from_date",
+        name: "Section",
+        selector: "section_type",
         sortable: true,
         width:'auto',
         grow:3,
        
-      }
+      },
+      {
+        name: "Category",
+        selector: "category_type",
+        sortable: true,
+        grow:0,
+        wrap: true
+      },
+      {
+        name: "Sub Category",
+        selector: "sub_category_type",
+        sortable: true,
+        grow:0,
+      },
+      {
+          name: "Content Date",
+          selector: "content_date",
+          sortable: true,
+          width:'auto',
+          grow:3,
+         
+        },  
+        {
+          name: "Content Type",
+          selector: "content_type",
+          sortable: true,
+          width:'auto',
+          grow:3,
+         
+        },
+        {
+          name: "ID",
+          selector: "content_id ",
+          sortable: true,
+          width:'auto',
+          grow:3,
+         
+        },
+        {
+          name: "Published",
+          selector: "published_test",
+          sortable: true,
+          width:'auto',
+          grow:3,
+         
+        }
+  
 
   
  
@@ -111,11 +157,11 @@ const Training = () => {
           confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
           if (result.isConfirmed) {
-            api.post('/training/deleteTraining',{training_id:id}).then(res=>{
+            api.post('/content/deleteContent',{content_id :id}).then(res=>{
               console.log(res)
               Swal.fire(
                 'Deleted!',
-                'Your Training has been deleted.',
+                'Your Content has been deleted.',
                 'success'
               )
       
@@ -133,7 +179,7 @@ const Training = () => {
 
 <Row>
     <Col md="6">
-      <Link to="/TrainingDetails">
+      <Link to="/ContentDetails">
         <Button  color="primary" className="my-3">
           Add New
         </Button>
@@ -151,14 +197,20 @@ const Training = () => {
               </tr>
           </thead>
           <tbody>
-            {training && training.map(element=>{
-                return (<tr key={element.training_id}>
-                    <td>{element.training_id}</td>
-                    <td><Link to={`/TrainingUpdate/${element.training_id}`} ><Icon.Edit2 /></Link></td>
-                    <td><Link to=""><span onClick={()=>deleteRecord(element.training_id)}><Icon.Trash2 /></span></Link></td>
+            {content && content.map(element=>{
+                return (<tr key={element.title}>
+                    <td>{element.content_id}</td>
+                    <td><Link to={`/ContentUpdate/${element.content_id}`} ><Icon.Edit2 /></Link></td>
+                    <td><Link to=""><span onClick={()=>deleteRecord(element.content_id)}><Icon.Trash2 /></span></Link></td>
                     <td>{element.title}</td>
-                    <td>{element.trainer}</td>
-                    <td>{moment(element.from_date).format('YYYY-MM-DD')}</td>
+                    <td>{element.sort_order}</td>
+                    <td>{element.section_type}</td>
+                    <td>{element.category_type}</td>
+                    <td>{element.sub_category_type}</td>
+                    <td>{moment(element.content_date).format('YYYY-MM-DD')}</td>
+                    <td>{element.content_type}</td>
+                    <td>{element.content_id}</td>
+                    <td>{element.published_test}</td>
               </tr>)
             })}
           </tbody>
@@ -174,4 +226,4 @@ const Training = () => {
     </div>)
 }
 
-export default Training;
+export default Content;
