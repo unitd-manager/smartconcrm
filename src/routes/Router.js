@@ -192,6 +192,7 @@ const TenderEdit= Loadable(lazy(() => import ('../views/EditData/TenderEdit')))
 const ProjectEdit= Loadable(lazy(() => import ('../views/EditData/ProjectEdit')))
 const BookingEdit= Loadable(lazy(() => import ('../views/EditData/BookingEdit')))
 const LoanEdit= Loadable(lazy(() => import ('../views/EditData/LoanEdit')))
+const BookingUpdate= Loadable(lazy(() => import ('../views/EditData/BookingUpdate')))
 
 
 const Routernew = () => {
@@ -217,6 +218,7 @@ const Routernew = () => {
         <Route path="/TenderEdit/:id" name="clienttdata" element={<TenderEdit />}></Route>
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
         <Route path="/BookingEdit/:id" name="clienttdata" element={<BookingEdit />}></Route>
+        <Route path="/BookingUpdate/:id" name="clienttdata" element={<BookingUpdate />}></Route>
         <Route path="/LoanEdit/:id" name="clienttdata" element={<LoanEdit />}></Route>
 
         <Route path="/pdf/:id" name="pdfData" element={<PdfData />}></Route>
