@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import {CardTitle,Table, Row,Col,Form,FormGroup,Label,Input,TabContent,TabPane,Nav, NavItem,NavLink,Button,Modal,ModalHeader,ModalBody,ModalFooter, } from 'reactstrap';
+import { Row,Col,Form,FormGroup,Label,Input,TabContent,TabPane,Nav, NavItem,NavLink,Button,Modal,ModalHeader,ModalBody,ModalFooter, } from 'reactstrap';
 import {ToastContainer} from 'react-toastify'
 import { Link, useParams } from 'react-router-dom';
 import * as Icon from 'react-feather';
@@ -15,7 +15,7 @@ import OtherChargesModal from '../../components/ProjectModal/OtherChargesModal';
 import ViewQuoteLogModal from '../../components/ProjectModal/ViewQuoteLogModal';
 import ViewLineItemModal from '../../components/ProjectModal/ViewLineItemModal';
 import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
-import MaterialsusedTab from '../../components/ProjectModal/MaterialsusedTab';
+// import AddMaterialsUsed from '../../components/ProjectModal/AddMaterialsUsed';
 import message from '../../components/Message';
 import api from '../../constants/api';
 
@@ -37,11 +37,12 @@ const ProjectEdit = () => {
     const [addOtherChargesModal, setAddOtherChargesModal] = useState(false);
     const [viewQuotationsModal, setViewQuotationsModal] = useState(false);
     const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
+    // const [ addMaterialsUsed, setAddMaterialsUsed ] = useState(false);
     const [viewLineModal, setViewLineModal] = useState(false);
     const [attachmentModal, setAttachmentModal] = useState(false);
-    const [claimAttachmentModal, setClaimAttachmentModal] = useState(false);
-    const [tabdeliveryorder, setTabdeliveryorder] = useState();
 
+
+    
 
     const toggle = (tab) => {
         if (activeTab !== tab) setActiveTab(tab);
@@ -54,7 +55,8 @@ const ProjectEdit = () => {
         setAttachmentModal(!attachmentModal);
         };
 
-    // Get Project By Id
+
+        // Get Project By Id
 
         const getProjectById = () => {
           api.post('/project/getProjectsByID',{project_id:id})
@@ -76,38 +78,10 @@ const ProjectEdit = () => {
         })
       }
       
-    // Edit Project
-
-    const handleInputs = (e) => {
-      setProjectDetail({...projectDetail, [e.target.name]: e.target.value}) 
-    }
-    const UpdateData = () => {
-      api.post('/project/edit-Project',projectDetail)
-      .then(() => {
-        message('Record editted successfully','success')
-        setTimeout(()=>{
-          window.location.reload()
-        },300);
-      })
-    }
-
-    // Tab Delivery Order
-
-    const TabDeliveryOrder = () => {
-      api.post('/projecttabdeliveryorder/TabDeliveryOrder',{project_id:id})
-     .then((res) => {
-      setTabdeliveryorder(res.data.data)
-      console.log("TabDeliveryOrder",res.data.data)
-    })
-    .catch(()=>{
-      message("Tab Delivery Order not found","info")
-    })
-    }
 
       useEffect(() => {
         getCostingbySummary();
         getProjectById();
-        TabDeliveryOrder();
       }, [id])
       
 
@@ -126,16 +100,14 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Title</Label>
-                    <Input  type="text" name="title"  defaultValue={projectDetail && projectDetail.title} onChange={handleInputs} />
+                    <Input  type="text" name="title"  value={projectDetail && projectDetail.title} />
                     </FormGroup>
                 </Col>
                 
                 <Col md="3">
                     <FormGroup>
                     <Label>Category <span className='required'> *</span> </Label>
-                    <Input type="select" name="company_id" 
-                        defaultValue={projectDetail && projectDetail.category} 
-                        onChange={handleInputs} >
+                    <Input type="select" name="company_id" value={projectDetail && projectDetail.category} >
                         <option value="">Please Select</option>
                         <option value="Project">Project</option>
                         <option selected="selected" value="Maintenance">Maintenance</option>
@@ -148,8 +120,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Status </Label>
-                    <Input type="select" name="contact_id" defaultValue={projectDetail && projectDetail.status}
-                         onChange={handleInputs}>
+                    <Input type="select" name="contact_id" value={projectDetail && projectDetail.status}>
                         <option value="">Please Select</option>
                         <option selected="selected" value="WIP">WIP</option>
                         <option value="Billable">Billable</option>
@@ -164,9 +135,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Company</Label>
-                    <Input type="text" disabled name="office_ref_no" 
-                        defaultValue={projectDetail && projectDetail.company_name} 
-                        onChange={handleInputs}/>
+                    <Input type="text" disabled name="office_ref_no" value={projectDetail && projectDetail.company_name}/>
                     </FormGroup>
                 </Col>
                 </Row>
@@ -176,9 +145,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Contact</Label>
-                    <Input type="select" name="mode_of_submission" 
-                        defaultValue={projectDetail && projectDetail.contact_id}
-                        onChange={handleInputs}>
+                    <Input type="select" name="mode_of_submission" value={projectDetail && projectDetail.contact_id}>
                         <option value="">Please Select</option>
                     </Input>
                     </FormGroup>
@@ -187,7 +154,7 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Start Date</Label>
-                        <Input type="date" name="site_show_date" defaultValue={projectDetail && projectDetail.start_date} onChange={handleInputs}/>
+                        <Input type="date" name="site_show_date" value={projectDetail && projectDetail.start_date}/>
                     </FormGroup>
                 </Col>
                 <Col md="3">
@@ -195,13 +162,13 @@ const ProjectEdit = () => {
                     <Label>Estimated Finish Date</Label>
                     <Input type="date" 
                       name="project_end_date" 
-                      defaultValue={projectDetail && projectDetail.estimated_finish_date} onChange={handleInputs}/>
+                      value={projectDetail && projectDetail.estimated_finish_date}/>
                     </FormGroup>
                 </Col>
                 <Col md="3">
                     <FormGroup>
                     <Label>Description</Label>
-                    <Input type="text" name="services" defaultValue={projectDetail && projectDetail.description} onChange={handleInputs}/>
+                    <Input type="text" name="services" value={projectDetail && projectDetail.description}/>
                     </FormGroup>
                 </Col>
                 </Row>
@@ -210,8 +177,9 @@ const ProjectEdit = () => {
                 <Col md="3">
                     <FormGroup>
                     <Label>Project Manager</Label>
-                    <Input type="select" name="site_show_attendee" defaultValue={projectDetail && projectDetail.project_manager_id} onChange={handleInputs}>
+                    <Input type="select" name="site_show_attendee" value={projectDetail && projectDetail.project_manager_id}>
                         <option value="" selected="selected">Please Select</option>
+                        
                       </Input>
 
                     </FormGroup>
@@ -228,7 +196,7 @@ const ProjectEdit = () => {
               
                 <Row>
                 <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-                    <Button type="button" className="btn btn-success mr-2" onClick={UpdateData}>
+                    <Button type="button" className="btn btn-success mr-2">
                     Save & Continue
                     </Button>
                     <Button type="submit" className="btn btn-dark">
@@ -476,6 +444,8 @@ const ProjectEdit = () => {
     <OtherChargesModal addOtherChargesModal={addOtherChargesModal} setAddOtherChargesModal={setAddOtherChargesModal} />
     <ViewQuoteLogModal viewQuotationsModal={viewQuotationsModal} setViewQuotationsModal={setViewQuotationsModal} />
     <ViewLineItemModal viewLineModal={viewLineModal} setViewLineModal={setViewLineModal} />
+    {/* <AddMaterialsUsed addMaterialsUsed={addMaterialsUsed} setAddMaterialsUsed={setAddMaterialsUsed}  /> */}
+
 
         <Nav tabs>
 
@@ -594,7 +564,7 @@ const ProjectEdit = () => {
             </Row> */}
             <Row>
               <Col md="3"><FormGroup><h3>Costing Summary</h3> </FormGroup></Col>
-              <Col md="2"><FormGroup><Label>Total Cost : <b>{getCostingSummary && getCostingSummary[0].of}</b></Label> </FormGroup></Col>
+              <Col md="2"><FormGroup><Label>Total Cost : test</Label> </FormGroup></Col>
               <Col md="2"><FormGroup><Label>PO Price (S$ W/o GST) : <b>{getCostingSummary && getCostingSummary[0].po_price}</b></Label> </FormGroup></Col>
               <Col md="3"><FormGroup><Label> Invoiced Price (S$ W/o GST) :</Label> </FormGroup></Col>
               <Col md="2"><FormGroup><Label>Profit Margin : <b>{getCostingSummary && getCostingSummary[0].profit_percentage}</b> %</Label> </FormGroup></Col>
@@ -670,7 +640,7 @@ const ProjectEdit = () => {
                 <FormGroup>
                 <Label> TOTAL COST </Label>
                 <br/>
-                <span>{getCostingSummary && getCostingSummary[0].of}</span>
+                <span>test</span>
                 </FormGroup>
             </Col>
             </Row>
@@ -680,15 +650,15 @@ const ProjectEdit = () => {
 
           <TabPane tabId="2">
 
-            <Row  className='mb-4'>
-              <Col md="3"> <Button color="primary" onClick={()=>{setViewQuotationsModal(true)}}>View Quote Log</Button></Col>
-            </Row>
-            <Row>
-              <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> Quotations </CardTitle>
-            </Row>
+              <Row>
+                  <Col md="3" className='mb-4 d-flex justify-content-between'>
+                    <h3>Quotations </h3> 
+                    <Button color="primary" onClick={()=>{setViewQuotationsModal(true)}}>View Quote Log</Button>
+                  </Col>
+              </Row>
 
-            <Form className='mt-4'>
-                <Row className='border-bottom mb-3'>
+            <Form>
+                <Row>
                   <Col><FormGroup><Label>Revision</Label> </FormGroup></Col>
                   <Col><FormGroup><Label>Quote Code</Label> </FormGroup></Col>
                   <Col><FormGroup><Label>Quote Date</Label> </FormGroup></Col>
@@ -700,9 +670,7 @@ const ProjectEdit = () => {
                 </Row>
                 <Row>
                 <Col>
-                  <FormGroup>
-                    <span>Cash</span>
-                  </FormGroup>
+                  <FormGroup></FormGroup>
                 </Col>
                 <Col>
                   <FormGroup>
@@ -752,25 +720,24 @@ const ProjectEdit = () => {
 
         <TabPane tabId="3">
 
-        <Row  className='mb-4'>
+        <Row>
+            {/* <Col md="3" className='mb-4 d-flex justify-content-between'> </Col> */}
+            <Col md="3"><FormGroup><h3>Materials Purchased </h3> </FormGroup></Col>
             <Col md="3"><Button color="primary" onClick={()=>{setAddPurchaseOrderModal(true)}}>Add Purchase Order</Button></Col>
             <Col md="3"><Button color="primary">Create Delivery Order</Button></Col>
             <Col md="3"><Button color="success">Add all Qty to Stock</Button></Col>
-          </Row>
-          <Row>
-            <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> Materials Purchased </CardTitle>
-          </Row>
+        </Row>
 
-        <Form className='mt-4'>
-          <Row className='border-bottom mb-3'>
-            <Col><FormGroup><Label>Title</Label> </FormGroup></Col>
-            <Col><FormGroup><Label>UoM</Label> </FormGroup></Col>
-            <Col><FormGroup><Label>Quantity</Label> </FormGroup></Col>
-            <Col><FormGroup><Label>Unit Price</Label> </FormGroup></Col>
+        {/* <Form>
+          <Row>
+            <Col><FormGroup><Label>Revision</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Quote Code</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Quote Date</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Quote Status</Label> </FormGroup></Col>
+            <Col md="1"><FormGroup><Label>Discount</Label> </FormGroup></Col>
             <Col md="1"><FormGroup><Label>Amount</Label> </FormGroup></Col>
-            <Col md="1"><FormGroup><Label>Status</Label> </FormGroup></Col>
-            <Col><FormGroup><Label></Label> Remarks</FormGroup></Col>
             <Col><FormGroup><Label></Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
           </Row>
           <Row>
           <Col>
@@ -803,9 +770,9 @@ const ProjectEdit = () => {
           </Col>
           <Col>
             <FormGroup>
-                <Label></Label>
+                <Label><u>View Line Items</u></Label>
 
-                {/* <Modal isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
+                <Modal isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
                       <ModalHeader toggle={viewLineToggle.bind(null)}>Line Items</ModalHeader>
                       <ModalBody>
                           <FormGroup>
@@ -831,14 +798,74 @@ const ProjectEdit = () => {
                       <ModalFooter>
                           <Button color="primary" onClick={viewLineToggle.bind(null)}>Submit</Button>
                       </ModalFooter>
-                  </Modal> */}
-
+                  </Modal>
             </FormGroup>
           </Col>
           <Col>
             <FormGroup>
               <Row>
-                <u>Transfer</u>
+
+                <Col md='4'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
+                <Col md='4'><Label><Link to=""><span ><Icon.Printer/></span></Link></Label></Col>
+                <Col md='4'><Label><Link to=""> <span><Icon.PlusCircle /></span> </Link></Label></Col>
+              </Row>
+            </FormGroup>
+          </Col>
+          </Row>
+        </Form> */}
+        </TabPane>
+
+
+        {/* Tab 4 */}
+
+        <TabPane tabId="4">
+
+        <Row>
+            {/* <Col md="3" className='mb-4 d-flex justify-content-between'> </Col> */}
+            <Col md="2"><FormGroup><h3> Materials used </h3> </FormGroup></Col>
+            <Col md="2"><Button color="primary">Print Pdf</Button></Col>
+            <Col md="3"><Button color="primary">Add materials used</Button></Col>
+        </Row>
+
+      <Form class="mt-5">
+          <Row>
+            <Col><FormGroup><Label>Description</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>UoM</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Quantity</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Remarks</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Status</Label> </FormGroup></Col>
+            <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
+          </Row>
+          <Row>
+          <Col>
+            <FormGroup></FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <span>test</span>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <Label>test</Label>
+            </FormGroup>
+          </Col>
+          <Col >
+            <FormGroup>
+                <Label>test</Label>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+                <Label>test</Label>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+              <Row>
+                <Col md='2'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
+                <Col md='2'><Label><Link to=""> <span><Icon.Eye /></span> </Link></Label></Col>
+                <Col md='8'><Label><Link to=""><span >Return To Stock</span></Link></Label></Col>
               </Row>
             </FormGroup>
           </Col>
@@ -846,535 +873,31 @@ const ProjectEdit = () => {
         </Form>
         </TabPane>
 
-
-        {/* Tab 4 */}
-
-        <TabPane tabId="4">
-            <MaterialsusedTab projectId={id}/>
-        </TabPane>
-
-      {/* Tab 5 */}
-
-      <TabPane tabId="5">
-
-      <Row>
-          <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> Materials Transferred From Other Projects </CardTitle>
-      </Row>
-
-      <Form className='mt-4'>
-      <Row className='border-bottom mb-3'>
-        <Col><FormGroup><Label>Ref Project</Label> </FormGroup></Col>
-        <Col><FormGroup><Label>Product</Label> </FormGroup></Col>
-        <Col><FormGroup><Label>Quantity</Label> </FormGroup></Col>
-        <Col><FormGroup><Label>Updated By</Label> </FormGroup></Col>
-      </Row>
-      <Row>
-        <Col>
-        <FormGroup></FormGroup>
-        </Col>
-        <Col>
-        <FormGroup>
-        <span>test</span>
-        </FormGroup>
-        </Col>
-        <Col>
-        <FormGroup>
-        <Label>test</Label>
-        </FormGroup>
-        </Col>
-        <Col >
-        <FormGroup>
-        <Label>test</Label>
-        </FormGroup>
-        </Col>
-      </Row>
-      </Form>
-      </TabPane>
-
-
-{/* Start Tab Content 6 */}
-      <TabPane tabId="6">
-          <Row  className='mb-4'>
-            <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">Delivery Order</CardTitle>
-          </Row>
-          <Form>
-                <Row className='border-bottom mb-3'>
-                  <Col><FormGroup><Label>Date</Label> </FormGroup></Col>
-                  <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
-                </Row>
-                {tabdeliveryorder && tabdeliveryorder.map((res)=>{
-                      return  <Row>
-                
-                    <Col>{res.date}</Col>
-                      <Col>
-                        <FormGroup>
-                            <Row>
-                              <Col md='1'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
-                              <Col md='1'><Label><Link to=""><span ><Icon.Printer/></span></Link></Label></Col>
-                            </Row>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    })
-                    
-                    }
-                
-          </Form>       
-      </TabPane>
-
-
-{/* Start Tab Content 7 */}
-
-      <TabPane tabId="7">
-
-      <Row  className='mb-4'>
-        <Col md="2"><Button color="primary">Add Work Order</Button></Col>
-      </Row>
-
-      <Row>
-          <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> Work Orders </CardTitle>
-      </Row>
-
-      <Form className='mt-4'>
-        <Row className='border-bottom mb-3'>
-          <Col><FormGroup><Label>WO Code</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Sub Con</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Status</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Due Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Completed Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Amount</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
-        </Row>
-        <Row>
-        <Col>
-          <FormGroup></FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <span>test</span>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-            <Row>
-              <Col md='2'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
-              <Col md='2'><Label><Link to=""> <span><Icon.Eye /></span> </Link></Label></Col>
-              <Col md='2'><Label><Link to=""><span ><Icon.PlusCircle /></span></Link></Label></Col>
-            </Row>
-          </FormGroup>
-        </Col>
-        </Row>
-      </Form>
-
-      <Row className='mt-4'>
-          <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> Payment History </CardTitle>
-      </Row>
-
-      <Form className='mt-4'>
-        <Row className='border-bottom mb-3'>
-          <Col><FormGroup><Label>Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>SubCon Name</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Amount</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Mode of Payment</Label> </FormGroup></Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormGroup></FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <span>test</span>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-        </Row>
-      </Form>
-
-      </TabPane>
-
-{/* Start Tab Content 8 */}
-
-      <TabPane tabId="8">
-
-          <Row  className='mb-4'>
-            <Col md="2"><Button color="primary">New PC</Button></Col>
-          </Row>
-
-          <Row>
-              <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> Claim </CardTitle>
-          </Row>
-
-          <Form className='mt-4'>
-            <Row className='border-bottom mb-3'>
-              <Col><FormGroup><Label>Code</Label> </FormGroup></Col>
-              <Col><FormGroup><Label>Date</Label> </FormGroup></Col>
-              <Col><FormGroup><Label>Title</Label> </FormGroup></Col>
-              <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
-              <Col><FormGroup><Label>Status</Label> </FormGroup></Col>
-              <Col><FormGroup><Label>Amount</Label> </FormGroup></Col>
-              <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
-            </Row>
-            <Row>
-            <Col>
-              <FormGroup></FormGroup>
-            </Col>
-            <Col>
-              <FormGroup>
-                  <span>test</span>
-              </FormGroup>
-            </Col>
-            <Col>
-              <FormGroup>
-                  <Label>test</Label>
-              </FormGroup>
-            </Col>
-            <Col>
-              <FormGroup>
-                  <Row>
-                    <Col md='2'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
-                  </Row>
-              </FormGroup>
-            </Col>
-            <Col>
-              <FormGroup>
-                  <Label>test</Label>
-              </FormGroup>
-            </Col>
-            <Col>
-              <FormGroup>
-                  <Label>test</Label>
-              </FormGroup>
-            </Col>
-            <Col>
-              <FormGroup>
-                <Row>
-                  <Col md='2'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
-                  <Col md='2'><Label><Link to=""> <span><Icon.Eye /></span> </Link></Label></Col>
-                </Row>
-              </FormGroup>
-            </Col>
-            </Row>
-          </Form>
-
-        <Row>
-            <Col xs="12" md="3">
-                <ComponentCard title="Claim Attachment">
-                    <Button color="primary" onClick={()=>{setClaimAttachmentModal(true)}}>
-                        Add
-                    </Button>
-                    <Modal isOpen={claimAttachmentModal}>
-                        <ModalHeader>Upload Media</ModalHeader>
-                        <ModalBody>
-                            <FormGroup>
-                                <Label htmlFor="exampleFile">Select Files</Label>
-                                <Input type="file" placeholder="" />
-                            </FormGroup>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="primary" onClick={()=>{setClaimAttachmentModal(false)}}>Upload</Button>
-                            <Button color="secondary" onClick={()=>{setClaimAttachmentModal(false)}}>Cancel</Button>
-                        </ModalFooter>
-                    </Modal>
-                </ComponentCard>
-            </Col>
-          </Row>
-
-      </TabPane>
-
-{/* Start Tab Content 9 */}
-
-<TabPane tabId="9">
-
-      <Row>
-          <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> FINANCE </CardTitle>
-      </Row>
-
-      <Row>
-        <Col lg="6">
-          <CardTitle tag="h4" className="border-bottom p-3 mb-0"> Account Receivables </CardTitle>
-            <Table bordered>
-              <thead>
-                <tr><th colSpan="3" className='bold'>Balance Receivables: $75,250.00</th></tr>
-                <tr>
-                  <th className='bold'>Description</th>
-                  <th className='bold'>Amount Invoiced</th>
-                  <th className='bold'>Amount Received</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Total Invoice Raised(Total PO Amount : )	</td>
-                  <td>$80,250.00	</td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>Total Payments Received	</td>
-                  <td></td>
-                  <td>$5000</td>
-                </tr>
-              </tbody>
-            </Table>
-        </Col>
-        <Col lg="6">
-          <CardTitle tag="h4" className="border-bottom p-3 mb-0"> Account Payables </CardTitle>
-            <Table bordered>
-              <thead>
-                <tr><th colSpan="3" className='bold'>Balance Payables : $1,637,681.00</th></tr>
-                <tr>
-                  <th className='bold'>Description</th>
-                  <th className='bold'>Invoice Received</th>
-                  <th className='bold'>Amount Paid</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Jacob</td>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                </tr>
-              </tbody>
-            </Table>
-        </Col>
-      </Row>
-
-
-      <Form className='mt-4'>
-        <Row className='border-bottom mb-3'>
-          <Col><FormGroup><Label>WO Code</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Sub Con</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Status</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Due Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Completed Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Amount</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Action</Label> </FormGroup></Col>
-        </Row>
-        <Row>
-        <Col>
-          <FormGroup></FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <span>test</span>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-              <Label>test</Label>
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-            <Row>
-              <Col md='2'><Label><Link to=""><span><Icon.Edit /></span></Link></Label></Col>
-              <Col md='2'><Label><Link to=""> <span><Icon.Eye /></span> </Link></Label></Col>
-              <Col md='2'><Label><Link to=""><span ><Icon.PlusCircle /></span></Link></Label></Col>
-            </Row>
-          </FormGroup>
-        </Col>
-        </Row>
-      </Form>
-
-
-      <Row  className='mb-4'>
-        <Col md="2"><Button color="primary">CREATE INVOICE</Button></Col>
-        <Col md="2"><Button color="primary">CREATE RECEIPT</Button></Col>
-      </Row>
-
-
-      <Row className='mt-4'>
-          <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> INVOICE(S) </CardTitle>
-      </Row>
-
-      <Form className='mt-4'>
-        <Row className='border-bottom mb-3'>
-          <Col><FormGroup><Label>Invoice Code</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Status</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Invoice Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Amount</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Print</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Edit</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Cancel</Label> </FormGroup></Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormGroup></FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <span>test</span>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-        </Row>
-      </Form>
-
-      <Row className='mt-4'>
-          <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> RECEIPT(S) </CardTitle>
-      </Row>
-
-      <Form className='mt-4'>
-        <Row className='border-bottom mb-3'>
-          <Col><FormGroup><Label>Receipt Code</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Status</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Receipt Date</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Mode of Payment</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Receipt Amount</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>View</Label> </FormGroup></Col>
-          <Col><FormGroup><Label>Cancel</Label> </FormGroup></Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormGroup></FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <span>test</span>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-                <Label>test</Label>
-            </FormGroup>
-          </Col>
-        </Row>
-      </Form>
-
-
-</TabPane>
-
 {/* Start Tab Content 10 */}
-
       <TabPane tabId="10">
-          <Row>
-            <Col xs="12" md="3">
-                <ComponentCard title="Attachments">
-                    <Button color="primary" onClick={attachmentToggle.bind(null)}>
-                        Add
-                    </Button>
-                    <Modal isOpen={attachmentModal} toggle={attachmentToggle.bind(null)}>
-                        <ModalHeader toggle={attachmentToggle.bind(null)}>Upload Media</ModalHeader>
-                        <ModalBody>
-                            <FormGroup>
-                                <Label htmlFor="exampleFile">Select Files</Label>
-                                <Input type="file" placeholder="" />
-                            </FormGroup>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="primary" onClick={attachmentToggle.bind(null)}>Upload</Button>
-                        </ModalFooter>
-                    </Modal>
-                </ComponentCard>
-            </Col>
-          </Row> 
+                <Row>
+                <Col xs="12" md="3">
+                    <ComponentCard title="Attachments">
+                        <Button color="primary" onClick={attachmentToggle.bind(null)}>
+                            Add
+                        </Button>
+                        <Modal isOpen={attachmentModal} toggle={attachmentToggle.bind(null)}>
+                            <ModalHeader toggle={attachmentToggle.bind(null)}>Upload Media</ModalHeader>
+                            <ModalBody>
+                                <FormGroup>
+                                    <Label htmlFor="exampleFile">Select Files</Label>
+                                    <Input type="file" placeholder="" />
+                                </FormGroup>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="primary" onClick={attachmentToggle.bind(null)}>Upload</Button>
+                            </ModalFooter>
+                        </Modal>
+                    </ComponentCard>
+                </Col>
+                </Row>
+               
       </TabPane>
-
 {/* End Tab Content 10 */}
 
         </TabContent>

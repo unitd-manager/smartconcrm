@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';
+import React,{useEffect} from 'react';
 import * as Icon from 'react-feather';
 import {Row,Col,Button } from 'reactstrap';
 import Swal from 'sweetalert2'
@@ -11,17 +11,24 @@ import "datatables.net-buttons/js/buttons.flash"
 import "datatables.net-buttons/js/buttons.html5"
 import "datatables.net-buttons/js/buttons.print"
 import { Link } from 'react-router-dom';
-import api from '../../constants/api';
-
+import { useDispatch,useSelector } from 'react-redux';
+// import api from '../../constants/api';
+import { getTenders,deleteTender } from '../../store/tender/tenderSlice';
 
 const Test = () => {
-    const [tenders,setTenders] = useState(null);
-    const getTenders = () =>{
-      api.get('/tender/getTenders')
-        .then((res)=> {
-            setTenders(res.data.data)
-            console.log(res.data.data)
-        })
+    // const [tendersdata,setTendersdata] = useState(null);
+    const dispatch=useDispatch();
+    const tenders =useSelector(state=>state.tender.tenders);
+    const getAllTenders = () =>{
+      // api.get('/tender/getTenders')
+      //   .then((res)=> {
+      //       setTenders(res.data.data)
+      //       console.log(res.data.data)
+      //   })
+
+      dispatch(getTenders());
+      // setTendersdata(tenders);
+      console.log(tenders);
     }
 
     useEffect(() => {
@@ -33,14 +40,18 @@ const Test = () => {
                       processing: true,
                       dom: 'Bfrtip',
                           buttons: ['csv', 'print'
-                          ]
+                          ],
+                        //   columnDefs: [
+                        //   { visible: false, targets: 1 }
+                        // ],
+    searching: true
                 }
             );
             } ,
             1000
             );
     
-        getTenders()
+        getAllTenders()
 
     }, [])
     
@@ -137,14 +148,15 @@ const Test = () => {
           confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
           if (result.isConfirmed) {
-            api.post('/tender/deleteTender',{opportunity_id:id}).then(res=>{
+            dispatch(deleteTender(id))
+           .then(res=>{
               console.log(res)
               Swal.fire(
                 'Deleted!',
                 'Your Tender has been deleted.',
                 'success'
               )
-              getTenders()
+              getAllTenders()
 
             })
           }
@@ -188,7 +200,7 @@ const Test = () => {
               </tr>
           </thead>
           <tbody>
-            {tenders && tenders.map(element=>{
+            {tenders&& tenders.map(element=>{
                 return (<tr key={element.title}>
                 <td>{element.opportunity_id}</td>
                 <td><Link to={`/TenderEdit/${element.opportunity_id}`} ><Icon.Edit2 /></Link></td>
@@ -203,13 +215,13 @@ const Test = () => {
                 </tr>)
             })}
           </tbody>
-          <tfoot>
+          {/* <tfoot>
           <tr>
                   {columns.map(cell=>{
                     return (<td key={cell.name}>{cell.name}</td>)
                   })}
               </tr>
-          </tfoot>
+          </tfoot> */}
       </table>
       </div>
     </div>)

@@ -1,14 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {Row,Col,Form,FormGroup,Label,Input,TabContent,TabPane,Nav, NavItem,NavLink,Button,Modal,
     ModalHeader,
     ModalBody,
     ModalFooter, } from 'reactstrap';
+import {useParams} from 'react-router-dom';
+import { useDispatch,useSelector } from 'react-redux';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import { getEmployee} from '../../store/employee/employeeSlice';
+import{getContactInformation} from '../../store/employee/contactInformationSlice';
+import {getEmergencyContact} from '../../store/employee/emergencyContactSlice';
+import {getEducationalQualification} from '../../store/employee/educationalQualificationSlice'
+import {getTabPassType} from '../../store/employee/tabPassTypeSlice';
+import {getJobInformationHistory} from '../../store/employee/jobInformationHistorySlice';
+import {getTrainingLinked} from '../../store/employee/trainingLinkedSlice';
+import message from '../../components/Message';
 
 const EmployeeDetailsData = () => {
 
     const [activeTab, setActiveTab] = useState('1');
+    const [employeeDetails, setEmployeeDetails] = useState ();
+    const [tabPassTypeDetails, setTabPassTypeDetails] = useState (null);
+    const [educationalQualificationDetails, setEducationalQualificationDetails] = useState (null);
+    const [contactInformationDetails, setContactInformationDetails] = useState (null);
+    const [emergencyContactDetails, setEmergencyContactDetails] = useState (null);
+    const [jobInformationHistoryDetails, setJobInformationHistoryDetails] = useState (null);
+    const [trainingLinkedDetails, setTrainingLinkedDetails] = useState (null);
+
+    // redux
+
+    const dispatch=useDispatch();
+    const employee=useSelector(state=>state.employee.employee);
+    const tabPassType=useSelector(state=>state.tabPassType.tabPassType);
+    const educationalQualification=useSelector(state=>state.educationalQualification.educationalQualification);
+    const contactInformation=useSelector(state=>state.contactInformation.contactInformation);
+    const emergencyContact=useSelector(state=>state.emergencyContact.emergencyContact);
+    const jobInformationHistory=useSelector(state=>state.jobInformationHistory.jobInformationHistory);
+    const trainingLinked=useSelector(state=>state.trainingLinked.trainingLinked);
+    const {id}=useParams();
 
     const toggle = (tab) => {
       if (activeTab !== tab) setActiveTab(tab);
@@ -34,7 +63,79 @@ const EmployeeDetailsData = () => {
       const toggle4 = () => {
         setModal4(!modal4);
       };
+
+      const handleInputChange=(e)=>{
+        setEmployeeDetails({...employee, [e.target.name]:e.target.value })
+      }
+      const handleEcInputs=(e)=>{
+        setEmergencyContactDetails({...emergencyContactDetails, [e.target.name]:e.target.value}, )
+      }
+      const handleCiInputs=(e)=>{
+        setContactInformationDetails({...contactInformationDetails, [e.target.name]:e.target.value}, )
+      }
+      const handleEduInputs=(e)=>{
+        setEducationalQualificationDetails({...educationalQualificationDetails, [e.target.name]:e.target.value}, )
+      }
       
+     const getemployeeData=()=>{
+        dispatch(getEmployee(id))
+        .then(()=>{setEmployeeDetails(employee);
+        console.log(employeeDetails)
+     }).catch(()=>message('no employee data'));
+        
+      }
+      const gettabPassTypeData=()=>{
+        dispatch(getTabPassType(id));
+        setTabPassTypeDetails(tabPassType);
+      }
+      const geteducationalQualificationData=()=>{
+        dispatch(getEducationalQualification(id));
+        setEducationalQualificationDetails(educationalQualification);
+      }
+      const getcontactInformationData=()=>{
+        dispatch(getContactInformation(id));
+        setContactInformationDetails(contactInformation);
+      }
+      const getemergencyContactData=()=>{
+        dispatch(getEmergencyContact(id));
+        setEmergencyContactDetails(emergencyContact);
+      }
+      const getjobInformationHistoryData=()=>{
+        dispatch(getJobInformationHistory(id));
+        setJobInformationHistoryDetails(jobInformationHistory);
+      }
+      const gettrainingLinkedData=()=>{
+        dispatch(getTrainingLinked(id));
+        setTrainingLinkedDetails(trainingLinked);
+      }
+
+    //   const editEmployeeData = () =>
+    // {
+    //   // api.post('/tender/edit-Tenders',tenderDetails)
+    //   dispatch(updateEmployee(employeeDetails)).then(()=> {
+        
+    //     message('Record editted successfully','success')
+    //     setTimeout(() => {
+    //       window.location.reload()
+    //     }, 300);
+
+    //   })
+    //     .catch(() => {
+    //       message('Unable to edit record.','error')
+    //     })
+    // }
+
+
+      useEffect(()=>{
+        getemployeeData();
+        getcontactInformationData();
+        geteducationalQualificationData();
+        getemergencyContactData();
+        getjobInformationHistoryData();
+        gettabPassTypeData();
+        gettrainingLinkedData();
+      },[id])
+
   return (
     <>
     <BreadCrumbs />
@@ -55,19 +156,19 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Code</Label>
-                        <Input type="text" placeholder='EMP-1002'/>
+                        <Input name="emp_code" defaultValue={employee && employee.emp_code} onChange={handleInputChange} type="text" placeholder='EMP-1002'/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Full Name *</Label>
-                        <Input type="text"  />
+                        <Input name="first_name" defaultValue={employee && employee.first_name} onChange={handleInputChange} type="text"  />
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Salutation</Label>
-                        <Input type="select">
+                        <Input name="salutation" defaultValue={employee && employee.salutation} onChange={handleInputChange} type="select">
                             <option value="">Please Select</option>
                             <option value="Mr">Mr</option>
                             <option selected="selected" value="Mrs">Mrs</option>
@@ -78,7 +179,7 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Gender *</Label>
-                        <Input type="select">
+                        <Input name="gender" defaultValue={employee && employee.gender} onChange={handleInputChange} type="select">
                             <option value="">Please Select</option>
                             <option selected="selected" value="Female">Female</option>
                             <option value="Male">Male</option>
@@ -90,7 +191,7 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Status</Label>
-                        <Input type="select">
+                        <Input name="status" defaultValue={employee && employee.status} onChange={handleInputChange} type="select">
                             <option value="Archive">Archive</option>
                             <option selected="selected" value="Current">Current</option>
                             <option value="Cancel">Cancel</option>
@@ -100,19 +201,19 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Date of Birth *</Label>
-                        <Input type="date"/>
+                        <Input name="date_of_birth" defaultValue={employee && employee.date_of_birth} onChange={handleInputChange} type="date"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Passport No</Label>
-                        <Input type="text"/>
+                        <Input name="passport" defaultValue={employee && employee.passport} onChange={handleInputChange} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Passport Expiry</Label>
-                            <Input type="date"/>
+                            <Input name="date_of_expiry" defaultValue={employee && employee.date_of_expiry} onChange={handleInputChange} type="date"/>
                         </FormGroup>
                     </Col>
                     </Row>
@@ -120,7 +221,7 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Marital Status</Label>
-                        <Input type="select">
+                        <Input name="marital_status" defaultValue={employee && employee.marital_status} onChange={handleInputChange} type="select">
                             <option value="">Please Select</option>
                             <option selected="selected" value="Married">Married</option>
                             <option value="Single">Single</option>
@@ -130,7 +231,7 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Nationality *</Label>
-                        <Input type="select">
+                        <Input name="nationality" defaultValue={employee && employee.nationality} onChange={handleInputChange} type="select">
                             <option value="">Please Select</option>
                             <option value="AFGHAN">AFGHAN</option>
                             <option value="ALBANIAN">ALBANIAN</option>
@@ -404,7 +505,7 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Race</Label>
-                        <Input type="select">
+                        <Input name="race" defaultValue={employee && employee.race} onChange={handleInputChange} type="select">
                             <option value="">Please Select</option>
                             <option value="AFGHAN">AFGHAN</option>
                             <option value="ALBANIAN">ALBANIAN</option>
@@ -677,7 +778,7 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Religion</Label>
-                        <Input type="select">
+                        <Input name="religion" defaultValue={employee && employee.religion} onChange={handleInputChange} type="select">
                             <option value="">Please Select</option>
                             <option value="BUDDHIST">BUDDHIST</option>
                             <option value="CHRISTIAN">CHRISTIAN</option>
@@ -691,7 +792,7 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Project Designation</Label>
-                        <Input type="select">
+                        <Input name="project_designation" defaultValue={employee && employee.project_designation} onChange={handleInputChange} type="select">
                             <option value="">Please Select</option>
                             <option selected="selected" value="Employee">Employee</option>
                             <option value="Manager">Manager</option>
@@ -702,7 +803,7 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Team</Label>
-                        <Input type="select">
+                        <Input name="team" defaultValue={employee && employee.team} onChange={handleInputChange} type="select">
                             <option value="">Please Select</option>
                             <option selected="selected" value="Team A">Team A</option>
                             <option value="Team B">Team B</option>
@@ -712,25 +813,26 @@ const EmployeeDetailsData = () => {
 
                         </FormGroup>
                     </Col>
+
                     <Col md="3">
                     <Label>Project manager</Label>
                         <FormGroup check>
-                          <Input name="radio1" type="radio" />{' '}
+                          <Input defaultValue={employee && employee} onChange={handleInputChange} name="radio1" type="radio" />{' '}
                           <Label check>Yes</Label>
                         </FormGroup>
                         <FormGroup check>
-                            <Input name="radio1" type="radio" />{' '}
+                            <Input defaultValue={employee && employee} onChange={handleInputChange} name="radio1" type="radio" />{' '}
                             <Label check> No </Label>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                     <Label>Admin Staff</Label>
                         <FormGroup check>
-                          <Input name="radio1" type="radio" />{' '}
+                          <Input defaultValue={employee && employee} onChange={handleInputChange} name="radio1" type="radio" />{' '}
                           <Label check>Yes</Label>
                         </FormGroup>
                         <FormGroup check>
-                            <Input name="radio1" type="radio" />{' '}
+                            <Input defaultValue={employee && employee} onChange={handleInputChange} name="radio1" type="radio" />{' '}
                             <Label check> No </Label>
                         </FormGroup>
                     </Col>
@@ -739,7 +841,7 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Employee Type</Label>
-                        <Input type="select">
+                        <Input name="" defaultValue={employee && employee} onChange={handleInputChange} type="select">
                             <option value="">Please Select</option>
                             <option selected="selected" value="Employee">Please Select</option>
                             <option value="In house">In house</option>
@@ -750,7 +852,7 @@ const EmployeeDetailsData = () => {
                     </Row>
                     <Row>
                     <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-                        <Button type="submit" className="btn btn-success mr-2">
+                        <Button type="submit" className="btn btn-success mr-2" >
                         Save & Continue
                         </Button>
                         <Button type="submit" className="btn btn-dark">
@@ -841,19 +943,19 @@ const EmployeeDetailsData = () => {
             <Col md="3">
                 <FormGroup>
                 <Label>Login Email</Label>
-                <Input type="email"/>
+                <Input name="login_email" defaultValue={employee && employee.login_email} onChange={handleInputChange} type="email"/>
                 </FormGroup>
             </Col>
             <Col md="3">
                 <FormGroup>
                 <Label>Password</Label>
-                <Input type="password"/>
+                <Input name="login_pass_word" defaultValue={employee && employee.login_pass_word} onChange={handleInputChange} type="password"/>
                 </FormGroup>
             </Col>
             <Col md="3">
                 <FormGroup>
                 <Label>User Group</Label>
-                <Input type="select">
+                <Input name="staff_user_group_id" defaultValue={employee && employee} onChange={handleInputChange} type="select">
                     <option value="2">Tender</option>
                     <option value="3">HR</option>
                     <option value="4">Admin and Purchase</option>
@@ -870,11 +972,11 @@ const EmployeeDetailsData = () => {
             <Col md="3">
             <Label>Published</Label>
                 <FormGroup check>
-                    <Input name="radio1" type="radio" />{' '}
+                    <Input name="staff_published" defaultValue={employee && employee.staff_published} onChange={handleInputChange}  type="radio" />{' '}
                     <Label check>Yes</Label>
                 </FormGroup>
                 <FormGroup check>
-                    <Input name="radio1" type="radio" />{' '}
+                    <Input name="staff_published" defaultValue={employee && employee.staff_published} onChange={handleInputChange}  type="radio" />{' '}
                     <Label check> No </Label>
                 </FormGroup>
             </Col>
@@ -885,7 +987,7 @@ const EmployeeDetailsData = () => {
             <Col md="6">
                 <FormGroup>
                 <Label>Pass Type *</Label>
-                <Input type="select">
+                <Input name="citizen" value={tabPassTypeDetails && tabPassTypeDetails.citizen} type="select">
                     <option value="">Please Select</option>
                     <option selected="selected" value="Citizen">Citizen</option>
                     <option value="PR">PR</option>
@@ -899,7 +1001,7 @@ const EmployeeDetailsData = () => {
             <Col md="6">
                 <FormGroup>
                 <Label>NRIC No *</Label>
-                <Input type="text"/>
+                <Input name="nric_no" value={tabPassTypeDetails && tabPassTypeDetails.nric_no} type="text"/>
                 </FormGroup>
             </Col>
             </Row>
@@ -909,7 +1011,7 @@ const EmployeeDetailsData = () => {
                     <Col md="4">
                         <FormGroup>
                         <Label>Qualification 1</Label>
-                        <Input type="select">
+                        <Input name="educational_qualitifcation1" value={educationalQualificationDetails && educationalQualificationDetails.educational_qualitifcation1} onChange={handleEduInputs} type="select">
                             <option value="Archive" selected="selected">Please Select</option>
                         </Input>
                         </FormGroup>
@@ -917,21 +1019,21 @@ const EmployeeDetailsData = () => {
                     <Col md="4">
                         <FormGroup>
                         <Label>Degree</Label>
-                        <Input type="text"/>
+                        <Input name="degree1" value={educationalQualificationDetails && educationalQualificationDetails.degree1} onChange={handleEduInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="4">
                         <FormGroup>
                         <Label>Year of completion</Label>
-                        <Input type="date"/>
+                        <Input name="year_of_completion1" value={educationalQualificationDetails && educationalQualificationDetails.year_of_completion1} onChange={handleEduInputs} type="date"/>
                         </FormGroup>
                     </Col>
                 </Row>
                 <Row>
                     <Col md="4">
                         <FormGroup>
-                        <Label>Qualification 1</Label>
-                        <Input type="select">
+                        <Label>Qualification 2</Label>
+                        <Input name="educational_qualitifcation2" value={educationalQualificationDetails && educationalQualificationDetails.educational_qualitifcation2} onChange={handleEduInputs} type="select">
                             <option value="Archive" selected="selected">Please Select</option>
                         </Input>
                         </FormGroup>
@@ -939,21 +1041,21 @@ const EmployeeDetailsData = () => {
                     <Col md="4">
                         <FormGroup>
                         <Label>Degree</Label>
-                        <Input type="text"/>
+                        <Input name="degree2" value={educationalQualificationDetails && educationalQualificationDetails.degree2} onChange={handleEduInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="4">
                         <FormGroup>
                         <Label>Year of completion</Label>
-                        <Input type="date"/>
+                        <Input name="year_of_completion2" value={educationalQualificationDetails && educationalQualificationDetails.year_of_completion2} onChange={handleEduInputs} type="date"/>
                         </FormGroup>
                     </Col>
                 </Row>
                 <Row>
                     <Col md="4">
                         <FormGroup>
-                        <Label>Qualification 1</Label>
-                        <Input type="select">
+                        <Label>Qualification 3</Label>
+                        <Input name="educational_qualitifcation1" value={educationalQualificationDetails && educationalQualificationDetails.educational_qualitifcation3} onChange={handleEduInputs} type="select">
                             <option value="Archive" selected="selected">Please Select</option>
                         </Input>
                         </FormGroup>
@@ -961,13 +1063,13 @@ const EmployeeDetailsData = () => {
                     <Col md="4">
                         <FormGroup>
                         <Label>Degree</Label>
-                        <Input type="text"/>
+                        <Input name="degree3" value={educationalQualificationDetails && educationalQualificationDetails.degree3} onChange={handleEduInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="4">
                         <FormGroup>
                         <Label>Year of completion</Label>
-                        <Input type="date"/>
+                        <Input name="year_of_completion3" value={educationalQualificationDetails && educationalQualificationDetails.year_of_completion3} onChange={handleEduInputs} type="date"/>
                         </FormGroup>
                     </Col>
                 </Row>
@@ -978,25 +1080,25 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Address 1</Label>
-                        <Input type="text"/>
+                        <Input name="address_area" value={contactInformationDetails && contactInformationDetails.address_area} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Address 2</Label>
-                        <Input type="text"/>
+                        <Input name="address_street" value={contactInformationDetails && contactInformationDetails.address_street} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Postal Code</Label>
-                        <Input type="text"/>
+                        <Input name="address_po_code" value={contactInformationDetails && contactInformationDetails.address_po_code} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Country</Label>
-                        <Input type="text"/>
+                        <Input name="address_country1" value={contactInformationDetails && contactInformationDetails.address_country1} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                 </Row>
@@ -1004,19 +1106,19 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>HP/Mobile No.</Label>
-                        <Input type="text"/>
+                        <Input name="mobile" value={contactInformationDetails && contactInformationDetails.mobile} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Alternate Contact number</Label>
-                        <Input type="text"/>
+                        <Input name="phone" value={contactInformationDetails && contactInformationDetails.phone} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Email</Label>
-                        <Input type="email"/>
+                        <Input name="email" value={contactInformationDetails && contactInformationDetails.email} onChange={handleCiInputs} type="email"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
@@ -1032,25 +1134,25 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Address 1</Label>
-                        <Input type="text"/>
+                        <Input name="foreign_addrs_area" value={contactInformationDetails && contactInformationDetails.foreign_addrs_area} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Address 2</Label>
-                        <Input type="text"/>
+                        <Input name="foreign_addrs_street" value={contactInformationDetails && contactInformationDetails.foreign_addrs_street} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Postal Code</Label>
-                        <Input type="text"/>
+                        <Input name="foreign_addrs_postal_code" value={contactInformationDetails && contactInformationDetails.foreign_addrs_postal_code} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Country</Label>
-                        <Input type="text"/>
+                        <Input name="foreign_addrs_country" value={contactInformationDetails && contactInformationDetails.foreign_addrs_country} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                 </Row>
@@ -1058,19 +1160,19 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>HP/Mobile No.</Label>
-                        <Input type="text"/>
+                        <Input name="foreign_mobile" value={contactInformationDetails && contactInformationDetails.foreign_mobile} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Alternate Contact number</Label>
-                        <Input type="text"/>
+                        <Input name="phone_direct" value={contactInformationDetails && contactInformationDetails.phone_direct} onChange={handleCiInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Email</Label>
-                        <Input type="email"/>
+                        <Input name="foreign_email" value={contactInformationDetails && contactInformationDetails.foreign_email} onChange={handleCiInputs} type="email"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
@@ -1087,25 +1189,25 @@ const EmployeeDetailsData = () => {
                     <Col md="3">
                         <FormGroup>
                         <Label>Name</Label>
-                        <Input type="text"/>
+                        <Input name="emergency_contact_name" value={emergencyContactDetails && emergencyContactDetails.emergency_contact_name} onChange={handleEcInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Phone 1</Label>
-                        <Input type="text"/>
+                        <Input name="emergency_contact_phone" value={emergencyContactDetails && emergencyContactDetails.emergency_contact_phone} onChange={handleEcInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Phone 2</Label>
-                        <Input type="text"/>
+                        <Input name="emergency_contact_phone2" value={emergencyContactDetails && emergencyContactDetails.emergency_contact_phone2} onChange={handleEcInputs} type="text"/>
                         </FormGroup>
                     </Col>
                     <Col md="3">
                         <FormGroup>
                         <Label>Address</Label>
-                        <Input type="text"/>
+                        <Input name="emergency_contact_address" value={emergencyContactDetails && emergencyContactDetails.address} onChange={handleEcInputs} type="text"/>
                         </FormGroup>
                     </Col>
                 </Row>
@@ -1191,7 +1293,8 @@ const EmployeeDetailsData = () => {
                 </Row>
           </TabPane>
           <TabPane tabId="7">
-               
+               <Col>{jobInformationHistoryDetails}</Col>
+               <Col>{trainingLinkedDetails}</Col>
           </TabPane>
         </TabContent>
       </ComponentCard>

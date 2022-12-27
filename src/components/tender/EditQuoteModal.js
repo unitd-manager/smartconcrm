@@ -3,10 +3,13 @@ import { Row,Col,FormGroup,Input,Button,Modal,ModalHeader,ModalBody,Label,Form} 
 import { Editor } from 'react-draft-wysiwyg';
 import PropTypes from 'prop-types'
 // import message from '../Message';
+
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import {EditorState, convertToRaw, ContentState } from 'draft-js';
-import api from '../../constants/api';
+import { useDispatch,useSelector } from 'react-redux';
+import { updateQuote } from '../../store/tender/quoteSlice';
+// import api from '../../constants/api';
 import message from '../Message';
 
 const ComponentCard = React.lazy(() => import('../ComponentCard'))
@@ -20,19 +23,25 @@ const EditQuoteModal = ({editQuoteModal,setEditQuoteModal,existingQuote}) =>
         existingQuote: PropTypes.object,
       }
 
-    //   Get Quote Edited Value
-    const [quoteData, setQuoteData] = useState(existingQuote);
-    const [conditions, setConditions] = useState('')
-    const [lineItem, setLineItem] = useState('')
+       //redux
+    const dispatch=useDispatch();
+    const quote=useSelector(state=>state.quote.quote)
+    const lineitem=useSelector(state=>state.lineItem.lineItem)
 
+    //   Get Quote Edited Value
+    const [quoteData, setQuoteData] = useState(quote);
+    const [conditions, setConditions] = useState('')
+    const [lineItem, setLineItem] = useState(lineitem)
+    
+   
       const handleData = (e) => {
         setQuoteData({...quoteData, [e.target.name]:e.target.value});
       }
      
     const GetEditQuote = () => {
 
-        api.post('/tender/edit-TabQuote',quoteData)
-        .then((res)=> {
+        // api.post('/tender/edit-TabQuote',quoteData)
+        dispatch(updateQuote(quoteData)).then((res)=> {
           console.log('edit quote',res.data.data)
             message('Quote Edited Successfully.','success')
             window.location.reload()
@@ -191,7 +200,7 @@ const EditQuoteModal = ({editQuoteModal,setEditQuoteModal,existingQuote}) =>
                             editorClassName="demo-editor border mb-4 edi-height"
                             onEditorStateChange={(e)=>{
                                 handleDataEditor(e,'intro_drawing_quote')
-                                setLineItem(e)
+                                // setLineItem(e)
                             }}
                         />
                         <Row>

@@ -9,7 +9,7 @@ import '../form-editor/editor.scss'
 
 import pdfMake from "pdfmake"
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-
+import { useDispatch,useSelector } from 'react-redux';
 import EditCostingSummaryModal from '../../components/tender/EditCostingSummaryModal';
 import ViewQuoteLogModal from '../../components/tender/ViewQuoteLogModal';
 import AddLineItemModal from '../../components/tender/AddLineItemModal';
@@ -18,19 +18,35 @@ import EditLineItemModal from '../../components/tender/EditLineItemModal';
 // import GeneratePDFPrint from '../../components/tender/GeneratePDFPrint';
 // import ViewLineItemModal from '../../components/tender/ViewLineItemModal';
 import AttachmentModal from '../../components/tender/AttachmentModal';
+
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
+import {  getTender, updateTender } from '../../store/tender/tenderSlice';
+import { getCostingSummary } from '../../store/tender/costingSummarySlice';
+import { getQuote,deleteQuote} from '../../store/tender/quoteSlice';
+import { getLineItems} from '../../store/tender/lineItemSlice';
+import { getContacts,createContact} from '../../store/tender/contactSlice';
+import { getCompanies,createCompany } from '../../store/tender/companySlice';
 
 
 const TenderEdit = () => {
 
     const [activeTab, setActiveTab] = useState('1');
-    const [costingsummary,setCostingSummary] = useState(null);
-    const [quote,setQuote] = useState(null);
-    const [lineItem, setLineItem] = useState(null);
+    // const [costingsummary,setCostingSummary] = useState(null);
+    // const [quote,setQuote] = useState(null);
+    // const [lineItem, setLineItem] = useState(null);
     const [tenderDetails, setTenderDetails] = useState()
+
+    //redux
+    const dispatch=useDispatch();
+    const {tender}=useSelector(state=>state.tender);
+    const costingsummary=useSelector(state=>state.costingSummary.costingSummary);
+    const contact=useSelector(state=>state.contact.contacts)
+    const company=useSelector(state=>state.company.companies)
+    const lineItem=useSelector(state=>state.lineItem.lineItems)
+    const {quote}=useSelector(state=>state.quote)
 
     const toggle = (tab) => {
       if (activeTab !== tab) setActiveTab(tab);
@@ -47,8 +63,8 @@ const TenderEdit = () => {
     const [getFile, setGetFile] = React.useState(null);
 
     // const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
-    const [contact, setContact] = useState();
-    const [company, setCompany] = useState();
+    // const [contact, setContact] = useState();
+    // const [company, setCompany] = useState();
     const [incharge, setIncharge] = useState();
     const [selectedCompany, setSelectedCompany] = useState()
     const [addLineItemModal, setAddLineItemModal] = useState(false);
@@ -70,36 +86,41 @@ const TenderEdit = () => {
     // Get Costing Summary Data
     const getCostingbySummary = () =>
     {
-      api.post('/tender/getCostingSummaryById',{opportunity_id:id})
-      .then((res)=> {
-          setCostingSummary(res.data.data)
+      // api.post('/tender/getCostingSummaryById',{opportunity_id:id})
+      try{
+      dispatch(getCostingSummary(id))
+          // setCostingSummary(costingSummaryfromstore)
           //seteditCostingSummaryData(res.data.data)
-          console.log('costing summary',res.data.data)
-      }).catch(()=>{
+          console.log('costing summary',costingsummary)
+      }
+      catch(error){
         message("Costing Summary not found","info")
-      })
+      }
     }
 
     // Get Company Data
      const getCompany = () =>{
-      api.get('/company/getCompany')
-      .then((res)=> {
-        setCompany(res.data.data)
-      }).catch(()=>{
+      // api.get('/company/getCompany')
+      try{
+      dispatch(getCompanies())
+        // setCompany(companyfromstore)
+      }
+      catch(error){
         message("Company not found","info")
-      })
+      }
     }
 
     // Get Quote By Id
-     const getQuote = () =>
+     const getquote = () =>
      {
-        api.post('/tender/getQuoteById',{opportunity_id:id})
-        .then((res)=> {
-          setQuote(res.data.data[0])
-          console.log(res)  
-        }).catch(() => {
+        // api.post('/tender/getQuoteById',{opportunity_id:id})
+        try{
+          dispatch(getQuote(id))
+          
+        }
+        catch(error){
           message("Quote not found","info")
-        })
+        }
      }
 
 
@@ -131,31 +152,33 @@ const TenderEdit = () => {
         if(companyInsertData.company_name !== '' && 
         companyInsertData.phone !== '' && 
         companyInsertData.address_country !== ''){
-          api.post('/company/insertCompany',companyInsertData)
-          .then(()=> {
+          // api.post('/company/insertCompany',companyInsertData)
+          try{
+         dispatch(createCompany(companyInsertData))
           message('Company inserted successfully.','success')
             toggle()
             getCompany()
-          })
-          .catch(() => {
+          }
+          catch(error){
             message('Network connection error.','error')
-          })
+          }
         }else{
           message('Please fill all required fields.','error')
         }
         
       }
 
-     const getContact = (companyId) =>{
+     const getcontact = (companyId) =>{
+      try{
         setSelectedCompany(companyId)
-        api.post('/company/getContactByCompanyId',{company_id:companyId})
-        .then((res)=> {
-          setContact(res.data.data)
-        })
-        .catch(() => {
-          setContact([])
+        // api.post('/company/getcontactByCompanyId',{company_id:companyId})
+        dispatch(getContacts(companyId))
+        
+        }
+        catch(error){
+          // setContact([])
           message('No contacts found','info')
-        })
+        }
       }
 
       // Get Incharge
@@ -174,14 +197,16 @@ const TenderEdit = () => {
 
      const editTenderById = () =>
      {
-        api.post('/tender/getTendersById',{opportunity_id:id})
-        .then((res)=> {
-            setTenderDetails(res.data.data)
-            getContact(res.data.data.company_id)
-        })
-       .catch(() => {
+        // api.post('/tender/getTendersById',{opportunity_id:id})
+
+      try{
+        dispatch(getTender(id))
+            setTenderDetails(tender)
+            getcontact(tender.company_id)
+        }
+       catch(error) {
          message("Tender Data Not Found",'info')
-        })
+        }
      }
     
      const handleInputs = (e) => {
@@ -192,8 +217,8 @@ const TenderEdit = () => {
     
     const editTenderData = () =>
     {
-      api.post('/tender/edit-Tenders',tenderDetails)
-      .then(()=> {
+      // api.post('/tender/edit-Tenders',tenderDetails)
+      dispatch(updateTender(tenderDetails)).then(()=> {
         
         message('Record editted successfully','success')
         setTimeout(() => {
@@ -230,9 +255,9 @@ const TenderEdit = () => {
       && newDataWithCompanyId.position !== '' && newDataWithCompanyId.department !== '' && newDataWithCompanyId.phone_direct !== '' 
       && newDataWithCompanyId.fax !== '' && newDataWithCompanyId.mobile !== '' ){
 
-        api.post('/tender/insertContact',newDataWithCompanyId)
-        .then(()=> {
-          getContact(newDataWithCompanyId.company_id)
+        // api.post('/tender/insertContact',newDataWithCompanyId)
+        dispatch(createContact(newDataWithCompanyId)).then(()=> {
+          getcontact(newDataWithCompanyId.company_id)
           message("Contact Inserted Successfully",'success')
           window.location.reload();
         }).catch(()=>{
@@ -245,11 +270,10 @@ const TenderEdit = () => {
     }
 
     // Get Line Item 
-    const getLineItem = (quotationId) => {
-      api.post('/tender/getQuoteLineItemsById',{quote_id:quotationId})
-      .then((res)=> {
-          setLineItem(res.data.data)
-          console.log(res)
+    const getlineItem = (quotationId) => {
+      // api.post('/tender/getQuoteLineItemsById',{quote_id:quotationId})
+     dispatch(getLineItems(quotationId)).then(()=> {
+          // setLineItem(lineitemfromstore)
           setViewLineModal(true);
       }).catch(()=>{
         message("Line Items not found","info")
@@ -268,7 +292,8 @@ const TenderEdit = () => {
         confirmButtonText: 'Yes, delete it!'
       }).then((result) => {
         if (result.isConfirmed) {
-          api.post('tender/deleteQuoteItems',{quote_items_id:quoteItemsId}).then((res)=>{
+          // api.post('tender/deleteQuoteItems',{quote_items_id:quoteItemsId})
+          dispatch(deleteQuote(quoteItemsId)).then((res)=>{
             console.log(res)
             Swal.fire(
               'Deleted!',
@@ -288,7 +313,7 @@ const TenderEdit = () => {
        const getFiles = () => {
         api.get('/file/getFileList')
         .then((res)=>{
-          setGetFile(res.data);
+          setGetFile(res.data.reverse());
            console.log("Uploaded File",res.data)
         })
     }
@@ -296,13 +321,16 @@ const TenderEdit = () => {
       useEffect(()=>{
         getCostingbySummary();
         editTenderById();
-        getQuote();
+        
         getIncharge();
         getCompany();
         getFiles();
-        console.log(lineItem)
-      },[id])
+      },[tender])
+useEffect(()=>{
+  getquote();
+ 
 
+},[quote]);
       //Open PDF
       const makePdf = (data) =>{
         let total = 0;
@@ -680,7 +708,7 @@ const TenderEdit = () => {
     <BreadCrumbs heading={tenderDetails && tenderDetails.title} />
 
         <Form >
-          <FormGroup>
+        <FormGroup>
           <ComponentCard title={`Key Details | Code: ${tenderDetails && tenderDetails.opportunity_code}`}>
               <Row>
               <Col md="3">
@@ -700,7 +728,7 @@ const TenderEdit = () => {
                   <Label>Company Name (OR) <Link to="" color="primary" onClick={()=>{setAddCompanyModal(true)}}><b><u>Add New Company</u></b></Link></Label>
                   <Input type="select" onChange={(e)=> {
                     handleInputs(e)
-                    getContact(e.target.value)
+                    getcontact(e.target.value)
                   }} 
                     value={tenderDetails && tenderDetails.company_id} 
                     name="company_id">
@@ -1529,7 +1557,7 @@ const TenderEdit = () => {
                 <Col>
                   <FormGroup>
                       <Label><u onClick={ () => {
-                          getLineItem(quote.quote_id)
+                          getlineItem(quote.quote_id)
                       }
                       }>View Line Items</u></Label>
 
@@ -1626,9 +1654,7 @@ const TenderEdit = () => {
                {getFile ? getFile.map(res=>{
                         return (
                           <>
-                          {/* <img src={res.url} alt="logos" width="200px" height="150px"/> */}
-                            <p><a href={res.url} target="_blank" rel="noreferrer">{res.name}</a></p>
-                            {/* <p>URL = {res.url}</a></p> */}
+                            <a href={res.url}>{res.name}</a><br></br>
                         </>
                         )
                     }) : (<p>no files uploaded yet</p>)}

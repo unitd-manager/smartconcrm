@@ -6,10 +6,48 @@ import ContactsReducer from './apps/contacts/ContactSlice';
 import EmailReducer from './apps/email/EmailSlice';
 import TicketReducer from './apps/ticket/TicketSlice';
 import userReducer from './auth/userSlice';
+import tenderReducer from './tender/tenderSlice';
+import companyReducer from './tender/companySlice';
+import contactReducer from './tender/contactSlice';
+import costingSummaryReducer from './tender/costingSummarySlice';
+import lineItemReducer from './tender/lineItemSlice';
+import quoteReducer from './tender/quoteSlice';
+import inventoryReducer from './inventory/inventorySlice';
+import adjustStockReducer from './inventory/adjustStockSlice';
+import productReducer from './product/productSlice';
+import payrollManagementReducer from './payrollManagement/payrollManagementSlice';
+import employeeReducer from './employee/employeeSlice';
+import tabPassTypeReducer from './employee/tabPassTypeSlice';
+import tabPurchaseOrderLinkedReducer from './inventory/tabPurchaseOrderLinkedSlice';
+import tabProjectLinkedReducer from './inventory/tabProjectLinkedSlice';
+import educationalQualificationReducer from './employee/educationalQualificationSlice';
+import contactInformationReducer from './employee/contactInformationSlice';
+import emergencyContactReducer from './employee/emergencyContactSlice';
+import jobInformationHistoryReducer from './employee/jobInformationHistorySlice';
+import trainingLinkedReducer from './employee/trainingLinkedSlice';
 
 export const store = configureStore({
   reducer: {
     user:userReducer,
+    tender:tenderReducer,
+    product:productReducer,
+    inventory:inventoryReducer,
+    adjustStock:adjustStockReducer,
+    employee:employeeReducer,
+    tabPassType:tabPassTypeReducer,
+    educationalQualification:educationalQualificationReducer,
+    contactInformation:contactInformationReducer,
+    emergencyContact:emergencyContactReducer,
+    jobInformationHistory:jobInformationHistoryReducer,
+    trainingLinked:trainingLinkedReducer,
+    tabPurchaseOrderLinked:tabPurchaseOrderLinkedReducer,
+    tabProjectLinked:tabProjectLinkedReducer,
+    payrollManagement:payrollManagementReducer,
+    company:companyReducer,
+    contact:contactReducer,
+    costingSummary:costingSummaryReducer,
+    lineItem:lineItemReducer,
+    quote:quoteReducer,
     customizer: CustomizerReducer,
     notesReducer: NotesReducer,
     chatReducer: ChatsReducer,

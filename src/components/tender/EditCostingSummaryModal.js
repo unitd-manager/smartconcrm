@@ -1,7 +1,10 @@
 import React,{useState} from 'react';
 import { Card, CardBody, CardTitle,Row,Col,Form,FormGroup,Label,Input,Button,Modal,ModalHeader,ModalBody, ModalFooter, } from 'reactstrap';
 import PropTypes from 'prop-types'
-import api from '../../constants/api';
+import { useDispatch } from 'react-redux';
+import { updateCostingSummary } from '../../store/tender/costingSummarySlice';
+// import api from '../../constants/api';
+
 
 
 const EditCostingSummaryModal = ({editCostingSummaryModel,setEditCostingSummaryModel,costingsummary}) => {
@@ -13,7 +16,7 @@ const EditCostingSummaryModal = ({editCostingSummaryModel,setEditCostingSummaryM
       }
 
     const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
-
+    const dispatch=useDispatch();
     //edit Tab Costing Summary Form
 
     const handleCostingSummeryInputs = (e) => {
@@ -22,9 +25,9 @@ const EditCostingSummaryModal = ({editCostingSummaryModel,setEditCostingSummaryM
   
       const EditCostingSummary = () => {
 
-        api.post('/tender/edit-TabCostingSummaryForm',editCostingSummaryData)
-        .then((res)=> {
-            console.log(res)
+        // api.post('/tender/edit-TabCostingSummaryForm',editCostingSummaryData)
+       dispatch(updateCostingSummary(editCostingSummaryData)).then(()=> {
+            // console.log(res)
             setEditCostingSummaryModel(false);
             window.location.reload()
        })

@@ -203,14 +203,7 @@ hr {
   font-size: .85em;
   letter-spacing: .1em;
 }
-.modal-title {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-}
-.bold {
-  font-weight: 700 !important;
-}
+
 @media screen and (max-width: 600px) {
   .lineitem {
     border: 0;

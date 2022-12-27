@@ -1,9 +1,9 @@
 
 import {  Route, Routes} from 'react-router-dom';
-
 import React,{ lazy } from 'react';
 import Loadable from '../layouts/loader/Loadable';
 import { userToken } from '../store/auth/userSlice';
+
 // import UserToken from '../components/UserToken'
 // import { Details } from '@material-ui/icons';
 
@@ -139,7 +139,7 @@ const ProjectTable = Loadable(lazy(() => import('../views/smartconTables/Project
 const ClientTable = Loadable(lazy(() => import('../views/smartconTables/Client')));
 const BookingTable = Loadable(lazy(() => import('../views/smartconTables/Booking')));
 const TimesheetTable = Loadable(lazy(() => import('../views/smartconTables/Timesheet')));
-const ProductTable = Loadable(lazy(() => import ('../views/smartconTables/product')));
+const ProductTable = Loadable(lazy(() => import ('../views/smartconTables/Product')));
 const TestTable = Loadable(lazy(() => import ('../views/smartconTables/Test')));
 
 // Details Table
@@ -147,6 +147,9 @@ const TenderDetailsTable = Loadable(lazy(() => import ('../views/detailTable/Ten
 const ClientDetailsTable = Loadable(lazy(() => import ('../views/detailTable/ClientDetails')))
 const BookingDetails = Loadable(lazy(() => import ('../views/detailTable/BookingDetails')))
 const TimesheetDetailsTable = Loadable(lazy(() => import ('../views/detailTable/TimesheetDetails')))
+const ProductDetails = Loadable(lazy(() => import ('../views/detailTable/ProductDetails')))
+
+const EditProdData = Loadable(lazy(() => import ('../views/EditData/editData')))
 // Finance Admin
 
 const SupplierTable = Loadable(lazy(() => import ('../views/smartconTables/Supplier')))
@@ -173,7 +176,7 @@ const EmployeeDetailsTable = Loadable(lazy(() => import ('../views/detailTable/E
 const EmployeeDetailsData = Loadable(lazy(() => import ('../views/detailTable/EmployeeDetailsData')))
 const CPFCalculatorTable = Loadable(lazy(() => import ('../views/smartconTables/CPFCalculator')))
 const CPFCalculatorDetails = Loadable(lazy(() => import ('../views/detailTable/CPFCalculatorDetails')))
-
+const PayrollManagementDetails = Loadable(lazy(() => import ('../views/detailTable/PayrollManagementDetails')))
 // Admin
 const StaffTable = Loadable(lazy(() => import ('../views/smartconTables/Staff')))
 const StaffDetailsTable = Loadable(lazy(() => import ('../views/detailTable/StaffDetails')))
@@ -188,11 +191,12 @@ const UserGroupDetails= Loadable(lazy(() => import ('../views/detailTable/UserGr
 // Table Edit's
 const TenderEdit= Loadable(lazy(() => import ('../views/EditData/TenderEdit')))
 const ProjectEdit= Loadable(lazy(() => import ('../views/EditData/ProjectEdit')))
-
+const ProductEdit= Loadable(lazy(() => import ('../views/EditData/ProductEdit')))
+const InventoryEdit= Loadable(lazy(() => import ('../views/EditData/InventoryEdit')))
 
 const Routernew = () => {
   // const { token, setToken } = UserToken();
-
+// const{userToken}= useSelector(state=>state.user);
   if (!userToken) {
     return <LoginFormik setToken={userToken} />;
   }
@@ -294,6 +298,8 @@ const Routernew = () => {
         <Route path="/Booking" name="clienttdata" element={<BookingTable />}></Route>
         <Route path="/BookingDetails" name="clienttdata" element={<BookingDetails />}></Route>
         <Route path="/Product" name="clienttdata" element={<ProductTable />}></Route>
+        <Route path="/ProductEdit/:id" name="clienttdata" element={<ProductEdit />}></Route>
+        <Route path="/ProductDetails" name="clienttdata" element={<ProductDetails />}></Route>
         <Route path="/Timesheet" name="clienttdata" element={<TimesheetTable />}></Route>
         <Route path="/TimesheetDetails" name="clienttdata" element={<TimesheetDetailsTable />}></Route>
 
@@ -302,6 +308,7 @@ const Routernew = () => {
         <Route path="/Subcon" name="clienttdata" element={<SubConTable />}></Route>
         <Route path="/SubConDetails" name="clienttdata" element={<SubConDetailsTable />}></Route>
         <Route path="/Inventory" name="clienttdata" element={<InventoryTable />}></Route>
+        <Route path="/inventoryEdit/:id" name="clienttdata" element={<InventoryEdit />}></Route>
         <Route path="/PurchaseOrder" name="clienttdata" element={<PurchaseOrderTable />}></Route>
         <Route path="/PurchaseOrderDetails" name="clienttdata" element={<PurchaseOrderDetails />}></Route>
         <Route path="/Vehicle" name="clienttdata" element={<VehicleTable />}></Route>
@@ -327,10 +334,10 @@ const Routernew = () => {
         <Route path="/UserGroupDetails" name="clienttdata" element={<UserGroupDetails />}></Route>
         <Route path="/Employee" name="clienttdata" element={<Employee />}></Route>
         <Route path="/EmployeeDetails" name="clienttdata" element={<EmployeeDetailsTable />}></Route>
-        <Route path="/EmployeeDetailsData" name="clienttdata" element={<EmployeeDetailsData />}></Route>
+        <Route path="/EmployeeDetailsData/:id" name="clienttdata" element={<EmployeeDetailsData />}></Route>
         <Route path="/test" name="clienttdata" element={<TestTable />}></Route>
-
-        
+        <Route path="/PayrollManagementDetails/:id" name="clienttdata" element={<PayrollManagementDetails />}></Route>
+        <Route path="/ProdEdit/:id" name="clienttdata" element={<EditProdData />}></Route>
         </Route>
       </Routes>
       
