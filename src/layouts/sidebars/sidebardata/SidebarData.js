@@ -146,6 +146,13 @@ const SidebarData = [
         collapisble: false,
       },
       {
+        title: 'Accounts',
+        href: '/Accounts',
+        icon: <Icon.Disc />,
+        id: 1.1,
+        collapisble: false,
+      },
+      {
         title: 'Sub Con',
         href: '/Subcon',
         icon: <Icon.Disc />,
