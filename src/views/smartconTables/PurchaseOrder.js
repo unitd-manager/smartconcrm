@@ -5,10 +5,7 @@ import Swal from 'sweetalert2'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
-<<<<<<< HEAD
-=======
 import moment from 'moment';
->>>>>>> 12719e56a39e6fcbe6ff216c833dd78cff40255e
 import $ from 'jquery';
 import "datatables.net-buttons/js/buttons.colVis"
 import "datatables.net-buttons/js/buttons.flash"
@@ -182,15 +179,12 @@ const deleteRecord = (id) => {
                       <td>{element.title}</td>
                       <td>{element.payment_terms}</td>
                       <td>{element.status}</td>
-<<<<<<< HEAD
                       <td>{element.purchase_order_date}</td>
                       <td>{element.supplier_inv_code}</td>
                       <td>{element.creation_date}</td>
-=======
                       <td>{moment(element.purchase_order_date).format('DD-MM-YYYY')}</td>
                       <td>{element.supplier_inv_code}</td>
                       <td>{moment(element.creation_date).format('DD-MM-YYYY')}</td>
->>>>>>> 12719e56a39e6fcbe6ff216c833dd78cff40255e
                   </tr>)
               })}
             </tbody>
