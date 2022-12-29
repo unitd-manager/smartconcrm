@@ -191,6 +191,9 @@ const SupplierHistory= Loadable(lazy(() => import ('../components/SupplierModal/
 // Table Edit's
 const TenderEdit= Loadable(lazy(() => import ('../views/EditData/TenderEdit')))
 const ProjectEdit= Loadable(lazy(() => import ('../views/EditData/ProjectEdit')))
+const BookingEdit= Loadable(lazy(() => import ('../views/EditData/BookingEdit')))
+const LoanEdit= Loadable(lazy(() => import ('../views/EditData/LoanEdit')))
+const BookingInsert= Loadable(lazy(() => import ('../views/EditData/BookingInsert')))
 const SubConEdit= Loadable(lazy(() => import ('../views/EditData/SubConEdit')))
 const SupplierEdit= Loadable(lazy(() => import ('../views/EditData/SupplierEdit')))
 const JobInformationEdit= Loadable(lazy(() => import ('../views/EditData/JobInformationEdit')))
@@ -221,6 +224,14 @@ const Routernew = () => {
       {/* Table Edit's */}
         <Route path="/TenderEdit/:id" name="clienttdata" element={<TenderEdit />}></Route>
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
+<<<<<<< HEAD
+=======
+
+        <Route path="/BookingEdit/:id" name="clienttdata" element={<BookingEdit />}></Route>
+        <Route path="/BookingInsert/:id" name="clienttdata" element={<BookingInsert />}></Route>
+        <Route path="/LoanEdit/:id" name="clienttdata" element={<LoanEdit />}></Route>
+
+>>>>>>> 529dc1a439333265ec7d3643409222e83fe2e98d
         <Route path="/SubConEdit/:id" name="clienttdata" element={<SubConEdit />}></Route>
         <Route path="/SupplierEdit/:id" name="clienttdata" element={<SupplierEdit />}></Route>
         <Route path="/JobInformationEdit/:id" name="clienttdata" element={<JobInformationEdit />}></Route>
@@ -233,6 +244,7 @@ const Routernew = () => {
         <Route path="/PurchaseOrderEdit/:id" name="clienttdata" element={<PurchaseOrderEdit />}></Route>
         <Route path="/PurchaseOrderAdd/:cname" name="clienttdata" element={<PurchaseOrderAdd />}></Route>
         <Route path="/TimesheetEdit/:id" name="clienttdata" element={<TimesheetEdit />}></Route>
+
 
         <Route path="/pdf/:id" name="pdfData" element={<PdfData />}></Route>
         <Route path="/pdfnext" name="pdfData" element={<PdfNext />}></Route>
