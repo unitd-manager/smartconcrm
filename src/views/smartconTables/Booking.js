@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom';
 import api from '../../constants/api';
 
 
-const Test = () => {
+const Booking = () => {
     const [bookings,setBookings] = useState(null);
     const getBooking = () =>{
       api.get('/booking/getBooking')
@@ -87,7 +87,7 @@ const Test = () => {
         },
         {
           name: "CustomerName",
-          selector: "c_company_name",
+          selector: "company_name",
           sortable: true,
           grow:0,
         },
@@ -182,7 +182,7 @@ const Test = () => {
                 <td><Link to=""><span onClick={()=>deleteRecord(element.booking_id)}><Icon.Trash2 /></span></Link></td>
                 <td>{moment(element.booking_date).format('YYYY-MM-DD')}</td>
                 <td>{element.assign_time}</td>
-                <td>{element.c_company_name}</td>
+                <td>{element.company_name}</td>
                 <td>{element.first_name}</td>
                 <td>{element.address_flat}</td>
                 </tr>)
@@ -200,4 +200,4 @@ const Test = () => {
     </div>)
 }
 
-export default Test;
+export default Booking;

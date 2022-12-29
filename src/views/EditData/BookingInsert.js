@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {  Row, Col, Form, FormGroup, Label, Input, Nav, NavItem, NavLink, TabContent, TabPane, Button, ModalFooter, } from 'reactstrap';
 import moment from 'moment';
 import { ToastContainer } from 'react-toastify'
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate,Link, useParams } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss'
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
@@ -10,9 +10,9 @@ import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
 
-const BookingEdit = () => {
+const BookingInsert = () => {
   const [activeTab, setActiveTab] = useState('1');
-  const [bookingDetails, setBookingDetails] = useState()
+  //const [bookingDetails, setBookingDetails] = useState()
   //const [companyDetails, setCompanyDetails] = useState()
 
   const toggle = (tab) => {
@@ -21,45 +21,16 @@ const BookingEdit = () => {
 
  // const [addCompanyModal, setAddCompanyModal] = useState(false);
   const [company, setCompany] = useState();
-  const [employee, setEmployee] = useState();
-  //const [booking, setBooking] = useState();
+  //const [employee, setEmployee] = useState();
+ const [booking, setBooking] = useState();
   const [servicelinkeddetails, setServiceLinkedDetails] = useState(null)
 
   const { id } = useParams()
   const navigate = useNavigate()
-
-   
-
-//  const getBooking = () =>{
-  //  api.get('/booking/getBooking')
- //   .then((res)=> {
-  //   setBooking(res.data.data);
-  //   console.log(res.data.data);
-  //  }).catch(()=>{
-  //    message("Booking not found","info")
- // })
-// }
- 
+  const [employee, setEmployee] = useState();
   
-
-  // Get Company Data
- 
   
-
- const getCompany = () =>{
-  api.get('/booking/getCompanyName')
-  .then((res)=> {
-    setCompany(res.data.data)
-  }).catch(()=>{
-    message("Company not found","info")
-  })
-}
-// const handleCompanyInputs = (e) => {
-   // setCompany({ ...company, [e.target.name]: e.target.value });
-  //}
-  //Get Employee Data
-
-   const getEmployee = () =>{
+  const getEmployee = () =>{
     api.get('/booking/getEmployeeName')
     .then((res)=> {
       setEmployee(res.data.data);
@@ -68,6 +39,42 @@ const BookingEdit = () => {
       message("Employee not found","info")
     })
   }
+  const getCompany = () =>{
+  api.get('/company/getCompany')
+  .then((res)=> {
+    setCompany(res.data.data);
+    console.log(company);
+  }).catch(()=>{
+    message("Company not found","info")
+  })
+}
+
+   
+
+  const getBooking = () =>{
+   api.get('/booking/getBooking')
+   .then((res)=> {
+     setBooking(res.data.data);
+     console.log(booking);
+    }).catch(()=>{
+      message("Booking not found","info")
+  })
+ }
+
+ 
+ 
+
+  
+
+  // Get Company Data
+ 
+  
+// const handleCompanyInputs = (e) => {
+   // setCompany({ ...company, [e.target.name]: e.target.value });
+  //}
+  //Get Employee Data
+
+   
   //const handleEmployeeInputs = (e) => {
    // setEmployee({ ...employee, [e.target.name]: e.target.value });
   //}
@@ -76,6 +83,20 @@ const BookingEdit = () => {
   //const handleCompanyInputs = (e) => {
   //  setCompanyDetails({ ...companyDetails, [e.target.name]: e.target.value });
   //}
+
+
+  const [bookingDetails, setBookingDetails] = useState({
+    booking_date: "",
+    company_name:"",
+    address_flat:"",
+    first_name:"",
+    assign_time:"",
+    status:"",
+    gps_parameter:""
+
+  });
+
+ 
   
 
   // Get Booking By Id
@@ -94,6 +115,57 @@ const BookingEdit = () => {
   const handleInputs = (e) => {
     setBookingDetails({ ...bookingDetails, [e.target.name]: e.target.value });
   }
+  
+
+  //Logic for edit data in db
+
+  const insertBookingData = () => {
+    api.post('/booking/insertBooking', bookingDetails)
+      .then(() => {
+
+        message('Record inserted successfully', 'success')
+       // setTimeout(() => {
+       //   window.location.reload()
+       // }, 300);
+
+      })
+      .catch(() => {
+        message('Unable to edit record.', 'error')
+      })
+
+
+  }
+  const insertCompanyData = () => {
+    api.post('/company/insertCompany', bookingDetails)
+      .then(() => {
+
+        message('Record inserted successfully', 'success')
+       
+
+      })
+      .catch(() => {
+        message('Unable to edit record.', 'error')
+      })
+
+
+  }
+  const insertEmployeeData = () => {
+    api.post('/employee/insertEmployee', bookingDetails)
+      .then(() => {
+
+        message('Record insert successfully', 'success')
+        // setTimeout(() => {
+        //   //window.location.reload()
+        // }, 300);
+
+      })
+      .catch(() => {
+        message('Unable to edit record.', 'error')
+      })
+
+
+  }
+ 
   const editCreationModificationById = () => {
     api.post('/booking/getCreationModificationById', { booking_id: id })
       .then((res) => {
@@ -105,59 +177,6 @@ const BookingEdit = () => {
         message("Booking Data Not Found", 'info')
       })
   }
-
-  //Logic for edit data in db
-
-  const editBookingData = () => {
-    api.post('/booking/edit-Booking', bookingDetails)
-      .then(() => {
-
-        message('Record editted successfully', 'success')
-        setTimeout(() => {
-          window.location.reload()
-        }, 300);
-
-      })
-      .catch(() => {
-        message('Unable to edit record.', 'error')
-      })
-
-
-  }
-  const editCompanyData = () => {
-    api.post('/company/edit-Company', bookingDetails)
-      .then(() => {
-
-        message('Record editted successfully', 'success')
-        setTimeout(() => {
-          window.location.reload()
-        }, 300);
-
-      })
-      .catch(() => {
-        message('Unable to edit record.', 'error')
-      })
-
-
-  }
-  const editEmployeeData = () => {
-    api.post('/employee/edit-Employee', bookingDetails)
-      .then(() => {
-
-        message('Record editted successfully', 'success')
-        setTimeout(() => {
-          window.location.reload()
-        }, 300);
-
-      })
-      .catch(() => {
-        message('Unable to edit record.', 'error')
-      })
-
-
-  }
- 
-  
   
  
   const getServiceLinked = () => {
@@ -178,8 +197,9 @@ const handleserviceInputs = (e) => {
 
     editBookingById();
     getCompany();
+    //getEmployee();
+    getBooking();
     getEmployee();
-    //getBooking();
     getServiceLinked();
         
 
@@ -194,49 +214,46 @@ const handleserviceInputs = (e) => {
         <FormGroup>
           <ComponentCard title={`Key Details | Code: ${bookingDetails && bookingDetails.booking_id}`}>
             <Row>
-              <Col md="3">
+            <Col md="3">
                 <FormGroup>
-                  <Label>BookingDate <span className='required'> *</span></Label>
+                  <Label> BookingDate </Label>
                   <Input type="date" onChange={handleInputs} value={bookingDetails && moment(bookingDetails.booking_date).format('YYYY-MM-DD')} name="booking_date" />
                 </FormGroup>
               </Col>
               <Col md="3">
                 <FormGroup>
-                <Label>Company Name</Label>
-                <Input type="select" onChange={(e)=> {
-                    handleInputs(e)
-                    //getContact(e.target.value)
-                  }} 
-                    value={bookingDetails && bookingDetails.company_name} 
-                    name="company_name">
-                      <option value="" selected>Please Select</option>
-                      {company && company.map((e)=>{
-                        return  <option  value={e.company_name} >{e.company_name}</option>
+                <Label>Customer Name</Label>
+                <Input type="text"  name="company_name" value={id} onChange={handleInputs}>
+                      
+                      
 
-                    })}
                     </Input>
+
+                                      
                   
                 </FormGroup>
               </Col>
               <Col md="3">
                 <FormGroup>
                 <Label>Address</Label>
-                <br/>
-                <span>{bookingDetails && bookingDetails.address_flat}</span>
+                <Input type="text" value={bookingDetails && bookingDetails.address_flat} onChange={handleInputs} name="address_flat">
+                        </Input>
                 </FormGroup>
             </Col>
               <Col md="3">
                 <FormGroup>
                   <Label>Employee Name</Label>
                   
-                        <Input type="select" value={bookingDetails && bookingDetails.first_name} onChange={handleInputs} name="first_name">
+                        
+                        <Input type="select" value={bookingDetails && bookingDetails.employee_id} onChange={handleInputs} name="employee_id">
                             <option value="" selected="selected">Please Select</option>
                            {employee && employee.map((e)=>{
                             return(
-                              <option value={e.first_name} >{e.first_name}</option>
+                              <option value={e.employee_id} >{e.first_name}</option>
                             )
                            })} 
-                         </Input>
+                         
+                        </Input>
                
                   </FormGroup>
               </Col>
@@ -257,9 +274,10 @@ const handleserviceInputs = (e) => {
                     <option value="">Please Select</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Waiting for Approval">Waiting for Approval</option>
-                    <option value="Approved">Submitted</option>
-                     <option value="Awarded">Awarded</option>
-                    <option value="pending">Not Awarded</option>
+                    <option value="Submitted">Submitted</option>
+                    <option value="Follow-up">Follow-up</option>
+                    <option value="Awarded">Awarded</option>
+                    <option value="Not Awarded">Not Awarded</option>
                     <option value="Enquiry">Enquiry</option>
                     <option value="Cancelled">Cancelled</option>
                     <option selected="selected" value="Converted to Project">Converted to Project</option>
@@ -283,21 +301,19 @@ const handleserviceInputs = (e) => {
             <Row>
               <div className="pt-3 mt-3 d-flex align-items-center gap-2">
                 <Button onClick={() => {
-                  editBookingData();
-                  editCompanyData();
-                  editEmployeeData();
-                  editCreationModificationById();
-                 
+                  insertBookingData();
+                  insertCompanyData();
+                  insertEmployeeData();
+                  //editBookingById();
 
                 }} type="button" className="btn btn-success mr-2">
-                  Save & Continue
+                 <Link to="/Booking" >Save & Continue</Link>
                 </Button>
                 <Button onClick={() => {
                   navigate(-1)
                 }} type="button" className="btn btn-dark">
                   Go to List
                 </Button>
-                
               </div>
             </Row>
           </ComponentCard>
@@ -309,9 +325,13 @@ const handleserviceInputs = (e) => {
           <Col md="3">
             <FormGroup>
               <Label>Created By</Label>
-              <br/>
-                <span>{bookingDetails && bookingDetails.created_by}</span>
-            
+              <Input value={bookingDetails && bookingDetails.created_by} type="text"
+                    onChange={handleInputs} name="created_by"  />
+               {() => {
+                  
+                  editCreationModificationById();
+                       
+                }} 
               
             </FormGroup>
           </Col>
@@ -320,10 +340,13 @@ const handleserviceInputs = (e) => {
           <Col md="3">
             
               <Label>Modified By</Label>
-              <br/>
-                <span>{bookingDetails && bookingDetails.modified_by}</span>
-              
-               
+              <Input value={bookingDetails && bookingDetails.created_by} type="text"
+                    onChange={handleInputs} name="modified_by"  />
+               {() => {
+                  
+                  editCreationModificationById();
+                       
+                }} 
               
               
           </Col>
@@ -428,4 +451,4 @@ const handleserviceInputs = (e) => {
   )
 };
 
-export default BookingEdit;
+export default BookingInsert;
