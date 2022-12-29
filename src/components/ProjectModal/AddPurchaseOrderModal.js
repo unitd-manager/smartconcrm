@@ -122,6 +122,7 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
         api.get('/purchaseorder/TabPurchaseOrderLineItem')
        .then((res) => {
         const items = res.data.data
+        console.log(items)
         const finaldat = []
         items.forEach(item=>{
             finaldat.push({ value: item.product_id, label: item.title})
