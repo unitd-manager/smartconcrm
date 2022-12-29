@@ -192,8 +192,9 @@ const SupplierHistory= Loadable(lazy(() => import ('../components/SupplierModal/
 const TenderEdit= Loadable(lazy(() => import ('../views/EditData/TenderEdit')))
 const ProjectEdit= Loadable(lazy(() => import ('../views/EditData/ProjectEdit')))
 const BookingEdit= Loadable(lazy(() => import ('../views/EditData/BookingEdit')))
-const LoanEdit= Loadable(lazy(() => import ('../views/EditData/LoanEdit')))
+const ClientEdit= Loadable(lazy(() => import ('../views/EditData/ClientEdit')))
 const BookingInsert= Loadable(lazy(() => import ('../views/EditData/BookingInsert')))
+const ClientInsert= Loadable(lazy(() => import ('../views/EditData/ClientInsert')))
 const SubConEdit= Loadable(lazy(() => import ('../views/EditData/SubConEdit')))
 const SupplierEdit= Loadable(lazy(() => import ('../views/EditData/SupplierEdit')))
 const JobInformationEdit= Loadable(lazy(() => import ('../views/EditData/JobInformationEdit')))
@@ -229,7 +230,8 @@ const Routernew = () => {
 
         <Route path="/BookingEdit/:id" name="clienttdata" element={<BookingEdit />}></Route>
         <Route path="/BookingInsert/:id" name="clienttdata" element={<BookingInsert />}></Route>
-        <Route path="/LoanEdit/:id" name="clienttdata" element={<LoanEdit />}></Route>
+        <Route path="/ClientEdit/:id" name="clienttdata" element={<ClientEdit />}></Route>
+        <Route path="/ClientInsert/:companyName" name="clienttdata" element={<ClientInsert />}></Route>
 
         <Route path="/SubConEdit/:id" name="clienttdata" element={<SubConEdit />}></Route>
         <Route path="/SupplierEdit/:id" name="clienttdata" element={<SupplierEdit />}></Route>
