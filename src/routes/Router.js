@@ -221,9 +221,12 @@ const Routernew = () => {
       {/* Table Edit's */}
         <Route path="/TenderEdit/:id" name="clienttdata" element={<TenderEdit />}></Route>
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
+<<<<<<< HEAD
+=======
         <Route path="/SubConEdit/:id" name="clienttdata" element={<SubConEdit />}></Route>
         <Route path="/SupplierEdit/:id" name="clienttdata" element={<SupplierEdit />}></Route>
         <Route path="/JobInformationEdit/:id" name="clienttdata" element={<JobInformationEdit />}></Route>
+>>>>>>> 7549565bc88324753b35e26552233866b126d897
 
 {/* Supplier Modal */}
 <Route path="/SupplierHistory/:id" name="clienttdata" element={<SupplierHistory />}></Route>
