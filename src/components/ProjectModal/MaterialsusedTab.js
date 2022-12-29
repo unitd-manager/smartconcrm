@@ -16,7 +16,7 @@ const MaterialsusedTab = ({projectId}) => {
 
     const [ addMaterialsUsed, setAddMaterialsUsed ] = useState(false);
     const [ editMaterialsUsed, setEditMaterialsUsed ] = useState(false);
-    const [editMaterialsUsedData, setEditMaterialsUsedData] = useState(null)
+    const [ editMaterialsUsedData, setEditMaterialsUsedData] = useState(null)
     const [ materialusedportal, setMaterialusedportal ] = useState();
 
    

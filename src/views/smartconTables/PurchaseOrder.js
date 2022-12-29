@@ -5,6 +5,7 @@ import Swal from 'sweetalert2'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
+import moment from 'moment';
 import $ from 'jquery';
 import "datatables.net-buttons/js/buttons.colVis"
 import "datatables.net-buttons/js/buttons.flash"
@@ -178,9 +179,9 @@ const deleteRecord = (id) => {
                       <td>{element.title}</td>
                       <td>{element.payment_terms}</td>
                       <td>{element.status}</td>
-                      <td>{element.purchase_order_date}</td>
+                      <td>{moment(element.purchase_order_date).format('DD-MM-YYYY')}</td>
                       <td>{element.supplier_inv_code}</td>
-                      <td>{element.creation_date}</td>
+                      <td>{moment(element.creation_date).format('DD-MM-YYYY')}</td>
                   </tr>)
               })}
             </tbody>
