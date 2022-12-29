@@ -10,7 +10,7 @@ import {
     Button,ModalFooter
   } from 'reactstrap';
   import { ToastContainer } from 'react-toastify';
-  
+  import { Link } from 'react-router-dom';
 
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
@@ -99,7 +99,7 @@ const JobInformationDetails = () => {
         
        
             < Button color="primary" onClick={()=>{ insertJobInformation() }}>
-          Save and Continue</Button>
+          <Link to= {`/JobInformationEdit/:id${jobForms.first_name}`}>Save and Continue</Link></Button>
            < Button color="secondary" onClick={handleInputsJobForms}>
           Cancel</Button>
 

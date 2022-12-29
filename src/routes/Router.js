@@ -184,6 +184,8 @@ const SettingTable= Loadable(lazy(() => import ('../views/smartconTables/Setting
 const SettingDetails= Loadable(lazy(() => import ('../views/detailTable/SettingDetails')))
 const UserGroupTable= Loadable(lazy(() => import ('../views/smartconTables/UserGroup')))
 const UserGroupDetails= Loadable(lazy(() => import ('../views/detailTable/UserGroupDetails')))
+//SupplierModal
+const SupplierHistory= Loadable(lazy(() => import ('../components/SupplierModal/SupplierHistory')))
 
 
 // Table Edit's
@@ -223,7 +225,8 @@ const Routernew = () => {
         <Route path="/SupplierEdit/:id" name="clienttdata" element={<SupplierEdit />}></Route>
         <Route path="/JobInformationEdit/:id" name="clienttdata" element={<JobInformationEdit />}></Route>
 
-
+{/* Supplier Modal */}
+<Route path="/SupplierHistory/:id" name="clienttdata" element={<SupplierHistory />}></Route>
 
 
 
