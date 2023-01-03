@@ -150,6 +150,8 @@ const TimesheetDetailsTable = Loadable(lazy(() => import ('../views/detailTable/
 // Finance Admin
 const FinanceTable = Loadable(lazy(() => import ('../views/smartconTables/Finance')))
 const AccountsTable = Loadable(lazy(() => import ('../views/smartconTables/Accounts')))
+const ExpenseHeadTable = Loadable(lazy(() => import ('../views/smartconTables/ExpenseHead')))
+const ExpenseHeadDetails = Loadable(lazy(() => import ('../views/detailTable/ExpenseHeadDetails')))
 const SupplierTable = Loadable(lazy(() => import ('../views/smartconTables/Supplier')))
 const SupplierDetailsTable = Loadable(lazy(() => import ('../views/detailTable/SupplierDetails')))
 const SubConTable = Loadable(lazy(() => import ('../views/smartconTables/Subcon')))
@@ -193,6 +195,7 @@ const TenderEdit= Loadable(lazy(() => import ('../views/EditData/TenderEdit')))
 const ProjectEdit= Loadable(lazy(() => import ('../views/EditData/ProjectEdit')))
 const BookingEdit= Loadable(lazy(() => import ('../views/EditData/BookingEdit')))
 const ClientEdit= Loadable(lazy(() => import ('../views/EditData/ClientEdit')))
+const ExpenseHeadEdit= Loadable(lazy(() => import ('../views/EditData/ExpenseHeadEdit')))
 const BookingInsert= Loadable(lazy(() => import ('../views/EditData/BookingInsert')))
 const SubConEdit= Loadable(lazy(() => import ('../views/EditData/SubConEdit')))
 const SupplierEdit= Loadable(lazy(() => import ('../views/EditData/SupplierEdit')))
@@ -230,6 +233,7 @@ const Routernew = () => {
         <Route path="/BookingEdit/:id" name="clienttdata" element={<BookingEdit />}></Route>
         <Route path="/BookingInsert/:id" name="clienttdata" element={<BookingInsert />}></Route>
         <Route path="/ClientEdit/:id" name="clienttdata" element={<ClientEdit />}></Route>
+        <Route path="/ExpenseHeadEdit/:id" name="clienttdata" element={<ExpenseHeadEdit />}></Route>
         <Route path="/SubConEdit/:id" name="clienttdata" element={<SubConEdit />}></Route>
         <Route path="/SupplierEdit/:id" name="clienttdata" element={<SupplierEdit />}></Route>
         <Route path="/JobInformationEdit/:id" name="clienttdata" element={<JobInformationEdit />}></Route>
@@ -330,6 +334,8 @@ const Routernew = () => {
 
         <Route path="/Finance" name="clienttdata" element={<FinanceTable />}></Route>
         <Route path="/Accounts" name="clienttdata" element={<AccountsTable />}></Route>
+        <Route path="/ExpenseHead" name="clienttdata" element={<ExpenseHeadTable />}></Route>
+        <Route path="/ExpenseHeadDetails" name="clienttdata" element={<ExpenseHeadDetails />}></Route>
         <Route path="/Supplier" name="clienttdata" element={<SupplierTable />}></Route>
         <Route path="/SupplierDetails" name="clienttdata" element={<SupplierDetailsTable />}></Route>
         <Route path="/Subcon" name="clienttdata" element={<SubConTable />}></Route>

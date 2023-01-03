@@ -139,6 +139,13 @@ const SidebarData = [
         collapisble: false,
       },
       {
+        title: 'ExpenseHead',
+        href: '/ExpenseHead',
+        icon: <Icon.Disc />,
+        id: 1.1,
+        collapisble: false,
+      },
+      {
         title: 'Sub Con',
         href: '/Subcon',
         icon: <Icon.Disc />,
