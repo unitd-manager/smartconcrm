@@ -115,12 +115,15 @@ const ClientsEdit = () => {
     
     console.log(newContactWithCompanyId.company_id);
     api.post('/clients/insertContact',newContactWithCompanyId)
-    .then(()=> {
-      // setNewContactData(newContactData.company_id);
-    message('contact inserted successfully.','success')
-    // window.location.reload();
-      
-    })
+    .then((res)=> {
+      const insertedDataId= res.data.data.insertId
+      console.log(insertedDataId)
+     message('Contact inserted successfully.','success')
+     setTimeout(()=> {
+     navigate(`/ClientsEdit/${insertedDataId}`)
+     },300);
+       
+     })
     .catch(() => {
       message('Network connection error.','error')
     })
@@ -673,7 +676,6 @@ const ClientsEdit = () => {
                 <td>{element.contact_id}</td>
                 <td><Link to=""><span onClick={()=>{setContactData(element)
                                                     setEditContactEditModal(true)
-                                                    
                                                     }}><Icon.Edit2 /></span></Link></td>
                 <td><Link to=""><span onClick={()=>deleteRecord(element.contact_id)}><Icon.Trash2 /></span></Link></td>
                 <td>{element.first_name}</td>

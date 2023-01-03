@@ -8,7 +8,8 @@ import {
   Input,
   Button
 } from 'reactstrap';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import message from '../../components/Message';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs'
 import ComponentCard from '../../components/ComponentCard';
 import api from '../../constants/api';
@@ -19,17 +20,15 @@ const ClientDetails = () => {
   const navigate = useNavigate()
 
 
-  const [client, setClient] = useState();
-  const getClient = () => {
-    api.get('/clients/getClients')
-      .then((res) => {
-        setClient(res.data.data)
-        console.log(client)
-      })
-  }
-  useEffect(() => {
-    getClient();
-  }, [])
+  // const [client, setClient] = useState();
+  // const getClient = () => {
+  //   api.get('/clients/getClients')
+  //     .then((res) => {
+  //       setClient(res.data.data)
+  //       console.log(client)
+  //     })
+  // }
+ 
 
   const [clientForms, setClientForms] = useState({
     company_name: "",
@@ -38,6 +37,31 @@ const ClientDetails = () => {
   const handleClientForms = (e) => {
     setClientForms({ ...clientForms, [e.target.name]: e.target.value });
   }
+
+  const insertClient = () => {
+
+  
+    api.post('/clients/insertCompany',clientForms)
+    .then((res)=> {
+     const insertedDataId= res.data.data.insertId
+     console.log(insertedDataId)
+    message('Client inserted successfully.','success')
+    setTimeout(()=> {
+    navigate(`/ClientsEdit/${insertedDataId}`)
+    },300);
+      
+    })
+    .catch(() => {
+      message('Network connection error.','error')
+    })
+
+
+}
+
+
+  useEffect(() => {
+    // getClient();
+  }, [])
 
 
   return (
@@ -60,8 +84,9 @@ const ClientDetails = () => {
               <FormGroup>
                 <Row>
                   <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-                    <Button type="submit" className="btn btn-success mr-2">
-                      <Link to={`/ClientsUpdate/${clientForms.company_name}`} >Save & Continue</Link>
+                    <Button onClick={()=>{
+                           insertClient()
+                        }} type="button" className="btn btn-success mr-2" >Save & Continue
                     </Button>
                     <Button onClick={() => {
                       navigate(-1)
@@ -81,4 +106,4 @@ const ClientDetails = () => {
   );
 }
 
-export default ClientDetails;
+export default ClientDetails
