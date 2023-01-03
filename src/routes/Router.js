@@ -248,7 +248,7 @@ const Routernew = () => {
 
 
         <Route path="/PurchaseOrderEdit/:id" name="clienttdata" element={<PurchaseOrderEdit />}></Route>
-        <Route path="/PurchaseOrderAdd/:cname" name="clienttdata" element={<PurchaseOrderAdd />}></Route>
+        <Route path="/PurchaseOrderAdd/:title" name="clienttdata" element={<PurchaseOrderAdd />}></Route>
         <Route path="/TimesheetEdit/:id" name="clienttdata" element={<TimesheetEdit />}></Route>
 
 

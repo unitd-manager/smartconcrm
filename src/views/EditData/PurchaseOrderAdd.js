@@ -12,58 +12,99 @@ import {
   ModalBody,
   ModalFooter,
 } from 'reactstrap';
-import * as Icon from 'react-feather';
-import { useParams, Link } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify'
+import { useParams, useNavigate } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
 import moment from 'moment';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import ComponentCardV2 from '../../components/ComponentCardV2';
 import message from '../../components/Message';
 import api from '../../constants/api';
 import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
 
 const PurchaseOrderEdit = () => {
-  const [purchaseOrderDetails, setPurchaseOrderDetails] = useState();
+  //const [purchaseOrderDetails, setPurchaseOrderDetails] = useState();
   const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
   //const [searchParams, setSearchParams] = useSearchParams();
-
-  const { cname } = useParams();
-  const [products, setProducts] = useState(null);
+  const navigate = useNavigate();
+  const { title } = useParams();
+  //const [products, setProducts] = useState(null);
   const [attachmentModal, setAttachmentModal] = useState(false);
-  const getPurchaseOrder = () => {
-    api.get('/product/getProducts').then((res) => {
-      setProducts(res.data.data);
-      console.log(res.data.data);
-    });
-  };
+  const [purchaseOrderInsertData, setpurchaseOrderInsertData] = useState(null);
+  /*   const [supplier, setSupplier] = useState();
+  
+    const getSupplier = () =>{
+      api.get('/supplier/getSupplier')
+      .then((res)=> {
+        setSupplier(res.data.data);
+        console.log(res.data.data);
+      })
+    } */
+  // const getPurchaseOrder = () => {
+  //   api.get('/product/getProducts').then((res) => {
+  //     setProducts(res.data.data);
+  //     console.log(res.data.data);
+  //   });
+  // };
 
   const attachmentToggle = () => {
     setAttachmentModal(!attachmentModal);
   };
 
   const handleInputs = (e) => {
-    setPurchaseOrderDetails({ ...purchaseOrderDetails, [e.target.name]: e.target.value });
+    setpurchaseOrderInsertData({ ...purchaseOrderInsertData, [e.target.name]: e.target.value });
   };
 
-  const editPurchaseOrderById = () => {
-    api
-      .post('/purchaseorder/getPurchaseOrderByPurchaseOrderId', { purchase_order_id: cname })
-      .then((res) => {
-        setPurchaseOrderDetails(res.data.data[0]);
-        console.log(res.data.data[0]);
+  /*   const editPurchaseOrderById = () => {
+      api
+        .post('/purchaseorder/getPurchaseOrderByPurchaseOrderId', { purchase_order_id: cname })
+        .then((res) => {
+          setPurchaseOrderDetails(res.data.data[0]);
+          console.log(res.data.data[0]);
+        })
+        .catch(() => {
+          message('Purchase Order Data Not Found', 'info');
+        });
+    }; */
+
+  const insertPurchaseOrder = () => {
+    console.log("purchaseOrderInsertData : ", purchaseOrderInsertData);
+    api.post('/purchaseorder/insertPurchaseOrder', purchaseOrderInsertData)
+      .then(() => {
+        message('Purchase Order inserted successfully.', 'success')
       })
       .catch(() => {
-        message('Purchase Order Data Not Found', 'info');
-      });
-  };
+        message('Network connection error.', 'error')
+      })
+  }
+  /*   const [supplierForms, setSupplierForms] = useState({
+      title:"",
+      company_id:"",
+      contact_id:"",
+      category_id:"",
+    }); */
 
+  /*   const handleSupplierForms = (e) => {
+      setSupplierForms({...supplierForms, [e.target.name]:e.target.value});
+    } */
+
+    const applyChanges = () => {
+
+    }
+    const backToList = () => {
+      navigate("/PurchaseOrder");
+      
+    }    
   useEffect(() => {
-    editPurchaseOrderById();
-    getPurchaseOrder();
+    //editPurchaseOrderById();
+    //getPurchaseOrder();
     //setSearchParams();
-    console.log("cname",cname);
-  }, [cname]);
+    //getSupplier();
+    console.log("title", title);
+    setpurchaseOrderInsertData({ title });
+  }, [title]);
 
   const columns = [
     {
@@ -193,13 +234,46 @@ const PurchaseOrderEdit = () => {
   return (
     <>
       <BreadCrumbs />
-
       <Form>
         <FormGroup>
+          <ComponentCardV2>
+            <Row>
+              <Col>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      insertPurchaseOrder();
+                      navigate('/PurchaseOrder');
+                    }}
+                  >
+                    Save
+                  </Button>
+                  </Col>
+                  <Col>              
+                  <Button color="secondary" 
+                  onClick={() => {
+                    applyChanges();
+                    console.log("cancel process");
+                  }
+                  }>
+                    Apply
+                  </Button>
+                  </Col>
+                  <Col>         
+                  <Button color="danger" 
+                  onClick={() => {
+                    backToList();
+                    console.log("back to list");
+                  }
+                  }>
+                    Back to List
+                  </Button>
+              </Col>
+            </Row>
+          </ComponentCardV2>
           <ComponentCard
-            title={`Purchase Order Details | Company Name: ${
-              cname
-            }`}
+            title={`Purchase Order Details | Company Name: ${title
+              }`}
           >
             <Row>
               <Col md="3">
@@ -208,8 +282,8 @@ const PurchaseOrderEdit = () => {
                   <Input
                     type="text"
                     onChange={handleInputs}
-                    value={purchaseOrderDetails && purchaseOrderDetails.po_code}
-                    name="title"
+                    value={purchaseOrderInsertData && purchaseOrderInsertData.po_code}
+                    name="po_code"
                   />
                 </FormGroup>
               </Col>
@@ -219,7 +293,7 @@ const PurchaseOrderEdit = () => {
                   <Input
                     type="text"
                     onChange={handleInputs}
-                    value={cname}
+                    value={purchaseOrderInsertData && purchaseOrderInsertData.title}
                     name="title"
                   />
                 </FormGroup>
@@ -231,7 +305,7 @@ const PurchaseOrderEdit = () => {
                     type="select"
                     name="status"
                     onChange={handleInputs}
-                    value={purchaseOrderDetails && purchaseOrderDetails.status}
+                    value={purchaseOrderInsertData && purchaseOrderInsertData.status}
                   >
                     <option value="" selected="selected">
                       Please Select
@@ -252,11 +326,28 @@ const PurchaseOrderEdit = () => {
                   <Input
                     type="text"
                     onChange={handleInputs}
-                    value={purchaseOrderDetails && purchaseOrderDetails.supplier_inv_code}
+                    value={purchaseOrderInsertData && purchaseOrderInsertData.title}
                     name="supplier_inv_code"
                   />
                 </FormGroup>
               </Col>
+
+              {/*               <Col md="10">
+                    <Label>Supplier</Label>
+
+                    <Input type="select" name="company_name" onChange={(e)=>{
+                      //getContact(e.target.value)
+                      handleSupplierForms(e)
+                    }} value={purchaseOrderInsertData && purchaseOrderInsertData.company_id_supplier}>
+                    <option value="" selected >Please Select</option>
+
+                      {supplier && supplier.map((ele)=>{
+                        return  <option value={ele.supplier_id} >{ele.company_name}</option>
+
+                      })}
+                    </Input>
+                </Col> */}
+
             </Row>
 
             <Row>
@@ -265,7 +356,7 @@ const PurchaseOrderEdit = () => {
                   <Label>Priority</Label>
                   <Input
                     type="text"
-                    value={purchaseOrderDetails && purchaseOrderDetails.priority}
+                    value={purchaseOrderInsertData && purchaseOrderInsertData.priority}
                     onChange={handleInputs}
                     name="priority"
                   />
@@ -276,8 +367,8 @@ const PurchaseOrderEdit = () => {
                   <Label>PO Date</Label>
                   <Input
                     value={
-                      purchaseOrderDetails &&
-                      moment(purchaseOrderDetails.purchase_order_date).format('YYYY-MM-DD')
+                      purchaseOrderInsertData &&
+                      moment(purchaseOrderInsertData.purchase_order_date).format('YYYY-MM-DD')
                     }
                     type="date"
                     onChange={handleInputs}
@@ -292,8 +383,8 @@ const PurchaseOrderEdit = () => {
                     type="date"
                     onChange={handleInputs}
                     value={
-                      purchaseOrderDetails &&
-                      moment(purchaseOrderDetails.follow_up_date).format('YYYY-MM-DD')
+                      purchaseOrderInsertData &&
+                      moment(purchaseOrderInsertData.follow_up_date).format('YYYY-MM-DD')
                     }
                     name="follow_up_date"
                   />
@@ -304,7 +395,7 @@ const PurchaseOrderEdit = () => {
                   <Label>Notes to Supplier</Label>
                   <Input
                     type="textarea"
-                    value={purchaseOrderDetails && purchaseOrderDetails.notes}
+                    value={purchaseOrderInsertData && purchaseOrderInsertData.notes}
                     onChange={handleInputs}
                     name="notes"
                   />
@@ -317,7 +408,7 @@ const PurchaseOrderEdit = () => {
                   <Label>Delivery Terms</Label>
                   <Input
                     type="textarea"
-                    value={purchaseOrderDetails && purchaseOrderDetails.delivery_terms}
+                    value={purchaseOrderInsertData && purchaseOrderInsertData.delivery_terms}
                     onChange={handleInputs}
                     name="delivery_terms"
                   />
@@ -328,7 +419,7 @@ const PurchaseOrderEdit = () => {
                   <Label>Payment Terms</Label>
                   <Input
                     type="textarea"
-                    value={purchaseOrderDetails && purchaseOrderDetails.payment_terms}
+                    value={purchaseOrderInsertData && purchaseOrderInsertData.payment_terms}
                     onChange={handleInputs}
                     name="payment_terms"
                   />
@@ -338,7 +429,7 @@ const PurchaseOrderEdit = () => {
                 <FormGroup>
                   <Label>Payment Status</Label>
                   <Input
-                    value={purchaseOrderDetails && purchaseOrderDetails.payment_status}
+                    value={purchaseOrderInsertData && purchaseOrderInsertData.payment_status}
                     type="select"
                     onChange={handleInputs}
                     name="payment_status"
@@ -356,32 +447,12 @@ const PurchaseOrderEdit = () => {
                   <Label>Supplier Invoice Code</Label>
                   <Input
                     type="text"
-                    value={purchaseOrderDetails && purchaseOrderDetails.supplier_inv_code}
+                    value={purchaseOrderInsertData && purchaseOrderInsertData.supplier_inv_code}
                     onChange={handleInputs}
                     name="supplier_inv_code"
                   />
                 </FormGroup>
               </Col>
-              <Row>
-              <Col>
-              <FormGroup>
-              <Button
-                          color="primary"
-                          onClick={() => {
-                            //insertCompany();
-                            //alert("Hi");
-                            console.log("insert process");
-                          }}
-                        >
-                          Save & Continue
-                        </Button>
-                        <Button color="secondary" onClick={ //alert("Canceled")
-                        console.log("cancel process")}>
-                          Cancel
-                        </Button>
-              </FormGroup>
-              </Col>
-              </Row>
             </Row>
           </ComponentCard>
           <ComponentCard title="Product Linked">
@@ -419,72 +490,18 @@ const PurchaseOrderEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {products &&
-                        products.map((element) => {
-                          return (
-                            <tr key={element.product_id}>
-                              <td></td>
-                              <td>
-                                <input
-                                  type="checkbox"
-                                  id="dno"
-                                  name="do"
-                                  value={element.product_id}
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="checkbox"
-                                  id="sno"
-                                  name="sno"
-                                  value={element.product_id}
-                                />
-                              </td>
-                              <td>{element.product_id}</td>
-                              <td>{element.title}</td>
-                              <td>{element.price}</td>
-                              <td>{element.mrp}</td>
-                              <td>{element.gst}</td>
-                              <td>{element.qty_in_stock}</td>
-                              <td>{element.damaged_qty}</td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td>
-                                <Link to={`/PurchaseOrderEdit/${element.purchase_order_id}`}>
-                                  <Icon.Edit2 />
-                                </Link>
-                              </td>
-                              <td>
-                                <Link to="" color="primary" onClick={() => {}}>
-                                  <b>
-                                    <u>View History</u>
-                                  </b>
-                                </Link>
-                              </td>
-                              <td>
-                                <Link to="">
-                                  <span>
-                                    <Icon.Trash2 />
-                                  </span>
-                                </Link>
-                              </td>
-                            </tr>
-                          );
-                        })}
                     </tbody>
                     <tfoot></tfoot>
+                  </table>
+                  <table>
+                    No Records Linked
                   </table>
                 </div>
               </div>
             </Row>
           </ComponentCard>
           <ComponentCard title="Delivery Order">
-            <Row></Row>
-
+            <ToastContainer></ToastContainer>
             <Row></Row>
           </ComponentCard>
           <ComponentCard title="Add a note">
@@ -495,10 +512,10 @@ const PurchaseOrderEdit = () => {
             </Row>
             <Row className="mb-1">
               <Col md="1">
-              <button type="button" className="btn btn-primary btn-sm">Submit</button>
+                <button type="button" className="btn btn-primary btn-sm">Submit</button>
               </Col>
               <Col md="1">
-              <button type="button" className="btn btn-warning btn-sm">Cancel</button>
+                <button type="button" className="btn btn-warning btn-sm">Cancel</button>
               </Col>
             </Row>
           </ComponentCard>
