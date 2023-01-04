@@ -1,12 +1,12 @@
 import React,{useEffect,useState} from 'react';
 import * as Icon from 'react-feather';
-import moment from 'moment';
 import {Row,Col,Button } from 'reactstrap';
-import Swal from 'sweetalert2'
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
 import $ from 'jquery'; 
+
 import "datatables.net-buttons/js/buttons.colVis"
 import "datatables.net-buttons/js/buttons.flash"
 import "datatables.net-buttons/js/buttons.html5"
@@ -15,12 +15,12 @@ import { Link } from 'react-router-dom';
 import api from '../../constants/api';
 
 
-const Booking = () => {
-    const [bookings,setBookings] = useState(null);
-    const getBooking = () =>{
-      api.get('/booking/getBooking')
+const SectionDetails= () => {
+    const [section,setSection] = useState(null);
+    const getSection = () =>{
+      api.get('/section/getSection')
         .then((res)=> {
-            setBookings(res.data.data)
+          setSection(res.data.data)
             console.log(res.data.data)
         })
     }
@@ -41,7 +41,7 @@ const Booking = () => {
             1000
             );
     
-        getBooking()
+            getSection()
 
     }, [])
     
@@ -49,7 +49,7 @@ const Booking = () => {
    const columns = [
         {
           name: "id",
-          selector: "booking_id",
+          selector: "section_id ",
           grow:0,
           wrap: true,
           width:'4%'
@@ -63,90 +63,49 @@ const Booking = () => {
             button:true,
             sortable:false,
         },
+       
         {
-            name:'Del',
-            selector: "delete",
-            cell: () => <Icon.Trash />,
-            grow:0,
-            width:'auto',
-            wrap: true
-        },
-        {
-          name: "Date",
-          selector: "booking_date",
+          name: "Title",
+          selector: "title",
           sortable: true,
           grow:0,
           wrap: true
         },
         {
-          name: "AssignTime",
-          selector: "assign_time",
+          name: "Section Type",
+          selector: "section_type",
           sortable: true,
           grow:2,
           wrap: true
         },
         {
-          name: "CustomerName",
-          selector: "company_name",
+          name: "Button Position",
+          selector: "button_position",
           sortable: true,
           grow:0,
         },
         {
-            name: "EmployeeName",
-            selector: "first_name",
+            name: "ID",
+            selector: "sort_order",
             sortable: true,
             width:'auto',
             grow:3,
-            // cell: d => <span>{d.closing.join(", ")}</span>
+            
           },
           {
-            name: "Address",
-            selector: "address_flat",
+            name: "Published",
+            selector: "published",
             sortable: true,
             grow:2,
             width:'auto',
-            // cell: d => <span>{d.closing.join(", ")}</span>
+          
           },
           
       ]
       
-      const deleteRecord = (id) => {
-      
-         // console.log(id)
-        
-        Swal.fire({
-          title: `Are you sure? ${id}`,
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            api.post('/booking/deleteBooking',{booking_id:id}).then(res=>{
-              console.log(res)
-              Swal.fire(
-                'Deleted!',
-                'Your Booking has been deleted.',
-                'success'
-              )
-              getBooking()
-
-            })
-          }
-        })
-
-
-        // api.get(`/booking/deleteBooking/${booking_id}`)
-        //  .then((res)=> {
-        //      setBookings(res.data.data)
-        //  })
-
-      }
       
 
-  return (
+    return (
     <div className="MainDiv">
     {/* <div className="jumbotron text-center bg-sky">
         <h3>Therichpost.com</h3>
@@ -156,7 +115,7 @@ const Booking = () => {
 
     <Row>
           <Col md="6">
-            <Link to="/BookingDetails">
+            <Link to="/SectionDetails">
               <Button  color="primary" className="my-3">
                 Add New
               </Button>
@@ -175,16 +134,15 @@ const Booking = () => {
               </tr>
           </thead>
           <tbody>
-            {bookings && bookings.map(element=>{
-                return (<tr key={element.booking_id}>
-                <td>{element.booking_id}</td>
-                <td><Link to={`/BookingEdit/${element.booking_id}`} ><Icon.Edit2 /></Link></td>
-                <td><Link to=""><span onClick={()=>deleteRecord(element.booking_id)}><Icon.Trash2 /></span></Link></td>
-                <td>{moment(element.booking_date).format('YYYY-MM-DD')}</td>
-                <td>{element.assign_time}</td>
-                <td>{element.company_name}</td>
-                <td>{element.first_name}</td>
-                <td>{element.address_flat}</td>
+            {section && section.map(element=>{
+                return (<tr key={element.section_id}>
+                <td>{element.section_id}</td>
+                <td><Link to={`/SectionEdit/${element.section_id}`} ><Icon.Edit2 /></Link></td>
+                <td>{element.title}</td>
+                <td>{element.section_type}</td>
+                <td>{element.button_position}</td>
+                <td>{element.sort_order}</td>
+                <td>{element.published}</td>
                 </tr>)
             })}
           </tbody>
@@ -200,4 +158,4 @@ const Booking = () => {
     </div>)
 }
 
-export default Booking;
+export default SectionDetails;

@@ -6,12 +6,9 @@ import {
   FormGroup,
   Label,
   Input,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
+  Button
 } from 'reactstrap';
+import { ToastContainer } from 'react-toastify'
 import * as Icon from 'react-feather';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -22,25 +19,35 @@ import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
 import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
+import AttachmentModalV2 from '../../components/tender/AttachmentModalV2';
+import PictureAttachmentModalV2 from '../../components/tender/PictureAttachmentModalV2';
+import ViewFileComponentV2 from '../../components/ProjectModal/ViewFileComponentV2';
 
 const PurchaseOrderEdit = () => {
   const [purchaseOrderDetails, setPurchaseOrderDetails] = useState();
   const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
   const { id } = useParams();
   const [products, setProducts] = useState(null);
+  const [supplier, setSupplier] = useState();
   const [attachmentModal, setAttachmentModal] = useState(false);
+  const [pictureData, setDataForPicture] = useState({
+    modelType: ''
+  });
+  const [attachmentData, setDataForAttachment] = useState({
+    modelType: ''
+  });
   const navigate = useNavigate();
+
   const getPurchaseOrder = () => {
     api.get('/product/getProducts').then((res) => {
       setProducts(res.data.data);
-      console.log(res.data.data);
     });
   };
 
-  const attachmentToggle = () => {
-    setAttachmentModal(!attachmentModal);
-  };
-
+  /*   const attachmentToggle = () => {
+      setAttachmentModal(!attachmentModal);
+    };
+   */
   const handleInputs = (e) => {
     setPurchaseOrderDetails({ ...purchaseOrderDetails, [e.target.name]: e.target.value });
   };
@@ -50,7 +57,6 @@ const PurchaseOrderEdit = () => {
       .post('/purchaseorder/getPurchaseOrderByPurchaseOrderId', { purchase_order_id: id })
       .then((res) => {
         setPurchaseOrderDetails(res.data.data[0]);
-        console.log(res.data.data[0]);
       })
       .catch(() => {
         message('Purchase Order Data Not Found', 'info');
@@ -61,17 +67,42 @@ const PurchaseOrderEdit = () => {
     api.post('/purchaseorder/editPurchaseOrderDetails', purchaseOrderDetails)
       .then(() => {
         message('Record editted successfully', 'success');
-/*         setTimeout(() => {
-          window.location.reload();
-        }, 300); */
+        /*         setTimeout(() => {
+                  window.location.reload();
+                }, 300); */
       })
       .catch(() => {
         message('Unable to edit record.', 'error');
       });
-  };  
+  };
+
+  const getSupplier = () => {
+    api.get('/supplier/getSupplier')
+      .then((res) => {
+        setSupplier(res.data.data)
+      }).catch(() => {
+        message("Company not found", "info")
+      })
+  }
+
+  const dataForPicture = () => {
+    setDataForPicture({
+      modelType: 'picture'
+    });
+    console.log('inside DataForPucture');
+  }
+
+  const dataForAttachment = () => {
+    setDataForAttachment({
+      modelType: 'attachment'
+    })
+    console.log('inside DataForAttachment');
+  }
+
   useEffect(() => {
     editPurchaseOrderById();
     getPurchaseOrder();
+    getSupplier();
   }, [id]);
 
   const columns = [
@@ -206,9 +237,8 @@ const PurchaseOrderEdit = () => {
       <Form>
         <FormGroup>
           <ComponentCard
-            title={`Purchase Order Details | Code: ${
-              purchaseOrderDetails && purchaseOrderDetails.purchase_order_id
-            }`}
+            title={`Purchase Order Details | Code: ${purchaseOrderDetails && purchaseOrderDetails.purchase_order_id
+              }`}
           >
             <Row>
               <Col md="3">
@@ -259,11 +289,17 @@ const PurchaseOrderEdit = () => {
                 <FormGroup>
                   <Label>Supplier</Label>
                   <Input
-                    type="text"
+                    type="select"
                     onChange={handleInputs}
-                    value={purchaseOrderDetails && purchaseOrderDetails.supplier_inv_code}
-                    name="supplier_inv_code"
-                  />
+                    value={purchaseOrderDetails && purchaseOrderDetails.company_id_supplier}
+                    name="company_name"
+                  >
+                    <option value="" selected>Please Select</option>
+                    {supplier && supplier.map((e) => {
+                      return <option value={e.supplier_id} >{e.company_name}</option>
+
+                    })}
+                  </Input>
                 </FormGroup>
               </Col>
             </Row>
@@ -393,9 +429,10 @@ const PurchaseOrderEdit = () => {
                   Go to List
                 </Button>
               </div>
-            </Row>            
+            </Row>
           </ComponentCard>
           <ComponentCard title="Product Linked">
+            <ToastContainer></ToastContainer>
             <AddPurchaseOrderModal
               addPurchaseOrderModal={addPurchaseOrderModal}
               setAddPurchaseOrderModal={setAddPurchaseOrderModal}
@@ -408,14 +445,14 @@ const PurchaseOrderEdit = () => {
                     setAddPurchaseOrderModal(true);
                   }}
                 >
-                  Add Purchase Order
+                  Add Product
                 </Button>
               </Col>
               <Col md="3">
-                <Button color="primary">Create Delivery Order</Button>
+                <Button color="success">Add all Qty to Stock</Button>
               </Col>
               <Col md="3">
-                <Button color="success">Add all Qty to Stock</Button>
+                <Button color="primary">Delivery Order</Button>
               </Col>
             </Row>
             <Row>
@@ -465,12 +502,12 @@ const PurchaseOrderEdit = () => {
                               <td></td>
                               <td></td>
                               <td>
-                                <Link to={`/PurchaseOrderEdit/${element.purchase_order_id}`}>
+                                <Link to={`/PurchaseOrderEdit/${element.product_id}`}>
                                   <Icon.Edit2 />
                                 </Link>
                               </td>
                               <td>
-                                <Link to="" color="primary" onClick={() => {}}>
+                                <Link to="" color="primary" onClick={() => { }}>
                                   <b>
                                     <u>View History</u>
                                   </b>
@@ -506,54 +543,41 @@ const PurchaseOrderEdit = () => {
             </Row>
             <Row className="mb-1">
               <Col md="1">
-              <button type="button" className="btn btn-primary btn-sm">Submit</button>
+                <button type="button" className="btn btn-primary btn-sm">Submit</button>
               </Col>
               <Col md="1">
-              <button type="button" className="btn btn-warning btn-sm">Cancel</button>
+                <button type="button" className="btn btn-warning btn-sm">Cancel</button>
               </Col>
             </Row>
           </ComponentCard>
           <ComponentCard title="Picture">
             <Row>
-              <Button color="primary" onClick={attachmentToggle.bind(null)}>
-                Add
-              </Button>
-              <Modal isOpen={attachmentModal} toggle={attachmentToggle.bind(null)}>
-                <ModalHeader toggle={attachmentToggle.bind(null)}>Upload Media</ModalHeader>
-                <ModalBody>
-                  <FormGroup>
-                    <Label htmlFor="exampleFile">Select Files</Label>
-                    <Input type="file" placeholder="" />
-                  </FormGroup>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="primary" onClick={attachmentToggle.bind(null)}>
-                    Upload
-                  </Button>
-                </ModalFooter>
-              </Modal>
+              <Col xs="12" md="3" className='mb-3'>
+                <Button color="primary" onClick={() => {
+                  dataForPicture();
+                  setAttachmentModal(true);
+                }}>
+                  Add
+                </Button>
+              </Col>
             </Row>
+            <PictureAttachmentModalV2 moduleId={id} roomName='Purchase Order' altTagData='Po Alternate Data' desc='PO Desc' modelType={pictureData.modelType} attachmentModal={attachmentModal} setAttachmentModal={setAttachmentModal} />
+            <ViewFileComponentV2 moduleId={id} roomName='Purchase Order' />
           </ComponentCard>
           <ComponentCard title="Attachments">
             <Row>
-              <Button color="primary" onClick={attachmentToggle.bind(null)}>
-                Add
-              </Button>
-              <Modal isOpen={attachmentModal} toggle={attachmentToggle.bind(null)}>
-                <ModalHeader toggle={attachmentToggle.bind(null)}>Upload Media</ModalHeader>
-                <ModalBody>
-                  <FormGroup>
-                    <Label htmlFor="exampleFile">Select Files</Label>
-                    <Input type="file" placeholder="" />
-                  </FormGroup>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="primary" onClick={attachmentToggle.bind(null)}>
-                    Upload
-                  </Button>
-                </ModalFooter>
-              </Modal>
+              <Col xs="12" md="3" className='mb-3'>
+                <Button color="primary" onClick={() => {
+                  dataForAttachment();
+                  setAttachmentModal(true);
+                }}>
+                  Add
+                </Button>
+              </Col>
             </Row>
+
+            <AttachmentModalV2 moduleId={id} roomName='Purchase Order' altTagData='Po Alternate Data' desc='PO Desc' modelType={attachmentData.modelType} attachmentModal={attachmentModal} setAttachmentModal={setAttachmentModal} />
+            <ViewFileComponentV2 moduleId={id} roomName='Purchase Order' />
           </ComponentCard>
         </FormGroup>
       </Form>

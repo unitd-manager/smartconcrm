@@ -91,7 +91,7 @@ const PurchaseOrderDetails = () => {
                     <option value="" selected >Please Select</option>
 
                       {supplier && supplier.map((ele)=>{
-                        return  <option key={ele.supplier_id} value={ele.supplier_id} >{ele.company_name}</option>
+                        return  <option value={ele.company_name} >{ele.company_name}</option>
 
                       })}
                     </Input>

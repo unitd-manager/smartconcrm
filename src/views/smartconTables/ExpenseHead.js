@@ -1,6 +1,5 @@
 import React,{useEffect,useState} from 'react';
 import * as Icon from 'react-feather';
-import moment from 'moment';
 import {Row,Col,Button } from 'reactstrap';
 import Swal from 'sweetalert2'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -15,12 +14,12 @@ import { Link } from 'react-router-dom';
 import api from '../../constants/api';
 
 
-const Booking = () => {
-    const [bookings,setBookings] = useState(null);
-    const getBooking = () =>{
-      api.get('/booking/getBooking')
+const ExpenseHead = () => {
+    const [accounts,setExpensehead] = useState(null);
+    const getExpensehead = () =>{
+      api.get('/expensehead/getExpenseHead')
         .then((res)=> {
-            setBookings(res.data.data)
+          setExpensehead(res.data.data)
             console.log(res.data.data)
         })
     }
@@ -41,7 +40,7 @@ const Booking = () => {
             1000
             );
     
-        getBooking()
+            getExpensehead()
 
     }, [])
     
@@ -49,7 +48,7 @@ const Booking = () => {
    const columns = [
         {
           name: "id",
-          selector: "booking_id",
+          selector: "expense_group_id",
           grow:0,
           wrap: true,
           width:'4%'
@@ -72,42 +71,20 @@ const Booking = () => {
             wrap: true
         },
         {
-          name: "Date",
-          selector: "booking_date",
+          name: "Title",
+          selector: "title",
           sortable: true,
           grow:0,
           wrap: true
         },
         {
-          name: "AssignTime",
-          selector: "assign_time",
+          name: "	Updated By",
+          selector: "updated_by",
           sortable: true,
           grow:2,
           wrap: true
         },
-        {
-          name: "CustomerName",
-          selector: "company_name",
-          sortable: true,
-          grow:0,
-        },
-        {
-            name: "EmployeeName",
-            selector: "first_name",
-            sortable: true,
-            width:'auto',
-            grow:3,
-            // cell: d => <span>{d.closing.join(", ")}</span>
-          },
-          {
-            name: "Address",
-            selector: "address_flat",
-            sortable: true,
-            grow:2,
-            width:'auto',
-            // cell: d => <span>{d.closing.join(", ")}</span>
-          },
-          
+        
       ]
       
       const deleteRecord = (id) => {
@@ -124,23 +101,23 @@ const Booking = () => {
           confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
           if (result.isConfirmed) {
-            api.post('/booking/deleteBooking',{booking_id:id}).then(res=>{
+            api.post('/expensehead/deleteExpGroup',{expense_group_id:id}).then(res=>{
               console.log(res)
               Swal.fire(
                 'Deleted!',
-                'Your Booking has been deleted.',
+                'Your Tender has been deleted.',
                 'success'
               )
-              getBooking()
+              getExpensehead()
 
             })
           }
         })
 
 
-        // api.get(`/booking/deleteBooking/${booking_id}`)
+        // api.get(`/tender/deleteExpense/${expense_id}`)
         //  .then((res)=> {
-        //      setBookings(res.data.data)
+        //      setAccounts(res.data.data)
         //  })
 
       }
@@ -156,7 +133,7 @@ const Booking = () => {
 
     <Row>
           <Col md="6">
-            <Link to="/BookingDetails">
+            <Link to="/ExpenseHeadDetails">
               <Button  color="primary" className="my-3">
                 Add New
               </Button>
@@ -175,17 +152,14 @@ const Booking = () => {
               </tr>
           </thead>
           <tbody>
-            {bookings && bookings.map(element=>{
-                return (<tr key={element.booking_id}>
-                <td>{element.booking_id}</td>
-                <td><Link to={`/BookingEdit/${element.booking_id}`} ><Icon.Edit2 /></Link></td>
-                <td><Link to=""><span onClick={()=>deleteRecord(element.booking_id)}><Icon.Trash2 /></span></Link></td>
-                <td>{moment(element.booking_date).format('YYYY-MM-DD')}</td>
-                <td>{element.assign_time}</td>
-                <td>{element.company_name}</td>
-                <td>{element.first_name}</td>
-                <td>{element.address_flat}</td>
-                </tr>)
+            {accounts && accounts.map(element=>{
+                return (<tr key={element.expense_group_id}>
+                <td>{element.expense_group_id}</td>
+                <td><Link to={`/ExpenseHeadEdit/${element.expense_group_id}`} ><Icon.Edit2 /></Link></td>
+                <td><Link to=""><span onClick={()=>deleteRecord(element.expense_group_id)}><Icon.Trash2 /></span></Link></td>
+                <td>{element.title}</td>
+                <td>{element.updated_by}</td>
+                               </tr>)
             })}
           </tbody>
           <tfoot>
@@ -200,4 +174,4 @@ const Booking = () => {
     </div>)
 }
 
-export default Booking;
+export default ExpenseHead;

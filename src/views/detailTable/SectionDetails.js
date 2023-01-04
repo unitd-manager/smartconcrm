@@ -16,38 +16,30 @@ import api from '../../constants/api';
 
 
 
-const ClientDetails = () => {
+const SectionDetails = () => {
   const navigate = useNavigate()
 
 
-  // const [client, setClient] = useState();
-  // const getClient = () => {
-  //   api.get('/clients/getClients')
-  //     .then((res) => {
-  //       setClient(res.data.data)
-  //       console.log(client)
-  //     })
-  // }
- 
+  
+  
 
-  const [clientForms, setClientForms] = useState({
-    company_name: "",
+  const [sectionForms, setSectionForms] = useState({
+    title: "",
   });
 
-  const handleClientForms = (e) => {
-    setClientForms({ ...clientForms, [e.target.name]: e.target.value });
+  const handleSectionForms = (e) => {
+    setSectionForms({ ...sectionForms, [e.target.name]: e.target.value });
   }
-
-  const insertClient = () => {
+  const insertSection = () => {
 
   
-    api.post('/clients/insertCompany',clientForms)
+    api.post('/section/insertSection',sectionForms)
     .then((res)=> {
      const insertedDataId= res.data.data.insertId
      console.log(insertedDataId)
-    message('Client inserted successfully.','success')
+    message('Section inserted successfully.','success')
     setTimeout(()=> {
-    navigate(`/ClientsEdit/${insertedDataId}`)
+    navigate(`/SectionEdit/${insertedDataId}`)
     },300);
       
     })
@@ -59,8 +51,12 @@ const ClientDetails = () => {
 }
 
 
+
+
+
+
   useEffect(() => {
-    // getClient();
+    
   }, [])
 
 
@@ -74,9 +70,9 @@ const ClientDetails = () => {
               <FormGroup>
                 <Row>
                   <Col md="12">
-                    <Label>Company Name</Label>
+                    <Label>Title</Label>
 
-                    <Input type="text" name="company_name" onChange={(e) => {handleClientForms(e)}}>
+                    <Input type="text" name="title" onChange={(e) => {handleSectionForms(e)}}>
                     </Input>
                   </Col>
                 </Row>
@@ -85,8 +81,8 @@ const ClientDetails = () => {
                 <Row>
                   <div className="pt-3 mt-3 d-flex align-items-center gap-2">
                     <Button onClick={()=>{
-                           insertClient()
-                        }} type="button" className="btn btn-success mr-2" >Save & Continue
+                           insertSection()
+                        }} type="button" className="btn btn-success mr-2"  >Save & Continue
                     </Button>
                     <Button onClick={() => {
                       navigate(-1)
@@ -106,4 +102,4 @@ const ClientDetails = () => {
   );
 }
 
-export default ClientDetails
+export default SectionDetails;

@@ -18,7 +18,7 @@ import api from '../../constants/api';
 function PurchaseOrder() {
   const [purchaseOrder,setPurchaseOrder] = useState(null);
   const getPurchaseOrder = () =>{
-    api.get('/purchaseorder/TabPurchaseOrder')
+    api.get('/purchaseorder/getPurchaseOrders')
       .then((res)=> {
         setPurchaseOrder(res.data.data);
         console.log(res.data.data);
@@ -133,7 +133,7 @@ const deleteRecord = (id) => {
    confirmButtonText: 'Yes, delete it!'
  }).then((result) => {
    if (result.isConfirmed) {
-     api.delete('/purchaseorder/deletePurchaseOrder',{po_code:id}).then(res=>{
+     api.delete('/purchaseorder/deletePurchaseOrder',{data: {purchase_order_id:id}}).then(res=>{
        console.log(res)
        Swal.fire(
          'Deleted!',
@@ -179,9 +179,6 @@ const deleteRecord = (id) => {
                       <td>{element.title}</td>
                       <td>{element.payment_terms}</td>
                       <td>{element.status}</td>
-                      <td>{element.purchase_order_date}</td>
-                      <td>{element.supplier_inv_code}</td>
-                      <td>{element.creation_date}</td>
                       <td>{moment(element.purchase_order_date).format('DD-MM-YYYY')}</td>
                       <td>{element.supplier_inv_code}</td>
                       <td>{moment(element.creation_date).format('DD-MM-YYYY')}</td>

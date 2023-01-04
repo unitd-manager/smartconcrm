@@ -153,6 +153,13 @@ const SidebarData = [
         collapisble: false,
       },
       {
+        title: 'ExpenseHead',
+        href: '/ExpenseHead',
+        icon: <Icon.Disc />,
+        id: 1.1,
+        collapisble: false,
+      },
+      {
         title: 'Sub Con',
         href: '/Subcon',
         icon: <Icon.Disc />,
@@ -261,6 +268,13 @@ const SidebarData = [
       {
         title: 'Staff',
         href: '/Staff',
+        icon: <Icon.Disc />,
+        id: 1.1,
+        collapisble: false,
+      },
+      {
+        title: 'Section',
+        href: '/Section',
         icon: <Icon.Disc />,
         id: 1.1,
         collapisble: false,

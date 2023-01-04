@@ -8,7 +8,7 @@ import {
   Input,
   Button
 } from 'reactstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useParams } from 'react-router-dom';
 import message from '../../components/Message';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs'
 import ComponentCard from '../../components/ComponentCard';
@@ -16,38 +16,38 @@ import api from '../../constants/api';
 
 
 
-const ClientDetails = () => {
+const ContentDetails = () => {
+  const {id} = useParams();
   const navigate = useNavigate()
 
 
-  // const [client, setClient] = useState();
-  // const getClient = () => {
-  //   api.get('/clients/getClients')
+  // const [expensehead, setExpenseHead] = useState();
+  // const getExpenseHead = () => {
+  //   api.get('/expensehead/getExpenseHead')
   //     .then((res) => {
-  //       setClient(res.data.data)
-  //       console.log(client)
+  //       setExpenseHead(res.data.data)
+  //       console.log(expensehead)
   //     })
   // }
  
 
-  const [clientForms, setClientForms] = useState({
-    company_name: "",
+  const [expenseForms, setExpenseForms] = useState({
+    title: "",
   });
 
-  const handleClientForms = (e) => {
-    setClientForms({ ...clientForms, [e.target.name]: e.target.value });
+  const handleExpenseForms = (e) => {
+    setExpenseForms({ ...expenseForms, [e.target.name]: e.target.value });
   }
-
-  const insertClient = () => {
+  const insertExpense = () => {
 
   
-    api.post('/clients/insertCompany',clientForms)
+    api.post('/expensehead/insertExpGroup',expenseForms)
     .then((res)=> {
      const insertedDataId= res.data.data.insertId
      console.log(insertedDataId)
-    message('Client inserted successfully.','success')
+    message('Expense inserted successfully.','success')
     setTimeout(()=> {
-    navigate(`/ClientsEdit/${insertedDataId}`)
+    navigate(`/ExpenseHeadEdit/${insertedDataId}`)
     },300);
       
     })
@@ -57,11 +57,10 @@ const ClientDetails = () => {
 
 
 }
+useEffect(() => {
 
+}, [id])
 
-  useEffect(() => {
-    // getClient();
-  }, [])
 
 
   return (
@@ -74,9 +73,12 @@ const ClientDetails = () => {
               <FormGroup>
                 <Row>
                   <Col md="12">
-                    <Label>Company Name</Label>
+                    <Label>Title</Label>
 
-                    <Input type="text" name="company_name" onChange={(e) => {handleClientForms(e)}}>
+                    <Input type="text" name="title" onChange={(e) => {
+                      //getContact(e.target.value)
+                      handleExpenseForms(e)
+                    }}>
                     </Input>
                   </Col>
                 </Row>
@@ -85,13 +87,13 @@ const ClientDetails = () => {
                 <Row>
                   <div className="pt-3 mt-3 d-flex align-items-center gap-2">
                     <Button onClick={()=>{
-                           insertClient()
-                        }} type="button" className="btn btn-success mr-2" >Save & Continue
+                           insertExpense()
+                        }} type="button" className="btn btn-success mr-2" >submit
                     </Button>
                     <Button onClick={() => {
                       navigate(-1)
                     }} type="button" className="btn btn-dark">
-                      Go to List
+                      Cancel
                     </Button>
                   </div>
                 </Row>
@@ -106,4 +108,4 @@ const ClientDetails = () => {
   );
 }
 
-export default ClientDetails
+export default ContentDetails

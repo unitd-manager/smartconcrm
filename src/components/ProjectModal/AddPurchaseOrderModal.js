@@ -2,9 +2,9 @@ import React,{useState,useEffect} from 'react';
 import { Row,Col,FormGroup,Input,Button,Modal,ModalHeader,ModalBody, ModalFooter,Label } from 'reactstrap';
 import {  Link } from 'react-router-dom';
 import PropTypes from 'prop-types'
-import * as $ from "jquery";
+//import * as $ from "jquery";
 import random from 'random'
-import Select from 'react-select';
+//import Select from 'react-select';
 import api from '../../constants/api';
 import message from '../Message';
 
@@ -17,51 +17,118 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
       }
 
       const [ addNewProductModal, setAddNewProductModal] = useState(false)
-      const [ getSupplierValue, setGetSupplierValue] = useState()
-      const [tabMaterialsPurchased, setTabMaterialsPurchased] = useState();
+      const [ getProductValue, setProductValue] = useState()
+      //const [tabMaterialsPurchased, setTabMaterialsPurchased] = useState();
       //const [selectedOption, setSelectedOption] = useState(null);
+      const [ productDetail, setProductDetail] = useState({
+        category_id: ""
+        , sub_category_id : "" 
+        , title: ""
+        , product_code: ""
+        , description: ""
+        , qty_in_stock: ""
+        , price: ""
+        , published: ""
+        , member_only: ""
+        , creation_date: ""
+        , modification_date: ""
+        , chi_title: ""
+        , chi_description: ""
+        , sort_order: ""
+        , meta_title: ""
+        , meta_description: ""
+        , meta_keyword: ""
+        , latest : "" 
+        , description_short: ""
+        , chi_description_short: ""
+        , general_quotation: ""
+        , unit: ""
+        , product_group_id: ""
+        , department_id: ""
+        , item_code: ""
+        , modified_by: ""
+        , created_by: ""
+        , part_number: ""
+        , price_from_supplier: ""
+        , model: ""
+        , carton_no: ""
+        , batch_no: ""
+        , vat: ""
+        , fc_price_code: ""
+        , batch_import: ""
+        , commodity_code: ""
+        , show_in_website: ""
+        , most_selling_product: ""
+        , site_id: ""
+        , damaged_qty: ""
+        , item_code_backup: ""
+        , hsn_sac: ""
+        , deals_of_week: ""
+        , top_seller: ""
+        , hot_deal: ""
+        , most_popular : "" 
+        , top_rating: ""
+        , section_id: ""
+        , discount_type: ""
+        , discount_percentage: ""
+        , discount_amount: ""
+        , hsn: ""
+        , gst: ""
+        , product_weight: ""
+        , tam_title: ""
+        , tam_description: ""
+        , tam_description_short: ""
+        , supplier_id: ""
+        , product_type: ""
+        , bar_code: ""
+        , tag_no: ""
+        , pack_size : "" 
+        , discount_from_date: ""
+        , discount_to_date: ""
+        , mrp: ""        
+      });
       const [addMoreItem, setMoreItem] = useState(
         [{
             "id":random.int(1,99).toString(),
             "itemId":"",
-            "uom": "",
+            "unit": "",
             "qty": "",
-            "unitprice": "",
-            "totalprice": "",
-            "item":"",
+            "price": "",
+            "mrp": "",
+            "gst":"",
             "description":""
         },{
           "id":random.int(0,9999).toString(),
           "itemId":"",
-          "uom": "",
+          "unit": "",
           "qty": "",
-          "unitprice": "",
-          "totalprice": "",
-          "item":"",
+          "price": "",
+          "mrp": "",
+          "gst":"",
           "description":""
         },{
           "id":random.int(0,9999).toString(),
           "itemId":"",
-          "uom": "",
+          "unit": "",
           "qty": "",
-          "unitprice": "",
-          "totalprice": "",
-          "item":"",
+          "price": "",
+          "mrp": "",
+          "gst":"",
           "description":""
         }]
       )
-      const [ totalAmount, setTotalAmount ] = useState(0);
+      //const [ totalAmount, setTotalAmount ] = useState(0);
 
       const AddNewLineItem = () => {
         //setMoreItem(addMoreItem + 1)
         setMoreItem([...addMoreItem,{
             "id": random.int(0,9999).toString(),
             "itemId":"",
-            "uom": "",
+            "unit": "",
             "qty": "",
-            "unitprice": "",
-            "totalprice": "",
-            "item":"",
+            "price": "",
+            "mrp": "",
+            "gst":"",
             "description":""
         }])
       } 
@@ -107,15 +174,29 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
     
     })
 
+    const handleNewProductDetails = (e) => {
+        setProductDetail({...productDetail, [e.target.name]:e.target.value});
+      }
+
     //   Get Supplier
-    const getSupplier = () => {
-        api.get('/purchaseorder/suppliers')
+    const getProduct = () => {
+        api.get('/product/getProducts')
         .then((res)=>{
-        setGetSupplierValue(res.data.data)
+        setProductValue(res.data.data)
         console.log("Supplier",res)
       })
     }
-          
+         
+    const insertProduct = () => {
+        api.post('/product/insertProduct',productDetail)
+        .then(()=>{
+            message('Product inserted successfully', 'success');
+      })
+      .catch(() => {
+        message('Unable to insert product.', 'error');
+      });
+    }   
+
     // Materials Purchased
 
     const TabMaterialsPurchased = () => {
@@ -126,7 +207,7 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
         items.forEach(item=>{
             finaldat.push({ value: item.product_id, label: item.title})
         })
-        setTabMaterialsPurchased(finaldat)
+        //setTabMaterialsPurchased(finaldat)
       })
       .catch(()=>{
         message("Tab Purchase Order not found","info")
@@ -134,80 +215,80 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
       }
 
 //  calculate Total
-      const calculateTotal = () => {
-       const oldArray = addMoreItem
-        let totalValue = 0
-        const result = [];
-        $(".lineitem tbody tr").each(function() {
-          const allValues = {}; 
-          $(this).find("input").each(function() {
+    //   const calculateTotal = () => {
+    //    const oldArray = addMoreItem
+    //     let totalValue = 0
+    //     const result = [];
+    //     $(".lineitem tbody tr").each(function() {
+    //       const allValues = {}; 
+    //       $(this).find("input").each(function() {
            
-              const fieldName = $(this).attr("name");
+    //           const fieldName = $(this).attr("name");
              
-              allValues[fieldName] = $(this).val();
-              allValues.totalprice = allValues.qty * allValues.unitprice
+    //           allValues[fieldName] = $(this).val();
+    //           allValues.totalprice = allValues.qty * allValues.unitprice
               
-          });
-          result.push(allValues);
-      })  
-      result.forEach(obj=>{
-        if(obj.id){
-/* eslint-disable */
+    //       });
+    //       result.push(allValues);
+    //   })  
+    //   result.forEach(obj=>{
+    //     if(obj.id){
+    //     /* eslint-disable */
 
-           // const objId = parseInt(obj.id)
+    //        // const objId = parseInt(obj.id)
            
-            const foundObj = oldArray.find(el => el.id === obj.id)
-            if(foundObj){
-                obj.item = foundObj.item
-                obj.itemId = foundObj.itemId
-            }
+    //         const foundObj = oldArray.find(el => el.id === obj.id)
+    //         if(foundObj){
+    //             obj.item = foundObj.item
+    //             obj.itemId = foundObj.itemId
+    //         }
            
-        }
+    //     }
 
-      })
-      console.log(result)
-      result.forEach(e=>{
-        if(e.totalprice)
-        {
-          totalValue += parseFloat(e.totalprice)
-        }
-      })
+    //   })
+    //   console.log(result)
+    //   result.forEach(e=>{
+    //     if(e.totalprice)
+    //     {
+    //       totalValue += parseFloat(e.totalprice)
+    //     }
+    //   })
      
-      setMoreItem(result)
-      setTotalAmount(totalValue)
-      }
+    //   setMoreItem(result)
+    //   setTotalAmount(totalValue)
+    //   }
       
     //   Insert Purchase Order
 
-    const handleInsertValue = (e) => {
+    // const handleInsertValue = (e) => {
       
-        setInsertPurchaseOrderData({...insertPurchaseOrderData, [e.target.name]:e.target.value});
-    }
+    //     setInsertPurchaseOrderData({...insertPurchaseOrderData, [e.target.name]:e.target.value});
+    // }
     const poProduct = (inId,itemObj) => {
         api.post('/purchaseorder/insertPoProduct',{
             purchase_order_id:inId
        ,item_title:itemObj.item
       , quantity:itemObj.qty
-      , unit:itemObj.uom
-      , amount:itemObj.totalprice
+      , unit:itemObj.unit
+      , amount:0
       , description:itemObj.description
       , creation_date:new Date()
       , modification_date:new Date()
       , created_by:"1"
       , modified_by:"1"
       , status:"In Progress"
-      , cost_price	:parseInt(itemObj.unitprice,10)
-      , selling_price:""
+      , cost_price	:parseInt(itemObj.unit,10)
+      , selling_price:itemObj.mrp
       , qty_updated:parseInt(itemObj.qty,10)
       , qty:parseInt(itemObj.qty,10)
       , product_id:parseInt(itemObj.itemId,10)
       , supplier_id:insertPurchaseOrderData.supplier_id
-      , gst:0
+      , gst:itemObj.gst
       , damage_qty:0
       , brand:""
       , qty_requested:0
       , qty_delivered:0
-      , price:0
+      , price:itemObj.price
 
         })
         .then((res)=>{ 
@@ -221,7 +302,7 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
 
     const insertlineItem = (inserId) => {
        addMoreItem.forEach(pItems=>{
-        if(pItems.item != ''){
+        if(pItems.item !== ''){
             poProduct(inserId,pItems)
         }
 
@@ -230,7 +311,7 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
 
     const insertPurchaseOrder = () => {
        
-        
+        console.log("insertPurchaseOrderData : ",insertPurchaseOrderData)
         api.post('/purchaseorder/insertPurchaseOrder',insertPurchaseOrderData)
         .then((res)=>{ 
             setInsertPurchaseOrderData({
@@ -274,8 +355,9 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
             
             
             })
-            setAddPurchaseOrderModal(false)
-            insertlineItem(res.data.data.insertId)
+            setAddPurchaseOrderModal(false);
+            insertlineItem(res.data.data.insertId);
+            getProduct();
             message('Purchase Order Added!','success')
             // insertlineItem()
         }) 
@@ -284,36 +366,36 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
   
 
     useEffect(() => {
-        getSupplier();
+        getProduct();
         TabMaterialsPurchased();
     }, [])
     useEffect(() => {
         setMoreItem([{
             "id":random.int(1,99).toString(),
             "itemId":"",
-            "uom": "",
+            "unit": "",
             "qty": "",
-            "unitprice": "",
-            "totalprice": "",
-            "item":"",
+            "price": "",
+            "mrp": "",
+            "gst":"",
             "description":""
         },{
           "id":random.int(0,9999).toString(),
           "itemId":"",
-          "uom": "",
+          "unit": "",
           "qty": "",
-          "unitprice": "",
-          "totalprice": "",
-          "item":"",
+          "price": "",
+          "mrp": "",
+          "gst":"",
           "description":""
         },{
           "id":random.int(0,9999).toString(),
           "itemId":"",
-          "uom": "",
+          "unit": "",
           "qty": "",
-          "unitprice": "",
-          "totalprice": "",
-          "item":"",
+          "price": "",
+          "mrp": "",
+          "gst":"",
           "description":""
         }])
     }, [addPurchaseOrderModal])
@@ -330,7 +412,7 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
   return (
     <>
          <Modal size="xl" isOpen={addPurchaseOrderModal}>
-            <ModalHeader>Add Purchase Order</ModalHeader>
+            <ModalHeader>Add Product</ModalHeader>
             
             <ModalBody>
                 <FormGroup>
@@ -341,53 +423,13 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
                             <Button color="primary" onClick={()=>{setAddNewProductModal(true)}}>Add New Product</Button>
                         </Col>
                         <Col md="3">
-                            <Button color="primary" onClick={()=>{AddNewLineItem()}}>Add More Items</Button>
+                            <Button color="primary" onClick={()=>{AddNewLineItem()}}>Add Item</Button>
                         </Col>
                         </Row>
                         <br/>
-                        <Row>
-                        <Col md="3">
-                            <Label>Supplier</Label>
-                            <Input type="select" name="supplier_id" onChange={handleInsertValue}>
-                                <option selected="selected" 
-                                value="">Please Select</option>
-
-                                {getSupplierValue && getSupplierValue.map((res)=>{
-                                    return <option 
-                                    value={res.supplier_id} 
-                                   >{res.company_name}</option>
-                                })}
-
-                            </Input>
-                        </Col>
-                        <Col md="3">
-                            <Label>PO Date</Label>
-                            <Input type="date" name="po_date" onChange={handleInsertValue} 
-                           
-                            />
-                        </Col>
-                        <Col md="3">
-                            <Label>PO No.</Label>
-                            <Input type="text" name="po_code" onChange={handleInsertValue} 
-                          
-                            />
-                        </Col>
-                        <Col md="3">
-                            <Label>GST</Label>
-                            <FormGroup check>
-                            <Input name="gst" type="radio" value="1" onChange={handleInsertValue}
-                            />
-                            <Label check>Yes</Label>
-                            </FormGroup>
-                            <FormGroup check>
-                                <Input name="gst" type="radio" value="0" onChange={handleInsertValue}/>
-                                <Label check> No </Label>
-                            </FormGroup>
-                        </Col>
-                        </Row>
-                        <Row>
+                        {/* <Row>
                             <FormGroup className='mt-3'> Total Amount : {totalAmount} </FormGroup>
-                        </Row>
+                        </Row> */}
                     </Col>
                     </Row>
 
@@ -395,11 +437,11 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
                     <thead>
                     <tr className=''>
                         <th width="20%" scope="col">Item</th>
-                        <th scope="col">UoM</th>
+                        <th scope="col">Unit</th>
                         <th scope="col">Quantity</th>
-                        <th scope="col">Unit Price</th>
-                        <th scope="col">Amount</th>
-                        <th width="25%" scope="col">Remarks</th>
+                        <th scope="col">Cost Price (without GST)</th>
+                        <th scope="col">Selling Price (without GST)</th>
+                        <th scope="col">GST</th>
                         <th scope="col"></th>
                     </tr>
                     </thead>
@@ -410,24 +452,37 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
                         <tr key={item.id}>
                             <td data-label="Item"  key={item.id}>                     
 
-                                 <Select
+{/*                                  <Select
                                     key={item.id}
                                     defaultValue={{value:item.item,label:item.item}}
                                     onChange={(e)=>{
                                         onchangeItem(e,item.id)
                                     }}
                                     options={tabMaterialsPurchased}
-                                />
+                                /> */}
+                            <Input type="select" name="item" onChange={(e)=>{
+                                        onchangeItem(e,item.id)
+                                    }} value={insertPurchaseOrderData&& insertPurchaseOrderData.item}>
+                                <option selected="selected" 
+                                value="">Please Select</option>
+
+                                {getProductValue && getProductValue.map((res)=>{
+                                    return <option key={item.id}
+                                    value={res.product_id} 
+                                   >{res.title}</option>
+                                })}
+
+                            </Input>                                
                                 <Input value={item.item} type="hidden" name="item"></Input>
                                 <Input value={item.itemId} type="hidden" name="itemId"></Input>
                             </td>
-                            <td data-label="UoM"><Input defaultValue={item.uom} type="text" name="uom" /></td>
-                            <td data-label="Qty"><Input defaultValue={item.qty} type="number" name="qty" /></td>
-                            <td data-label="Unit Price" ><Input defaultValue={item.unitprice} type="number" onBlur={()=>{
-                                    calculateTotal()
-                                  }} name="unitprice" /></td>
-                            <td data-label="Total Price"><Input type="hidden" defaultValue={item.totalprice} name="totalprice" />{item.totalprice}</td>
-                            <td data-label="Remarks"><Input type="input" defaultValue={item.description} name="description" /></td>
+                            <td data-label="Unit"><Input defaultValue={item.uom} type="text" name="unit" value={insertPurchaseOrderData&& insertPurchaseOrderData.unit}/></td>
+                            <td data-label="Qty"><Input defaultValue={item.qty} type="number" name="qty" value={insertPurchaseOrderData&& insertPurchaseOrderData.qty}/></td>
+                            <td data-label="Cost Price" ><Input defaultValue={item.unitprice} type="number" value={insertPurchaseOrderData&& insertPurchaseOrderData.price} onBlur={()=>{
+                                    //calculateTotal()
+                                  }} name="price" /></td>
+                            <td data-label="Selling Price"><Input type="input" defaultValue={item.totalprice} name="mrp" value={insertPurchaseOrderData&& insertPurchaseOrderData.mrp} />{item.totalprice}</td>
+                            <td data-label="GST"><Input type="input" defaultValue={item.description} name="gst" value={insertPurchaseOrderData&& insertPurchaseOrderData.gst} /></td>
                             <td data-label="Action"> <Input defaultValue={item.id} type="hidden" name="id"></Input><Link to=""><span>Clear</span></Link></td>
                         </tr>
                         );
@@ -439,7 +494,11 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
                 </FormGroup>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={()=>{insertPurchaseOrder()}}>Submit</Button>
+                <Button color="primary" onClick={()=>{
+                    insertPurchaseOrder();
+                    //insertlineItem(res.data.data.insertId);
+                    getProduct();
+                    }}>Submit</Button>
                 <Button color="secondar" onClick={()=>{setAddPurchaseOrderModal(false)}}>Cancel</Button>
             </ModalFooter>
         </Modal>
@@ -458,7 +517,7 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
                                 <Row>
                                     <Label sm="2">Product Name <span className='required'> *</span></Label>
                                     <Col sm="10">
-                                    <Input type="text" name="product_name" />
+                                    <Input type="text" name="title" onChange={handleNewProductDetails} value={productDetail.title}/>
                                     </Col>
                                 </Row>
                             </FormGroup>
@@ -466,7 +525,7 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
                                 <Row>
                                      <Label sm="2">Product Type <span className='required'> *</span></Label>
                                     <Col sm="10">
-                                    <Input type="select" name="product_type">
+                                    <Input type="select" name="product_type" onChange={handleNewProductDetails} value={productDetail.product_type}>
                                         <option value="">Please Select</option>
                                         <option selected="selected" value="Materials">Materials</option>
                                         <option value="Tools">Tools</option>
@@ -480,7 +539,12 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
                 </FormGroup>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={()=>{setAddNewProductModal(false)}}>Submit</Button>
+                <Button color="primary" onClick={()=>{
+                    setAddNewProductModal(false);
+                    insertProduct();
+                    getProduct();
+                    console.log(productDetail);
+                    }}>Submit</Button>
                 <Button color="secondar" onClick={()=>{setAddNewProductModal(false)}}>Cancel</Button>
             </ModalFooter>
         </Modal>
