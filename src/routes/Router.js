@@ -155,7 +155,6 @@ const TimesheetDetailsTable = Loadable(lazy(() => import ('../views/detailTable/
 
 // Finance Admin
 const FinanceTable = Loadable(lazy(() => import ('../views/smartconTables/Finance')))
-// const FinanceDetailsTable = Loadable(lazy(() => import ('../views/detailTable/FinanceDetails')))
 const SupplierTable = Loadable(lazy(() => import ('../views/smartconTables/Supplier')))
 const SupplierDetailsTable = Loadable(lazy(() => import ('../views/detailTable/SupplierDetails')))
 const SubConTable = Loadable(lazy(() => import ('../views/smartconTables/Subcon')))
@@ -173,7 +172,7 @@ const LeaveTable = Loadable(lazy(() => import ('../views/smartconTables/Leave'))
 const LeaveDetailsTable = Loadable(lazy(() => import ('../views/detailTable/LeaveDetails')))
 const LoanTable = Loadable(lazy(() => import ('../views/smartconTables/Loan')))
 const LoanDeatilsTable = Loadable(lazy(() => import ('../views/detailTable/LoanDetails')))
-// const TrainingTable = Loadable(lazy(() => import ('../views/smartconTables/Training')))
+const TrainingTable = Loadable(lazy(() => import ('../views/smartconTables/Training')))
 const TrainingDetailsTable = Loadable(lazy(() => import ('../views/detailTable/TrainingDetails')))
 const JobInformationTable = Loadable(lazy(() => import ('../views/smartconTables/JobInformation')))
 const JobInformationDetailsTable = Loadable(lazy(() => import ('../views/detailTable/JobInformationDetails'))) 
@@ -336,7 +335,7 @@ const Routernew = () => {
         <Route path="/Loan" name="clienttdata" element={<LoanTable />}></Route>
         <Route path="/LoanDetails" name="clienttdata" element={<LoanDeatilsTable />}></Route>
         <Route path="/TrainingDetails" name="clienttdata" element={<TrainingDetailsTable/>}></Route>
-        {/* <Route path="/Training" name="clienttdata" element={<TrainingTable />}></Route> */}
+        <Route path="/Training" name="clienttdata" element={<TrainingTable />}></Route>
         <Route path="/JobInformation" name="clienttdata" element={<JobInformationTable />}></Route>
         <Route path="/JobInformationDetails" name="clienttdata" element={<JobInformationDetailsTable />}></Route>
         <Route path="/PayrollManagement" name="clienttdata" element={<PayrollManagementTable />}></Route>

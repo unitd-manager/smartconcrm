@@ -91,7 +91,7 @@ const Training = () => {
         width:'auto',
         grow:3,
        
-      }
+      } 
 
   
  

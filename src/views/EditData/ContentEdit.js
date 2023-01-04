@@ -21,7 +21,6 @@ const ContentEdit = () => {
   const [sectionLinked, setSectionLinked] = useState();
   const [categoryLinked, setCategoryLinked] = useState();
   const [subcategoryLinked, setSubCategoryLinked] = useState();
-  const [conditions, setConditions] = useState('')
   const { title } = useParams()
   const navigate = useNavigate()
 
@@ -135,7 +134,6 @@ const ContentEdit = () => {
                     <option value="" selected="selected" >Please Select</option>
                     {subcategoryLinked && subcategoryLinked.map((ele) => {
                       return <option value={ele.sub_category_id} >{ele.sub_category_type}</option>
-
                     })}
                   </Input>
 
@@ -147,11 +145,8 @@ const ContentEdit = () => {
                   <Input type="text" onChange={handleInputs} value={contentDetails && contentDetails.content_type} name="content_type" />
                 </FormGroup>
               </Col>
-
-
             </Row>
           </ComponentCard>
-
           <ComponentCard title='Content details'>
             <Row>
               <Col md="4">

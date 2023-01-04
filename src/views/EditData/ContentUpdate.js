@@ -173,16 +173,15 @@ const ContentUpdate = () => {
           <ComponentCard title='Content details'>
             <Row>
               <Col md="4">
-                <FormGroup>
-                  <Label> Show Title</Label>
-
-                  <Input name="show_title" type="radio" value="1" onChange={handleInputs} />
-                  <Label check> Yes </Label>
-
-                  <Input name="show_title" type="radio" value="0" onChange={handleInputs} />
-                  <Label check> No </Label>
-
-                </FormGroup>
+              <Label>Show Title</Label>
+                  <br></br>
+                  <Input type='radio' name='show_title' value="1" onChange={handleInputs} 
+                checked={contentDetails && contentDetails.show_title === 1 && true} ></Input>
+                    <Label>Yes</Label>
+                    <br></br>
+                    <Input type='radio' name='show_title' value="0" onChange={handleInputs} 
+                    checked={contentDetails && contentDetails.show_title === 0 && true} ></Input>
+                    
               </Col>
               <Col md="4">
                 <FormGroup>

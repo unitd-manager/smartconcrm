@@ -86,7 +86,7 @@ const Content = () => {
     },
     {
         name: "Section",
-        selector: "section_type",
+        selector: "section_title",
         sortable: true,
         width:'auto',
         grow:3,
@@ -94,14 +94,14 @@ const Content = () => {
       },
       {
         name: "Category",
-        selector: "category_type",
+        selector: "category_title",
         sortable: true,
         grow:0,
         wrap: true
       },
       {
         name: "Sub Category",
-        selector: "sub_category_type",
+        selector: "sub_category_title",
         sortable: true,
         grow:0,
       },
@@ -131,7 +131,7 @@ const Content = () => {
         },
         {
           name: "Published",
-          selector: "published_test",
+          selector: "published",
           sortable: true,
           width:'auto',
           grow:3,
@@ -204,13 +204,13 @@ const Content = () => {
                     <td><Link to=""><span onClick={()=>deleteRecord(element.content_id)}><Icon.Trash2 /></span></Link></td>
                     <td>{element.title}</td>
                     <td>{element.sort_order}</td>
-                    <td>{element.section_type}</td>
-                    <td>{element.category_type}</td>
-                    <td>{element.sub_category_type}</td>
+                    <td>{element.section_title}</td>
+                    <td>{element.category_title}</td>
+                    <td>{element.sub_category_title}</td>
                     <td>{moment(element.content_date).format('YYYY-MM-DD')}</td>
                     <td>{element.content_type}</td>
                     <td>{element.content_id}</td>
-                    <td>{element.published_test}</td>
+                    <td>{element.published}</td>
               </tr>)
             })}
           </tbody>
