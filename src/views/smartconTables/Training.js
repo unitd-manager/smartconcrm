@@ -91,10 +91,8 @@ const Training = () => {
         width:'auto',
         grow:3,
        
-      } 
-
-  
- 
+      }
+      
       ]
       
       const deleteRecord = (id) => {
@@ -111,7 +109,7 @@ const Training = () => {
           confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
           if (result.isConfirmed) {
-            api.post('/training/deleteTraining',{training_id:id}).then(res=>{
+            api.post('/training/deleteTraining',{training_id :id}).then(res=>{
               console.log(res)
               Swal.fire(
                 'Deleted!',
@@ -152,13 +150,14 @@ const Training = () => {
           </thead>
           <tbody>
             {training && training.map(element=>{
-                return (<tr key={element.training_id}>
+                return (<tr key={element.title}>
                     <td>{element.training_id}</td>
                     <td><Link to={`/TrainingUpdate/${element.training_id}`} ><Icon.Edit2 /></Link></td>
                     <td><Link to=""><span onClick={()=>deleteRecord(element.training_id)}><Icon.Trash2 /></span></Link></td>
                     <td>{element.title}</td>
                     <td>{element.trainer}</td>
                     <td>{moment(element.from_date).format('YYYY-MM-DD')}</td>
+                    
               </tr>)
             })}
           </tbody>

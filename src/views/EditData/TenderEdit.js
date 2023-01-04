@@ -693,7 +693,7 @@ const TenderEdit = () => {
                     name="company_id">
                       <option value="" selected>Please Select</option>
                       {company && company.map((e)=>{
-                        return  <option key={e.company_id} value={e.company_id} >{e.company_name}</option>
+                        return  <option key={e.company_id} value={e.company_id} > {e.company_name} </option>
 
                     })}
 

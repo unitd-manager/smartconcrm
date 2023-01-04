@@ -6,7 +6,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
-import { convertToRaw } from 'draft-js';
+import htmlToDraft from 'html-to-draftjs';
+import {EditorState, convertToRaw, ContentState } from 'draft-js';
 import ContentAttachmentModal from '../../components/finance/ContentAttachmentModal';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss'
@@ -23,8 +24,8 @@ const ContentUpdate = () => {
   const [sectionLinked, setSectionLinked] = useState();
   const [categoryLinked, setCategoryLinked] = useState();
   const [subcategoryLinked, setSubCategoryLinked] = useState();
-  const [conditions, setConditions] = useState('')
   const [attachmentModal, setAttachmentModal] = useState(false);
+  const [description, setDescription] = useState('')
   const { id } = useParams()
   const navigate = useNavigate()
 
@@ -40,11 +41,22 @@ const ContentUpdate = () => {
     setContentDetails({ ...contentDetails, [type]: draftToHtml(convertToRaw(e.getCurrentContent())) });
 
   }
+  const convertHtmlToDraft = (existingQuoteformal) =>{
+   
+        const contentBlock = htmlToDraft(existingQuoteformal && existingQuoteformal);
+        if (contentBlock) {
+          const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+          const editorState = EditorState.createWithContent(contentState);
+          setDescription(editorState)
+        }
+}
   //Content By id
   const getContentById = () => {
+    
     api.post('/content/getContentById', { content_id: id })
       .then((res) => {
         setContentDetails(res.data.data)
+        convertHtmlToDraft(res.data.data.description)
       })
       .catch(() => {
         message("Content Data Not Found", 'info')
@@ -68,7 +80,6 @@ const ContentUpdate = () => {
     api.get('/content/getSection', sectionLinked)
       .then((res) => {
         setSectionLinked(res.data.data);
-        console.log(res.data.data);
       })
   }
 
@@ -77,17 +88,15 @@ const ContentUpdate = () => {
     api.get('/content/getCategory', categoryLinked)
       .then((res) => {
         setCategoryLinked(res.data.data);
-        console.log(res.data.data);
       })
   }
 
   //sub category select field
-
+ 
   const getSubCategory = () => {
     api.get('/content/getSubCategory', subcategoryLinked)
       .then((res) => {
         setSubCategoryLinked(res.data.data);
-        console.log(res.data.data);
       })
   }
 
@@ -126,7 +135,7 @@ const ContentUpdate = () => {
                   <Input type="select" name="section_id" value={contentDetails && contentDetails.section_id} onChange={handleInputs} >
                     <option value="" selected="selected" >Please Select</option>
                     {sectionLinked && sectionLinked.map((ele) => {
-                      return <option value={ele.section_id} >{ele.section_type}</option>
+                      return <option value={ele.section_id} >{ele.section_title}</option>
 
                     })}
                   </Input>
@@ -139,7 +148,7 @@ const ContentUpdate = () => {
                   <Input type="select" name="category_id" value={contentDetails && contentDetails.category_id} onChange={handleInputs} >
                     <option value="" selected="selected" >Please Select</option>
                     {categoryLinked && categoryLinked.map((ele) => {
-                      return <option value={ele.category_id} >{ele.category_type}</option>
+                      return <option value={ele.category_id} >{ele.category_title}</option>
 
                     })}
                   </Input>
@@ -152,7 +161,7 @@ const ContentUpdate = () => {
                   <Input type="select" name="sub_category_id" value={contentDetails && contentDetails.sub_category_id} onChange={handleInputs} >
                     <option value="" selected="selected" >Please Select</option>
                     {subcategoryLinked && subcategoryLinked.map((ele) => {
-                      return <option value={ele.sub_category_id} >{ele.sub_category_type}</option>
+                      return <option value={ele.sub_category_id} >{ele.sub_category_title}</option>
 
                     })}
                   </Input>
@@ -173,26 +182,29 @@ const ContentUpdate = () => {
           <ComponentCard title='Content details'>
             <Row>
               <Col md="4">
-              <Label>Show Title</Label>
+                <FormGroup>
+                  <Label> Show Title</Label>
                   <br></br>
-                  <Input type='radio' name='show_title' value="1" onChange={handleInputs} 
-                checked={contentDetails && contentDetails.show_title === 1 && true} ></Input>
-                    <Label>Yes</Label>
-                    <br></br>
-                    <Input type='radio' name='show_title' value="0" onChange={handleInputs} 
-                    checked={contentDetails && contentDetails.show_title === 0 && true} ></Input>
-                    
+                  <Label > Yes </Label>
+                  <Input name="show_title"  value="1" type="radio" defaultChecked={contentDetails && contentDetails.show_title===1 && true } onChange={handleInputs} />
+                  
+                  <Label > No </Label>
+                  <Input name="show_title"  value="0" type="radio" defaultChecked={contentDetails && contentDetails.show_title===0 && true } onChange={handleInputs} />
+                 
+
+                </FormGroup>
               </Col>
               <Col md="4">
                 <FormGroup>
                   <Label>Published</Label>
+                  <br></br>
+                  <Label >Yes</Label>
+                  <Input name="published" value="1" type="radio"  defaultChecked={contentDetails && contentDetails.published===1 && true } onChange={handleInputs} />
 
-                  <Input name="published" type="radio" value="1" onChange={handleInputs} />
-                  <Label check>Yes</Label>
-
-                  <Input name="published_test" type="radio" value="0" onChange={handleInputs} />
-                  <Label check>No</Label>
-
+                  <Label >No</Label>
+                  <Input name="published" value="0"  type="radio" defaultChecked={contentDetails && contentDetails.published=== 0 && true} 
+                  onChange={handleInputs} />
+                 
 
                 </FormGroup>
               </Col>
@@ -206,12 +218,12 @@ const ContentUpdate = () => {
               <ComponentCard title='Description'>
 
                 <Editor
-                  editorState={conditions}
+                  editorState={description}
                   wrapperClassName="demo-wrapper mb-0"
                   editorClassName="demo-editor border mb-4 edi-height"
                   onEditorStateChange={(e) => {
                     handleDataEditor(e, 'description')
-                    setConditions(e)
+                    setDescription(e)
                   }}
                 />
 

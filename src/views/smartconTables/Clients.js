@@ -1,6 +1,5 @@
 import React,{useEffect,useState} from 'react';
 import * as Icon from 'react-feather';
-import moment from 'moment';
 import {Row,Col,Button } from 'reactstrap';
 import Swal from 'sweetalert2'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -15,12 +14,12 @@ import { Link } from 'react-router-dom';
 import api from '../../constants/api';
 
 
-const Test = () => {
-    const [bookings,setBookings] = useState(null);
-    const getBooking = () =>{
-      api.get('/booking/getBooking')
+const Claints = () => {
+    const [clients,setClients] = useState(null);
+    const getClients = () =>{
+      api.get('/clients/getClients')
         .then((res)=> {
-            setBookings(res.data.data)
+            setClients(res.data.data)
             console.log(res.data.data)
         })
     }
@@ -41,7 +40,7 @@ const Test = () => {
             1000
             );
     
-        getBooking()
+        getClients()
 
     }, [])
     
@@ -49,7 +48,7 @@ const Test = () => {
    const columns = [
         {
           name: "id",
-          selector: "booking_id",
+          selector: "company_id",
           grow:0,
           wrap: true,
           width:'4%'
@@ -72,43 +71,34 @@ const Test = () => {
             wrap: true
         },
         {
-          name: "Date",
-          selector: "booking_date",
+          name: "Name",
+          selector: "company_name",
           sortable: true,
           grow:0,
           wrap: true
         },
         {
-          name: "AssignTime",
-          selector: "assign_time",
+          name: "Email",
+          selector: "email",
           sortable: true,
           grow:2,
           wrap: true
         },
         {
-          name: "CustomerName",
-          selector: "c_company_name",
+          name: "Status",
+          selector: "status",
           sortable: true,
           grow:0,
         },
         {
-            name: "EmployeeName",
-            selector: "first_name",
+            name: "Phone",
+            selector: "phone",
             sortable: true,
             width:'auto',
             grow:3,
-            // cell: d => <span>{d.closing.join(", ")}</span>
+    
           },
-          {
-            name: "Address",
-            selector: "address_flat",
-            sortable: true,
-            grow:2,
-            width:'auto',
-            // cell: d => <span>{d.closing.join(", ")}</span>
-          },
-          
-      ]
+          ]
       
       const deleteRecord = (id) => {
       
@@ -124,23 +114,23 @@ const Test = () => {
           confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
           if (result.isConfirmed) {
-            api.post('/booking/deleteBooking',{booking_id:id}).then(res=>{
+            api.post('/clients/deleteCompany',{company_id:id}).then(res=>{
               console.log(res)
               Swal.fire(
                 'Deleted!',
-                'Your Booking has been deleted.',
+                'Your Tender has been deleted.',
                 'success'
               )
-              getBooking()
+              getClients()
 
             })
           }
         })
 
 
-        // api.get(`/booking/deleteBooking/${booking_id}`)
+        // api.get(`/tender/deleteTender/${opportunity_id}`)
         //  .then((res)=> {
-        //      setBookings(res.data.data)
+        //      setTenders(res.data.data)
         //  })
 
       }
@@ -156,7 +146,7 @@ const Test = () => {
 
     <Row>
           <Col md="6">
-            <Link to="/BookingDetails">
+            <Link to="/ClientsDetails">
               <Button  color="primary" className="my-3">
                 Add New
               </Button>
@@ -175,16 +165,15 @@ const Test = () => {
               </tr>
           </thead>
           <tbody>
-            {bookings && bookings.map(element=>{
-                return (<tr key={element.booking_id}>
-                <td>{element.booking_id}</td>
-                <td><Link to={`/BookingEdit/${element.booking_id}`} ><Icon.Edit2 /></Link></td>
-                <td><Link to=""><span onClick={()=>deleteRecord(element.booking_id)}><Icon.Trash2 /></span></Link></td>
-                <td>{moment(element.booking_date).format('YYYY-MM-DD')}</td>
-                <td>{element.assign_time}</td>
-                <td>{element.c_company_name}</td>
-                <td>{element.first_name}</td>
-                <td>{element.address_flat}</td>
+            {clients && clients.map(element=>{
+                return (<tr key={element.company_id}>
+                <td>{element.company_id}</td>
+                <td><Link to={`/ClientsEdit/${element.company_id}`} ><Icon.Edit2 /></Link></td>
+                <td><Link to=""><span onClick={()=>deleteRecord(element.company_id)}><Icon.Trash2 /></span></Link></td>
+                <td>{element.company_name}</td>
+                <td>{element.email}</td>
+                <td>{element.status}</td>
+                <td>{element.phone}</td>
                 </tr>)
             })}
           </tbody>
@@ -200,4 +189,4 @@ const Test = () => {
     </div>)
 }
 
-export default Test;
+export default Claints;

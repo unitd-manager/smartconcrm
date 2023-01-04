@@ -35,11 +35,13 @@ const ContentEdit = () => {
   const handleDataEditor = (e, type) => {
 
     setContentDetails({ ...contentDetails, [type]: draftToHtml(convertToRaw(e.getCurrentContent())) });
+  
 
   }
 
   //Insert Content
   const insertContentData = () => {
+   
     api.post('/content/insertContent', contentDetails)
       .then(() => {
         message('Record inserted successfully', 'success')
@@ -104,23 +106,23 @@ const ContentEdit = () => {
               <Col md="3">
                 <FormGroup>
                   <Label>Section</Label>
-                  <Input type="select" name="section_id" value={contentDetails && contentDetails.section_type} onChange={handleInputs} >
-                    <option value="" selected="selected" >Please Select</option>
-                    {sectionLinked && sectionLinked.map((ele) => {
-                      return <option value={ele.section_id} >{ele.section_type}</option>
-
-                    })}
-                  </Input>
+                  <Input type="select" name="section_id"   value={contentDetails && contentDetails.section_id} onChange={handleInputs}> 
+                        <option value="" selected="selected" >Please Select</option> 
+                        {sectionLinked && sectionLinked.map((ele) => {
+                          return <option value={ele.section_id} >{ele.section_title}</option>
+                           
+                        })}
+                      </Input>
 
                 </FormGroup>
               </Col>
               <Col md="3">
                 <FormGroup>
                   <Label>Category</Label>
-                  <Input type="select" name="category_id" value={contentDetails && contentDetails.category_type} onChange={handleInputs} >
+                  <Input type="select" name="category_id" value={contentDetails && contentDetails.category_title} onChange={handleInputs} >
                     <option value="" selected="selected" >Please Select</option>
                     {categoryLinked && categoryLinked.map((ele) => {
-                      return <option value={ele.category_id} >{ele.category_type}</option>
+                      return <option value={ele.category_id} >{ele.category_title}</option>
 
                     })}
                   </Input>
@@ -130,10 +132,11 @@ const ContentEdit = () => {
               <Col md="3">
                 <FormGroup>
                   <Label>Sub Category</Label>
-                  <Input type="select" name="sub_category_id" value={contentDetails && contentDetails.sub_category_type} onChange={handleInputs} >
+                  <Input type="select" name="sub_category_id" value={contentDetails && contentDetails.sub_category_id} onChange={handleInputs} >
                     <option value="" selected="selected" >Please Select</option>
                     {subcategoryLinked && subcategoryLinked.map((ele) => {
-                      return <option value={ele.sub_category_id} >{ele.sub_category_type}</option>
+                      return <option value={ele.sub_category_id} >{ele.sub_category_title}</option>
+
                     })}
                   </Input>
 
@@ -145,8 +148,11 @@ const ContentEdit = () => {
                   <Input type="text" onChange={handleInputs} value={contentDetails && contentDetails.content_type} name="content_type" />
                 </FormGroup>
               </Col>
+
+
             </Row>
           </ComponentCard>
+
           <ComponentCard title='Content details'>
             <Row>
               <Col md="4">
@@ -168,7 +174,7 @@ const ContentEdit = () => {
                   <Input name="published" type="radio" value="1" onChange={handleInputs} />
                   <Label check>Yes</Label>
 
-                  <Input name="published_test" type="radio" value="0" onChange={handleInputs} />
+                  <Input name="published" type="radio" value="0" onChange={handleInputs} />
                   <Label check>No</Label>
 
 
@@ -184,14 +190,14 @@ const ContentEdit = () => {
               <ComponentCard title='Description'>
 
                 <Editor
-                  editorState={conditions}
+                  
                   wrapperClassName="demo-wrapper mb-0"
                   editorClassName="demo-editor border mb-4 edi-height"
                   onEditorStateChange={(e) => {
                     handleDataEditor(e, 'description')
-                    setConditions(e)
+                    
                   }}
-                />
+                /> 
 
               </ComponentCard>
 
