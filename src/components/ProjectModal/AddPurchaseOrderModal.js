@@ -408,7 +408,7 @@ const AddPurchaseOrderModal = ({projectId,addPurchaseOrderModal,setAddPurchaseOr
                     {addMoreItem.map((item) => {
                         return (
                         <tr key={item.id}>
-                            <td data-label="Item"  key={item.id}>                     
+                            <td data-label="Item" key={item.id}>                     
 
                                  <Select
                                     key={item.id}

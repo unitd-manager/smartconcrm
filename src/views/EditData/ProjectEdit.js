@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import {CardTitle,Table, Row,Col,Form,FormGroup,Label,Input,TabContent,TabPane,Nav, NavItem,NavLink,Button,Modal,ModalHeader,ModalBody,ModalFooter, } from 'reactstrap';
 import {ToastContainer} from 'react-toastify'
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import * as Icon from 'react-feather';
 import Swal from 'sweetalert2'
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
@@ -25,6 +25,7 @@ import AttachmentModal from '../../components/tender/AttachmentModal';
 import ViewFileComponent from '../../components/ProjectModal/ViewFileComponent';
 import SubConWorkOrderPortal from '../../components/ProjectModal/SubConWorkOrderPortal';
 import SubconWorkPaymentHistory from '../../components/ProjectModal/SubconWorkPaymentHistory';
+import MaterialsTransferred from '../../components/ProjectModal/MaterialsTransferred';
 import message from '../../components/Message';
 import api from '../../constants/api';
 
@@ -32,6 +33,7 @@ import api from '../../constants/api';
 const ProjectEdit = () => {
 
     const {id} = useParams()
+    const navigate = useNavigate()
 
     const [projectDetail, setProjectDetail] = useState();
     const [getCostingSummary, setGetCostingSummary] = useState();
@@ -59,7 +61,6 @@ const ProjectEdit = () => {
     const [ editPOLineItemsModal, setEditPOLineItemsModal ]= useState(false);
     const [ deliveryData, setDeliveryData ]= useState('');
     const [ POId, setPOId ]= useState('');
-
 
     const toggle = (tab) => {
         if (activeTab !== tab) setActiveTab(tab);
@@ -145,13 +146,13 @@ const ProjectEdit = () => {
         confirmButtonText: 'Yes, delete it!'
       }).then((result) => {
         if (result.isConfirmed) {
-          api.post('/purchaseorder/deletePurchaseOrder',{purchase_order_id:deletePurchaseOrderId}).then((res)=>{
-            console.log(res)
+          api.post('/purchaseorder/deletePurchaseOrder',{purchase_order_id:deletePurchaseOrderId}).then(()=>{
             Swal.fire(
               'Deleted!',
               'Purchase Order has been deleted.',
               'success'
             )
+            window.location.reload();
             setViewLineModal(false)
           }).catch(()=>{
             message("Unable to Delete Purchase Order","info")
@@ -295,7 +296,7 @@ const deleteDeliveryOrder = (deliveryOrderId) => {
       
         <Form >
             <FormGroup>
-            <ComponentCard title={`Project Details | Code: ${projectDetail && projectDetail.opportunity_code} | 
+            <ComponentCard title={`Project Details | Code: ${projectDetail && projectDetail.project_code} | 
             Category : ${projectDetail && projectDetail.category} | 
             Company :  ${projectDetail && projectDetail.company_name}  | 
             Status : ${projectDetail && projectDetail.status} `}>
@@ -409,9 +410,11 @@ const deleteDeliveryOrder = (deliveryOrderId) => {
                     <Button type="button" className="btn btn-success mr-2" onClick={UpdateData}>
                     Save & Continue
                     </Button>
-                    <Button type="submit" className="btn btn-dark">
-                    Cancel
-                    </Button>
+                    <Button onClick={()=>{
+                          navigate(-1)
+                        }} type="button" className="btn btn-dark">
+                        Go to List
+                        </Button>
                   </div>
                 </Row>
             </ComponentCard>
@@ -437,7 +440,7 @@ const deleteDeliveryOrder = (deliveryOrderId) => {
     <EditQuotation editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} />
     <EditDeliveryOrder editDeliveryOrder={editDeliveryOrder} setEditDeliveryOrder={setEditDeliveryOrder} data={deliveryData} />
     <EditPoModal editPo={editPo} setEditPo={setEditPo} data={POId} />
-    <EditPOLineItemsModal editPOLineItemsModal={editPOLineItemsModal} setEditPOLineItemsModal={setEditPOLineItemsModal}  />
+    <EditPOLineItemsModal editPOLineItemsModal={editPOLineItemsModal} setEditPOLineItemsModal={setEditPOLineItemsModal} />
 
 
         <Nav tabs>
@@ -732,7 +735,9 @@ const deleteDeliveryOrder = (deliveryOrderId) => {
                   setPOId(e)
                 }}
                   ><u> Edit Po </u></span></Link></Col> 
-                <Col><Link to="" style={{color:"#fff"}}><span onClick={()=>{setEditPOLineItemsModal(true)}}><u> Edit Line Items </u></span></Link></Col> 
+                <Col><Link to="" style={{color:"#fff"}}><span onClick={()=>{
+                  setEditPOLineItemsModal(true)
+                  }}><u> Edit Line Items </u></span></Link></Col> 
                 <Col><span><u> print pdf </u></span></Col> 
                 <Col> Total : {getTotalOfPurchase(e.data)}</Col> 
                 <Col className='d-flex justify-content-end'><Button color="primary" onClick={()=>{deletePurchaseOrder(e.id)}}>X</Button></Col> 
@@ -833,34 +838,8 @@ const deleteDeliveryOrder = (deliveryOrderId) => {
           <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white"> Materials Transferred From Other Projects </CardTitle>
       </Row>
 
-      <Form className='mt-4'>
-      <Row className='border-bottom mb-3'>
-        <Col><FormGroup><Label>Ref Project</Label> </FormGroup></Col>
-        <Col><FormGroup><Label>Product</Label> </FormGroup></Col>
-        <Col><FormGroup><Label>Quantity</Label> </FormGroup></Col>
-        <Col><FormGroup><Label>Updated By</Label> </FormGroup></Col>
-      </Row>
-      <Row>
-        <Col>
-        <FormGroup></FormGroup>
-        </Col>
-        <Col>
-        <FormGroup>
-        <span>test</span>
-        </FormGroup>
-        </Col>
-        <Col>
-        <FormGroup>
-        <Label>test</Label>
-        </FormGroup>
-        </Col>
-        <Col >
-        <FormGroup>
-        <Label>test</Label>
-        </FormGroup>
-        </Col>
-      </Row>
-      </Form>
+      <MaterialsTransferred projectId={id}/>
+     
       </TabPane>
 
 

@@ -33,7 +33,7 @@ const Project = () => {
                       pageLength: 20,
                       processing: true,
                       dom: 'Bfrtip',
-                          buttons: ['csv', 'print'
+                          buttons: ['print'
                           ]
                 }
             );
