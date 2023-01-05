@@ -1,140 +1,105 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {
-    Card,
-    CardBody,
+    
     Row,
     Col,
     Form,
     FormGroup,
     Label,
     Input,
-    Button,Modal, ModalHeader, ModalBody,ModalFooter
+    Button,ModalFooter
   } from 'reactstrap';
+  import { ToastContainer } from 'react-toastify';
+  import {   useParams } from 'react-router-dom';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import api from '../../constants/api';
+import message from '../../components/Message';
 
-const TimesheetDetails = () => {
-    const [modal, setModal] = useState(false);
-    const toggle = () => {
-      setModal(!modal);
-    };
+const SubConDetails = () => {
+  const {id} = useParams()
+  const [subConForms, setSubConForms] = useState({
+    company_name:"",
+    
+  });
+  
+ // Get Supplier By Id
+
+ const editSubConById = () =>
+ {
+    api.post('/subcon/edit-Subcon',{company_name:id})
+    .then((res)=> {
+        setSubConForms(res.data.data[0])
+    })
+   .catch(() => {
+     message("SubCon Data Not Found",'info')
+    })
+ }
+
+ 
+
+//Logic for adding subcon in db
+
+
+
+
+const handleInputsSubConForms = (e) => {
+  setSubConForms({...subConForms, [e.target.name]:e.target.value});
+}
+
+const insertSubCon = () => {
+
+ 
+  api.post('/subcon/insertsub_con',subConForms)
+  .then(()=> {
+    message('Supplier inserted successfully.','success')
+  })
+  .catch(() => {
+    message('Network connection error.','error')
+  })
+  
+  }  
+  useEffect(()=>{
+    editSubConById();
+  
+  },[id])
+    
+
+  
+
   return (
     <div>
       <BreadCrumbs />
       <Row>
+        <ToastContainer></ToastContainer>
         <Col md="12">
-          <ComponentCard title="Key Details">
+          <ComponentCard title="SubCon Name">
             <Form>
               <FormGroup>
                 <Row>
-                  <Col md="12">
-                    <Label>Sub Con Name</Label>
-                    <Input type="text">
-                    </Input>
-                </Col>
-                {/* <Col md="2">
-                    <Label>Add New Customer</Label>
-                    <Button color="primary" onClick={toggle.bind(null)}>Add New</Button>
-                </Col> */}
+                  <Col md="10">
+                    <Label> SubCon Name <span className='required'> *</span> </Label>
+                    <Input type="text" name="company_name" onChange={handleInputsSubConForms}/>
+                    </Col>
                 </Row>
-                <Row>
-                    <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-                        <Button type="submit" className="btn btn-success mr-2">
-                        Save & Continue
-                        </Button>
-                        <Button type="submit" className="btn btn-dark">
-                        Cancel
-                        </Button>
-                     </div>
-                </Row>
-              </FormGroup>
+            </FormGroup>
+              
+              
             </Form>
           </ComponentCard>
         </Col>
-        
       </Row>
-      <Modal isOpen={modal} toggle={toggle.bind(null)}>
-      <ModalHeader toggle={toggle.bind(null)}>New Customer</ModalHeader>
-      <ModalBody>
-        <Row>
-        <Col md="12">
-          <Card>
-            <CardBody>
-              <Form>
-                <Row>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Name</Label>
-                      <Input type="text" />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Phone</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Website</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                  <FormGroup>
-                    <Label>Address 1</Label>
-                    <Input type="text" placeholder=" " />
-                  </FormGroup>
-                </Col>
-                <Col md="12">
-                  <FormGroup>
-                    <Label>Address 2</Label>
-                    <Input type="text" placeholder="" />
-                  </FormGroup>
-                </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Area</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Zip Code</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Latitude</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Longitude</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>   
-                </Row>
-              </Form>
-            </CardBody>
-
-          </Card>
-        </Col>
-        </Row>  
-      </ModalBody>
+      
       <ModalFooter>
-        <Button color="primary" onClick={toggle.bind(null)}>
+        <Button color="primary" onClick={()=>{ insertSubCon() }}>
           Save & Continue
         </Button>
-        <Button color="secondary" onClick={toggle.bind(null)}>
+        <Button color="secondary" onClick={handleInputsSubConForms}>
           Cancel
         </Button>
       </ModalFooter>
-    </Modal>
     </div>
-  );
+  )
 };
 
-export default TimesheetDetails;
+export default SubConDetails;

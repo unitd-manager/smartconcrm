@@ -1,140 +1,106 @@
-import React, {useState} from 'react';
+import React, {useState ,useEffect} from 'react';
 import {
-    Card,
-    CardBody,
+    
     Row,
     Col,
     Form,
     FormGroup,
     Label,
     Input,
-    Button,Modal, ModalHeader, ModalBody,ModalFooter
+    Button,ModalFooter
   } from 'reactstrap';
+  import { ToastContainer } from 'react-toastify';
+  import {   useParams } from 'react-router-dom';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import api from '../../constants/api';
+import message from '../../components/Message';
 
-const TimesheetDetails = () => {
-    const [modal, setModal] = useState(false);
-    const toggle = () => {
-      setModal(!modal);
-    };
+
+const SupplierDetails = () => {
+  const {id} = useParams()
+  const [supplierForms, setSupplierForms] = useState({
+    company_name:"",
+    
+  });
+  
+ // Get Supplier By Id
+
+ const editSupplierById = () =>
+ {
+    api.post('/supplier/edit-Supplier',{company_name:id})
+    .then((res)=> {
+        setSupplierForms(res.data.data[0])
+    })
+   .catch(() => {
+     message("Supplier Data Not Found",'info')
+    })
+ }
+
+ 
+
+//Logic for adding supplier in db
+
+
+
+
+const handleInputsSupplierForms = (e) => {
+  setSupplierForms({...supplierForms, [e.target.name]:e.target.value});
+}
+
+const insertSupplier = () => {
+
+ 
+  api.post('/supplier/insert-Supplier',supplierForms)
+  .then(()=> {
+    message('Supplier inserted successfully.','success')
+  })
+  .catch(() => {
+    message('Network connection error.','error')
+  })
+  
+  }  
+  useEffect(()=>{
+    editSupplierById();
+  
+  },[id])
+    
+
+
   return (
     <div>
       <BreadCrumbs />
       <Row>
+        <ToastContainer></ToastContainer>
         <Col md="12">
-          <ComponentCard title="Key Details">
+          <ComponentCard title="Supplier Name">
             <Form>
               <FormGroup>
                 <Row>
-                  <Col md="12">
-                    <Label>Supplier Name</Label>
-                    <Input type="text">
-                    </Input>
-                </Col>
-                {/* <Col md="2">
-                    <Label>Add New Customer</Label>
-                    <Button color="primary" onClick={toggle.bind(null)}>Add New</Button>
-                </Col> */}
+                  <Col md="10">
+                    <Label> Supplier Name <span className='required'> *</span> </Label>
+                    <Input type="text" name="company_name" onChange={handleInputsSupplierForms}/>
+                    </Col>
                 </Row>
-                <Row>
-                    <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-                        <Button type="submit" className="btn btn-success mr-2">
-                        Save & Continue
-                        </Button>
-                        <Button type="submit" className="btn btn-dark">
-                        Cancel
-                        </Button>
-                     </div>
-                </Row>
-              </FormGroup>
+            </FormGroup>
+              
+              
             </Form>
           </ComponentCard>
         </Col>
-        
       </Row>
-      <Modal isOpen={modal} toggle={toggle.bind(null)}>
-      <ModalHeader toggle={toggle.bind(null)}>New Customer</ModalHeader>
-      <ModalBody>
-        <Row>
-        <Col md="12">
-          <Card>
-            <CardBody>
-              <Form>
-                <Row>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Name</Label>
-                      <Input type="text" />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Phone</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Website</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                  <FormGroup>
-                    <Label>Address 1</Label>
-                    <Input type="text" placeholder=" " />
-                  </FormGroup>
-                </Col>
-                <Col md="12">
-                  <FormGroup>
-                    <Label>Address 2</Label>
-                    <Input type="text" placeholder="" />
-                  </FormGroup>
-                </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Area</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Zip Code</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Latitude</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>
-                  <Col md="12">
-                    <FormGroup>
-                      <Label>Longitude</Label>
-                      <Input type="text"  />
-                    </FormGroup>
-                  </Col>   
-                </Row>
-              </Form>
-            </CardBody>
-
-          </Card>
-        </Col>
-        </Row>  
-      </ModalBody>
+      
       <ModalFooter>
-        <Button color="primary" onClick={toggle.bind(null)}>
-          Save & Continue
+        <Button  color="primary" onClick={()=>{ insertSupplier() }} >
+          Save And Continue
         </Button>
-        <Button color="secondary" onClick={toggle.bind(null)}>
+        <Button color="secondary" onClick={handleInputsSupplierForms}>
           Cancel
         </Button>
       </ModalFooter>
-    </Modal>
     </div>
+  
   );
 };
 
-export default TimesheetDetails;
+export default SupplierDetails;

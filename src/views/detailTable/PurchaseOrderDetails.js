@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
     Card,
     CardBody,
@@ -10,14 +10,68 @@ import {
     Input,
     Button,Modal, ModalHeader, ModalBody,ModalFooter
   } from 'reactstrap';
+import { useNavigate } from "react-router-dom";
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import api from '../../constants/api';
+//import message from '../../components/Message';
 
 const PurchaseOrderDetails = () => {
     const [modal, setModal] = useState(false);
+    const [supplier, setSupplier] = useState();
+    const getSupplier = () =>{
+      api.get('/supplier/getSupplier')
+      .then((res)=> {
+        setSupplier(res.data.data);
+        console.log(res.data.data);
+      })
+    }
+
+
     const toggle = () => {
       setModal(!modal);
     };
+
+    useEffect(() => {
+      getSupplier()
+    }, [])
+
+    const [supplierForms, setSupplierForms] = useState({
+      title:"",
+      company_id:"",
+      contact_id:"",
+      category_id:"",
+    });
+    
+    const handleSupplierForms = (e) => {
+      setSupplierForms({...supplierForms, [e.target.name]:e.target.value});
+    }
+
+    // const insertPurchaseOrder = () => {
+    //   console.log("company_name : ",supplierForms.company_name);
+
+    //   // if(supplierForms.company_name !== ''){
+    //   //   api.post('/company/insertCompany',companyInsertData)
+    //   //   .then(()=> {
+    //   //   message('Company inserted successfully.','success')
+    //   //     toggle()
+    //   //     getCompany()
+    //   //   })
+    //   //   .catch(() => {
+    //   //     message('Network connection error.','error')
+    //   //   })
+    //   // }else{
+    //   //   message('Please fill all required fields.','error')
+    //   // }
+    
+    // }   
+    const navigate = useNavigate(); 
+    const routeChange = () =>{ 
+      const path = `/PurchaseOrderAdd/${supplierForms.company_name}`; 
+      console.log("inside routeChange : ",supplierForms);
+      navigate(path);
+    } 
+
   return (
     <div>
       <BreadCrumbs />
@@ -26,33 +80,28 @@ const PurchaseOrderDetails = () => {
           <ComponentCard title="Purchase Order Header">
             <Form>
               <FormGroup>
-                <Row>
-                  <Col md="12">
-                    <Label>Supplier</Label>
-                    <Input type="select">
-                        <option value="3">ABC New company Pte Ltd</option>
-                        <option value="1">ABC Supplier</option>
-                        <option value="11">abcd</option>
-                        <option value="14">DK Pte Ltd</option>
-                        <option value="9">Jing Shaw Pte Ltd</option>
-                        <option value="7">Kate Williams</option>
-                        <option value="5">Materials Supplier</option>
-                        <option value="16">New Frame Tech Ltd</option>
-                        <option value="13">Philips Boon</option>
-                        <option value="12">pqrs</option>
-                        <option value="15">raj har</option>
-                        <option value="10">RAM SAND</option>
-                        <option value="2">Supplier 2</option>
-                        <option value="8">Xac Pte Ltd</option>
-                        <option value="6">XYZ ENGINEERING PRIVATE LTD</option>
-                        <option value="4">XYZ Factory</option>
+              <Row>
+                  <Col md="10">
+                    <Label>Supplier Name </Label>
+
+                    <Input type="select" name="company_name" onChange={(e)=>{
+                      //getContact(e.target.value)
+                      handleSupplierForms(e)
+                    }}>
+                    <option value="" selected >Please Select</option>
+
+                      {supplier && supplier.map((ele)=>{
+                        return  <option value={ele.company_name} >{ele.company_name}</option>
+
+                      })}
                     </Input>
                 </Col>
-
                 </Row>
                 <Row>
                     <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-                        <Button type="submit" className="btn btn-success mr-2">
+                        <Button type="submit" name="routechange" className="btn btn-success mr-2" onClick={()=>{
+                          routeChange()
+                        }}>
                         Save & Continue
                         </Button>
                         <Button type="submit" className="btn btn-dark">

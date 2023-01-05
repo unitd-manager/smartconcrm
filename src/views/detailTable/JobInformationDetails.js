@@ -1,44 +1,120 @@
-import React from 'react';
-import {Row,Col,Form,FormGroup,Label,Input,Button } from 'reactstrap';
+import React, {useState,useEffect } from 'react';
+import {
+    
+    Row,
+    Col,
+    Form,
+    FormGroup,
+    Label,
+    Input,
+    Button,ModalFooter
+  } from 'reactstrap';
+  import { ToastContainer } from 'react-toastify';
+  // import { Link } from 'react-router-dom';
+
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import api from '../../constants/api';
+import message from '../../components/Message';
+
 
 const JobInformationDetails = () => {
+ 
+  const [employee, setEmployee] = useState();
+
+  
+  // Get Supplier By Id
+
+ const editJobById = () =>
+ {
+    api.get('/jobinformation/getEmployee')
+    .then((res)=> {
+      console.log(res.data.data)
+        setEmployee(res.data.data)
+    })
+   .catch(() => {
+    
+    })
+ }
+ 
+
+    
+    //Logic for adding tender in db
+    const [jobForms, setJobForms] = useState({
+      first_name:"",
+      
+    });
+    
+    
+    const handleInputsJobForms = (e) => {
+      setJobForms({...jobForms, [e.target.name]:e.target.value});
+    }
+    
+    const insertJobInformation = () => {
+    
+      
+      api.post('/jobinformation/insertjob_information',jobForms)
+      .then(()=> {
+        message('JobInformation inserted successfully.','success')
+      })
+      .catch(() => {
+        message('Network connection error.','error')
+      })
+      }
+      useEffect(()=>{
+        editJobById();
+      
+      },[])
+  
+    
+
   return (
     <div>
       <BreadCrumbs />
       <Row>
+      <ToastContainer></ToastContainer>
         <Col md="12">
           <ComponentCard title="Key Details">
             <Form>
               <FormGroup>
-                <Row>
-                  <Col md="12">
-                    <Label>Employee Name</Label>
-                    <Input type="text"/>
-                </Col>
-                </Row>
-              </FormGroup>
-              <FormGroup>
-                <Row>
-                    <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-                        <Button type="submit" className="btn btn-success mr-2">
-                        Save & Continue
-                        </Button>
-                        <Button type="submit" className="btn btn-dark">
-                        Cancel
-                        </Button>
-                     </div>
-                </Row>
+              <Row>
+                  
+                
+                <Label>Employee Name </Label>
+
+                    <Input type="select" name="employee_id" onChange={(e)=>{
+                      handleInputsJobForms(e)
+                    }}>
+                    <option value="" selected >Please Select</option>
+
+                      {employee && employee.map((ele)=>{
+                        return  (<option key={ele.employee_id} value={ele.employee_id} >{ele.first_name}</option>)
+                      })}
+                    </Input>
+                    </Row>
+                    
+                <ModalFooter>
+                
+                      
+        
+       
+            < Button color="primary" onClick={()=>{ insertJobInformation() }}>
+          <Link to= {`/JobInformationEdit/:id${jobForms.first_name}`}>Save and Continue</Link></Button>
+           < Button color="secondary" onClick={handleInputsJobForms}>
+          Cancel</Button>
+
+
+            
+      </ModalFooter>
+
               </FormGroup>
             </Form>
           </ComponentCard>
         </Col>
         
       </Row>
-      
-    </div>
+      </div>
+     
   );
-};
-
+}
 export default JobInformationDetails;
