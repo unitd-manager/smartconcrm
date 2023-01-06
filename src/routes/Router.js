@@ -203,9 +203,13 @@ const SupplierHistory= Loadable(lazy(() => import ('../components/SupplierModal/
 
 // Table Edit's
 const TenderEdit= Loadable(lazy(() => import ('../views/EditData/TenderEdit')))
+const FinanceEdit= Loadable(lazy(() => import ('../views/EditData/FinanceEdit')))
+const TrainingEdit= Loadable(lazy(() => import ('../views/EditData/TrainingEdit')))
 const ProjectEdit= Loadable(lazy(() => import ('../views/EditData/ProjectEdit')))
 const BookingEdit= Loadable(lazy(() => import ('../views/EditData/BookingEdit')))
 const ClientEdit= Loadable(lazy(() => import ('../views/EditData/ClientEdit')))
+const ContentEdit= Loadable(lazy(() => import ('../views/EditData/ContentEdit')))
+const ContentUpdate= Loadable(lazy(() => import ('../views/EditData/ContentUpdate')))
 const ExpenseHeadEdit= Loadable(lazy(() => import ('../views/EditData/ExpenseHeadEdit')))
 const SectionEdit= Loadable(lazy(() => import ('../views/EditData/SectionEdit')))
 const BookingInsert= Loadable(lazy(() => import ('../views/EditData/BookingInsert')))
@@ -241,7 +245,10 @@ const Routernew = () => {
           <Route path="/createnote" name="createnote" element={<CreateNote/>}></Route>
       {/* Table Edit's */}
         <Route path="/TenderEdit/:id" name="clienttdata" element={<TenderEdit />}></Route>
-        <Route path="/ContentEdit/:title" name="clienttdata" element={<ContentEdit />}></Route>
+        <Route path="/FinanceEdit/:id" name="clienttdata" element={<FinanceEdit />}></Route>
+        <Route path="/TrainingEdit/:id" name="clienttdata" element={<TrainingEdit />}></Route>
+        <Route path="/ContentEdit/:id" name="clienttdata" element={<ContentEdit />}></Route>
+        <Route path="/ContentUpdate/:id" name="clienttdata" element={<ContentUpdate />}></Route>
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
         <Route path="/JobInformationEdit/:id" name="clienttdata" element={<JobInformationEdit />}></Route>
 
@@ -256,7 +263,7 @@ const Routernew = () => {
         <Route path="/JobInformationEdit/:id" name="clienttdata" element={<JobInformationEdit />}></Route>
 
 {/* Supplier Modal */}
-<Route path="/SupplierHistory/:id" name="clienttdata" element={<SupplierHistory />}></Route>
+       <Route path="/SupplierHistory/:id" name="clienttdata" element={<SupplierHistory />}></Route>
 
 
 
