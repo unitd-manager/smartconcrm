@@ -1,11 +1,67 @@
-import React from 'react';
-import {Row,Col,Form,FormGroup,Label,Input,} from 'reactstrap';
+import React, { useState,useEffect } from 'react';
+import {Row,Col,Form,FormGroup,Label,Input,Button} from 'reactstrap';
+import { useNavigate } from 'react-router-dom';
+
+import moment from 'moment';
+
+import message from '../../components/Message';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
+
 import ComponentCard from '../../components/ComponentCard';
+import api from '../../constants/api';
 
 const LeaveDetails = () => {
+  const navigate = useNavigate()
 
-  return (
+  const [employee, setEmployee] = useState();
+  const getEmployee = () =>{
+    api.get('/leave/getEmployee')
+    .then((res)=> {
+      setEmployee(res.data.data);
+      console.log(res.data.data);
+    })
+  }
+
+  const [leaveInsertData,setLeaveInsertData ] = useState({
+    employee_id:"",
+    from_date:"",
+    to_date:"",
+    leave_type:""
+    
+  });
+  
+  const handleInputs = (e) => {
+    setLeaveInsertData({...leaveInsertData, [e.target.name]:e.target.value});
+  }
+  
+  const insertLeave = () => {
+  
+    
+      api.post('/leave/insertLeave',leaveInsertData)
+      .then((res)=> {
+        const insertedDataId= res.data.data.insertId
+        console.log(insertedDataId)
+       message('Leave inserted successfully.','success')
+       setTimeout(()=> {
+       navigate(`/LeavesEdit/${insertedDataId}`)
+       },300);
+         
+       })
+      .catch(() => {
+        message('Network connection error.','error')
+      })
+    
+    
+  }
+  
+     
+  useEffect(() => {
+    getEmployee();
+  }, [])
+  
+  
+
+return (
     <div>
       <BreadCrumbs />
       <Row>
@@ -13,39 +69,34 @@ const LeaveDetails = () => {
           <ComponentCard title="Key Details">
             <Form>
                 <FormGroup>
-                    <Row>
-                    <Col md="12">
-                        <Label> Employee Name * </Label>
-                        <Input type="select">
-                        <option value="" selected="selected">Please Select</option>
-                        <option value="10">ALEX</option>
-                        <option value="3">LAURA PATRICK</option>
-                        <option value="11">MRAF</option>
-                        <option value="4">PETER JOHN </option>
-                        <option value="8">RAMESH VIGNESH</option>
-                        <option value="2">RICKSON</option>
-                        <option value="1">SELVA SEKARAN</option>
-                        <option value="9">SIVA SHANKAR</option>
-                        <option value="6">SURENDAR</option>
-                        <option value="7">Testing Universal</option>
-                        <option value="5">VIGNESHWARAN</option>
-                        </Input>
-                        </Col>
-                    </Row>
+                <Row>
+                  <Col md="10">
+                    <Label>employee_name </Label>
+
+                    <Input type="select" name="employee_id" onChange={handleInputs}value={leaveInsertData && leaveInsertData.employee_id}>
+                    <option value="" selected >Please Select</option>
+
+                      {employee && employee.map((ele)=>{
+                        return  <option  value={ele.employee_id} >{ele.employee_name}</option>
+
+                      })}
+                    </Input>
+                </Col>
+                </Row>
                 </FormGroup>
                 <FormGroup>
                 <Row>
-                  <Col md="12">
+                  <Col md="3">
                     <Label>From date *</Label>
-                    <Input type="date"/>
+                    <Input type="date" onChange={handleInputs} value={leaveInsertData && moment(leaveInsertData.from_date).format('YYYY-MM-DD')} name="from_date"/>
                 </Col>
                 </Row>
                 </FormGroup>
                 <FormGroup>
                     <Row>
-                    <Col md="12">
+                    <Col md="3">
                         <Label>To date *</Label>
-                        <Input type="date"/>
+                        <Input type="date" onChange={handleInputs} value={leaveInsertData && moment(leaveInsertData.to_date).format('YYYY-MM-DD')} name="to_date"/>
                     </Col>
                     </Row>
                 </FormGroup>
@@ -53,7 +104,7 @@ const LeaveDetails = () => {
                     <Row>
                     <Col md="12">
                         <Label>Type of Leave *</Label>
-                        <Input type="select">
+                        <Input type="select" onChange={handleInputs} value={leaveInsertData && leaveInsertData.leave_type}name="leave_type">
                         <option value="" selected="selected">Please Select</option>
                         <option value="Absent">Absent</option>
                         <option value="Annual Leave">Annual Leave</option>
@@ -62,6 +113,19 @@ const LeaveDetails = () => {
                         </Input>
                     </Col>
                     </Row>
+                    
+                <Row>
+                    <div className="pt-3 mt-3 d-flex align-items-center gap-2">
+                        <Button onClick={()=>{
+                           insertLeave()
+                        }} type="button" className="btn btn-success mr-2" >
+                        Submit
+                        </Button>
+                        <Button type="submit" className="btn btn-dark">
+                        Cancel
+                        </Button>
+                     </div>
+                </Row>
                 </FormGroup>
             </Form>
           </ComponentCard>
