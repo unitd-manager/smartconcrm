@@ -20,6 +20,7 @@ const EditLineItemModal = Loadable(lazy(() => import('../components/tender/EditL
 const InvoiceData = Loadable(lazy(() => import('../components/finance/InvoiceData')));
 const CreateReceipt = Loadable(lazy(() => import('../components/finance/CreateReceipt')));
 const CreateNote = Loadable(lazy(() => import('../components/finance/CreateNote')));
+// const ExpenseHeadModal = Loadable(lazy(() => import('../components/tender/ExpenseHeadModal')));
 
 const PdfData = Loadable(lazy(() => import('../views/smartconTables/Tickets')));
 const PdfNext = Loadable(lazy(() => import('../views/smartconTables/GeneratePdf')));
@@ -235,13 +236,13 @@ const Routernew = () => {
           <Route path="/addlineitem" name="addlineitem" element={<AddLineItemModal />}></Route>
           <Route path="/editquote" name="editquote" element={<EditQuoteModal />}></Route>
           <Route path="/editlineitem" name="editlineitem" element={<EditLineItemModal />}></Route>
-   
+          {/* <Route path="/ExpenseHeadModal" name="editlineitem" element={<ExpenseHeadModal />}></Route> */}
           <Route path="/invoicedata" name="invoicedata" element={<InvoiceData />}></Route>
           <Route path="/createreceipt" name="createreceipt" element={<CreateReceipt />}></Route>
           <Route path="/createnote" name="createnote" element={<CreateNote/>}></Route>
       {/* Table Edit's */}
         <Route path="/TenderEdit/:id" name="clienttdata" element={<TenderEdit />}></Route>
-        <Route path="/ContentEdit/:title" name="clienttdata" element={<ContentEdit />}></Route>
+        {/* <Route path="/ContentEdit/:title" name="clienttdata" element={<ContentEdit />}></Route> */}
         <Route path="/projectEdit/:id" name="clienttdata" element={<ProjectEdit />}></Route>
         <Route path="/JobInformationEdit/:id" name="clienttdata" element={<JobInformationEdit />}></Route>
 

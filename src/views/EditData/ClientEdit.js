@@ -4,9 +4,11 @@ import {ToastContainer} from 'react-toastify';
 import {  useNavigate,useParams,Link } from 'react-router-dom';
 import * as Icon from 'react-feather';
 import Swal from 'sweetalert2';
+import moment from 'moment';
 import $ from 'jquery';
 import ContactEditModal from '../../components/tender/ContactEditModel';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
+import ComponentCardV2 from '../../components/ComponentCardV2';
 import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss'
@@ -20,8 +22,8 @@ const ClientsEdit = () => {
 
   const [activeTab, setActiveTab] = useState('1');
   const [editContactEditModal, setEditContactEditModal] = useState(false);
-  
  
+
  
     
     const {id} = useParams();
@@ -39,8 +41,20 @@ const ClientsEdit = () => {
       setAddContactModal(!addContactModal);
     };
 
+     
+  const applyChanges = () => {
+
+  }
+ 
+  const backToList = () => {
+    
+    navigate("/client");
+    
+  }
+   
 
     const [clientsDetails, setClientsDetails] = useState();
+   
     
   
 
@@ -130,80 +144,186 @@ const ClientsEdit = () => {
   
   
 }
+const DeleteSection = () => {
+  api.post('/clients/deleteCompany', {company_id: id} )
+      .then(() => {
+          message('Record editted successfully', 'success')
+      })
+      .catch(() => {
+          message('Unable to edit record.', 'error')
+      })
+}
 
+const [projectDetails, setProjectDetails] = useState();
+const editProjectById = () =>
+{
+   api.post('/clients/getProjectsByIdCompany',{company_id:id})
+   .then((res)=> {
+    setProjectDetails(res.data.data)
+       
+   })
+  .catch(() => {
+    message("Project Data Not Found",'info')
+   })
+}
+
+
+const [tenderDetails, setTenderDetails] = useState();
+const editTenderById = () =>
+{
+   api.post('/clients/getTendersByIdcompany',{company_id:id})
+   .then((res)=> {
+    setTenderDetails(res.data.data)
+    console.log(res.data.data) 
+   })
+  .catch(() => {
+    message("Tender Data Not Found",'info')
+   })
+}
+
+
+
+  //  Table Contact
 
    
+       const columns = [
+            {
+              name: "id",
+              selector: "company_id",
+              grow:0,
+              wrap: true,
+              width:'4%'
+            },
+            {
+                name: 'Edit',
+                selector: "edit",
+                cell: () => <Icon.Edit2 />,
+                grow:0,
+                width:'auto',
+                button:true,
+                sortable:false,
+            },
+            {
+                name:'Del',
+                selector: "delete",
+                cell: () => <Icon.Trash />,
+                grow:0,
+                width:'auto',
+                wrap: true
+            },
+            {
+              name: "Name",
+              selector: "first_name",
+              sortable: true,
+              grow:0,
+              wrap: true
+            },
+            {
+              name: "Email",
+              selector: "email",
+              sortable: true,
+              grow:2,
+              wrap: true
+            },
+            {
+              name: "Phone(Direct)",
+              selector: "phone_direct",
+              sortable: true,
+              grow:0,
+            },
+            {
+                name: "Mobile",
+                selector: "mobile",
+                sortable: true,
+                width:'auto',
+                grow:3,
+        
+              },
+              {
+                name: "Position",
+                selector: "position",
+                sortable: true,
+                width:'auto',
+                grow:3,
+        
+              },
+              {
+                name: "Dept",
+                selector: "department",
+                sortable: true,
+                width:'auto',
+                grow:3,
+        
+              },
+              ]
 
-   const columns = [
-        {
-          name: "id",
-          selector: "company_id",
-          grow:0,
-          wrap: true,
-          width:'4%'
-        },
-        {
-            name: 'Edit',
-            selector: "edit",
-            cell: () => <Icon.Edit2 />,
-            grow:0,
-            width:'auto',
-            button:true,
-            sortable:false,
-        },
-        {
-            name:'Del',
-            selector: "delete",
-            cell: () => <Icon.Trash />,
-            grow:0,
-            width:'auto',
-            wrap: true
-        },
-        {
-          name: "Name",
-          selector: "first_name",
-          sortable: true,
-          grow:0,
-          wrap: true
-        },
-        {
-          name: "Email",
-          selector: "email",
-          sortable: true,
-          grow:2,
-          wrap: true
-        },
-        {
-          name: "Phone(Direct)",
-          selector: "phone_direct",
-          sortable: true,
-          grow:0,
-        },
-        {
-            name: "Mobile",
-            selector: "mobile",
-            sortable: true,
-            width:'auto',
-            grow:3,
-    
-          },
-          {
-            name: "Position",
-            selector: "position",
-            sortable: true,
-            width:'auto',
-            grow:3,
-    
-          },
-          {
-            name: "Dept",
-            selector: "department",
-            sortable: true,
-            width:'auto',
-            grow:3,
-    
-          },
-          ]
+
+    // Table Project
+              const columns1= [
+                {
+                  name: "Project Code",
+                  selector: "project_code",
+                  grow:0,
+                  wrap: true,
+                  width:'4%'
+                },
+                
+                {
+                  name: "Title",
+                  selector: "title",
+                  sortable: true,
+                  grow:0,
+                  wrap: true
+                },
+                {
+                  name: "Project Value",
+                  selector: "project_value",
+                  sortable: true,
+                  grow:0,
+                },
+                {
+                  name: "Status",
+                  selector: "status",
+                  sortable: true,
+                  grow:2,
+                  wrap: true
+                },
+               
+                ]
+
+
+      // Table Tender
+              const columns3= [
+                {
+                  name: "Tender Code",
+                  selector: "opportunity_code",
+                  grow:0,
+                  wrap: true,
+                  width:'4%'
+                },
+                
+                {
+                  name: "Title",
+                  selector: "title",
+                  sortable: true,
+                  grow:0,
+                  wrap: true
+                },
+                {
+                  name: "Est Value",
+                  selector: "price",
+                  sortable: true,
+                  grow:0,
+                },
+                {
+                  name: "Status",
+                  selector: "status",
+                  sortable: true,
+                  grow:2,
+                  wrap: true
+                },
+               
+                ]
       
       const deleteRecord = () => {
       
@@ -250,18 +370,116 @@ const ClientsEdit = () => {
           } ,
           1000
           );
-  
+          setTimeout(() => {
+            $('#example1').DataTable(
+                // {
+                //     pagingType: 'full_numbers',
+                //       pageLength: 20,
+                //       processing: true,
+                //       dom: 'Bfrtip',
+                //           buttons: ['csv', 'print'
+                //           ]
+                // }
+            );
+            } ,
+            1000
+            );
+            setTimeout(() => {
+              $('#example2').DataTable(
+                  // {
+                  //     pagingType: 'full_numbers',
+                  //       pageLength: 20,
+                  //       processing: true,
+                  //       dom: 'Bfrtip',
+                  //           buttons: ['csv', 'print'
+                  //           ]
+                  // }
+              );
+              } ,
+              1000
+              );
+          editProjectById()
           getContactLinked()
+          editTenderById()
         
       },[id])
   
     return (
     <>
+      <Form>
+        <FormGroup>
+          <ComponentCardV2>
+            <Row>
+              
+              <Col>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      editClientsData();
+                      navigate('/Client');
+                    }}
+                  >
+                    Save
+                  </Button>
+                  </Col>
+                  <Col>              
+                  <Button color="primary" 
+                  onClick={() => {
+                    editClientsData();
+                    applyChanges();
+                    console.log("cancel process");
+                  }
+                  }>
+                    Apply
+                  </Button>
+                  </Col>
+                  <Col>         
+                  <Button color="danger" 
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to cancel  \n  \n You will lose any changes made")) {
+                        navigate("/Client");
+                      } else {
+                        applyChanges();
+                      }
+                  }
+                  }>
+                    Cancel
+                  </Button>
+              </Col>
+              <Col>         
+                  <Button color="danger" 
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to delete this record? You cannot undo this action!")) {
+                      DeleteSection();
+                        navigate("/Client")
+                      } else {
+                        applyChanges();
+                      }
+                    console.log("back to list");
+                  }
+                  }>
+                    Delete
+                  </Button>
+                  </Col>
+                  <Col>         
+                  <Button color="danger" 
+                  onClick={() => {
+                    backToList();
+                    console.log("back to list");
+                  }
+                  }>
+                    Back to List
+                  </Button>
+              </Col>
+            </Row>
+            </ComponentCardV2>
+            </FormGroup>
+            </Form>
     <BreadCrumbs heading={clientsDetails && clientsDetails.company_name} />
 
         <Form >
           <FormGroup>
-          <ComponentCard title={`Key Details | Code: ${clientsDetails && clientsDetails.company_id}`}>
+          <ComponentCard >
               <Row>
               <Col md="3">
                   <FormGroup>
@@ -581,7 +799,7 @@ const ClientsEdit = () => {
               </Col>
 
 
-                    <Row>
+                    {/* <Row>
                     <div className="pt-3 mt-3 d-flex align-items-center gap-2">
                         <Button onClick={()=>{
                            editClientsData()
@@ -594,7 +812,7 @@ const ClientsEdit = () => {
                         Go to List
                         </Button>
                      </div>
-                    </Row>
+                    </Row> */}
                   </ComponentCard>
                 </FormGroup>
               
@@ -655,12 +873,44 @@ const ClientsEdit = () => {
                   toggle('2');
                 }}
               >
+                Projects Linked
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={activeTab === '3' ? 'active' : ''}
+                onClick={() => {
+                  toggle('3');
+                }}
+              >
+                Invoice Linked
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={activeTab === '4' ? 'active' : ''}
+                onClick={() => {
+                  toggle('4');
+                }}
+              >
+                Tender Linked
+              </NavLink>
+            </NavItem>
+            
+            <NavItem>
+              <NavLink
+                className={activeTab === '5' ? 'active' : ''}
+                onClick={() => {
+                  toggle('5');
+                }}
+              >
                 Add notes
               </NavLink>
             </NavItem>
             </Nav>
 
             <TabContent className="p-4" activeTab={activeTab}>
+            <TabPane tabId="1">
               <Row>
 <table id="example" className="display">
           <thead>
@@ -784,7 +1034,155 @@ const ClientsEdit = () => {
                         </FormGroup>
                     </Col>
                     </Row>
+            </TabPane> 
+            <TabPane tabId="2">
+
+<Form>
+<Row>
+<table id="example1" className="display">
+          <thead>
+              <tr >
+                  {columns1.map(cell=>{
+                    return (<td key={cell.name}>{cell.name}</td>)
+                  })}
+              </tr>
+          </thead>
+          <tbody>
+            {projectDetails && projectDetails.map(element=>{
+                return (<tr key={element.project_code}>
+                <td>{element.project_code}</td>
+               <td> <Link to={`/projectEdit/${element.project_id}`} >{element.title}</Link></td>
+                <td>{element.project_value}</td>
+                <td>{element.status}</td>
               
+                </tr>)
+            })}
+          </tbody>
+          
+      </table>
+                                
+    
+</Row>
+ 
+</Form>
+</TabPane>
+<TabPane tabId="3">
+<Row>
+    <Col md="3" className='mb-4 d-flex justify-content-between'>
+      <h3>Past Leave HIstory</h3> 
+    </Col>
+</Row>
+
+<Form>
+  <Row>
+  <Col md="2">
+                <FormGroup>
+                <Label>Leave Type</Label>
+                <br/>
+             <span>{newContactData && newContactData.leave_type}</span>
+                </FormGroup>
+            </Col>
+            <Col md="2">
+                <FormGroup>
+                <Label>From Date</Label>
+                <br/>
+                <span>{newContactData && moment(newContactData.from_date).format('YYYY-MM-DD')}</span>
+                </FormGroup>
+            </Col>
+            <Col md="2">
+                <FormGroup>
+                <Label>To date</Label>
+                <br/>
+                <span>{newContactData && moment(newContactData.to_date).format('YYYY-MM-DD')}</span>
+                </FormGroup>
+            </Col>
+            <Col md="2">
+                <FormGroup>
+                <Label>No of date</Label>
+                <br/>
+                <span>{newContactData && newContactData.no_of_days}</span>
+                </FormGroup>
+            </Col>
+   
+    
+</Row>
+ 
+</Form>
+
+</TabPane>
+<TabPane tabId="4">
+<Form>
+<Row>
+<table id="example2" className="display">
+          <thead>
+              <tr >
+                  {columns3.map(cell=>{
+                    return (<td key={cell.name}>{cell.name}</td>)
+                  })}
+              </tr>
+          </thead>
+          <tbody>
+            {tenderDetails && tenderDetails.map(element=>{
+                return (<tr key={element.opportunity_code}>
+                <td>{element.opportunity_code}</td>
+               <td> <Link to={`/TenderEdit/${element.opportunity_id }`} >{element.title}</Link></td>
+                <td>{element.price}</td>
+                <td>{element.status}</td>
+              
+                </tr>)
+            })}
+          </tbody>
+          
+      </table>
+                                
+    
+</Row>
+ 
+</Form>
+</TabPane>
+<TabPane tabId="5">
+<Row>
+    <Col md="3" className='mb-4 d-flex justify-content-between'>
+      <h3>Past Leave HIstory</h3> 
+    </Col>
+</Row>
+
+<Form>
+  <Row>
+  <Col md="2">
+                <FormGroup>
+                <Label>Leave Type</Label>
+                <br/>
+             <span>{newContactData && newContactData.leave_type}</span>
+                </FormGroup>
+            </Col>
+            <Col md="2">
+                <FormGroup>
+                <Label>From Date</Label>
+                <br/>
+                <span>{newContactData && moment(newContactData.from_date).format('YYYY-MM-DD')}</span>
+                </FormGroup>
+            </Col>
+            <Col md="2">
+                <FormGroup>
+                <Label>To date</Label>
+                <br/>
+                <span>{newContactData && moment(newContactData.to_date).format('YYYY-MM-DD')}</span>
+                </FormGroup>
+            </Col>
+            <Col md="2">
+                <FormGroup>
+                <Label>No of date</Label>
+                <br/>
+                <span>{newContactData && newContactData.no_of_days}</span>
+                </FormGroup>
+            </Col>
+   
+    
+</Row>
+ 
+</Form>
+</TabPane> 
       
   </TabContent>
   
