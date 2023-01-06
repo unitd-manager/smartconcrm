@@ -18,11 +18,12 @@ const EditMaterialused = ({editMaterialsUsed,setEditMaterialsUsed,FetchMaterials
         setEditMaterialsUsedData({...editMaterialsUsedData, [e.target.name]:e.target.value});
       }
   
+      console.log(editMaterialsUsedData)
+
       const EditMaterialusedData = () => {
 
         api.post('/projecttabmaterialusedportal/editTabMaterialUsedPortal',editMaterialsUsedData)
-        .then((res)=> {
-            console.log(res)
+        .then(()=> {
             setEditMaterialsUsedData(false);
             window.location.reload()
        })
@@ -50,7 +51,7 @@ const EditMaterialused = ({editMaterialsUsed,setEditMaterialsUsed,FetchMaterials
                 <FormGroup>
                   <Label>Date</Label>
                   <Input type="date" name="date" 
-                  defaultValue={editMaterialsUsedData && editMaterialsUsedData.date}
+                  defaultValue={editMaterialsUsedData && editMaterialsUsedData.creation_date}
                   onChange={handleEditMaterialsUsedInputs}
                   />
                     
@@ -60,7 +61,7 @@ const EditMaterialused = ({editMaterialsUsed,setEditMaterialsUsed,FetchMaterials
                   <FormGroup>
                     <Label>Description</Label>
                     <Input type="text" name="description" 
-                    defaultValue={editMaterialsUsedData && editMaterialsUsedData.description}
+                    defaultValue={editMaterialsUsedData && editMaterialsUsedData.title}
                     onChange={handleEditMaterialsUsedInputs}
                     />
                   </FormGroup>
@@ -68,8 +69,8 @@ const EditMaterialused = ({editMaterialsUsed,setEditMaterialsUsed,FetchMaterials
                 <Col md="12">
                   <FormGroup>
                     <Label>Type</Label>
-                    <Input type="text" name="type" 
-                    // defaultValue={editMaterialsUsedData && editMaterialsUsedData.description}
+                    <Input type="text" name="title" readonly="readonly"
+                    defaultValue={editMaterialsUsedData && editMaterialsUsedData.product_type}
                     onChange={handleEditMaterialsUsedInputs}
                     />
                   </FormGroup>
@@ -77,8 +78,8 @@ const EditMaterialused = ({editMaterialsUsed,setEditMaterialsUsed,FetchMaterials
                 <Col md="12">
                   <FormGroup>
                     <Label>Stock</Label>
-                    <Input type="text" name="stock" 
-                    // defaultValue={editMaterialsUsedData && editMaterialsUsedData.description}
+                    <Input type="text" name="stock" readonly="readonly"
+                    defaultValue={editMaterialsUsedData && editMaterialsUsedData.qty_in_stock}
                     onChange={handleEditMaterialsUsedInputs}
                     />
                   </FormGroup>
@@ -86,7 +87,7 @@ const EditMaterialused = ({editMaterialsUsed,setEditMaterialsUsed,FetchMaterials
                 <Col md="12">
                   <FormGroup>
                     <Label>UoM</Label>
-                    <Input type="text" name="UoM" 
+                    <Input type="text" name="uom" 
                     defaultValue={editMaterialsUsedData && editMaterialsUsedData.unit}
                     onChange={handleEditMaterialsUsedInputs}
                     />
@@ -104,8 +105,8 @@ const EditMaterialused = ({editMaterialsUsed,setEditMaterialsUsed,FetchMaterials
                 <Col md="12">
                   <FormGroup>
                     <Label>Remarks</Label>
-                    <Input type="number" name="remarks" 
-                    // defaultValue={editMaterialsUsedData && editMaterialsUsedData.title}
+                    <Input type="text" name="remarks" 
+                    defaultValue={editMaterialsUsedData && editMaterialsUsedData.description}
                     onChange={handleEditMaterialsUsedInputs}
                     />
                   </FormGroup>

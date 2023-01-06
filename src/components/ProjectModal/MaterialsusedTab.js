@@ -51,7 +51,7 @@ const MaterialsusedTab = ({projectId}) => {
 
         <Form className='mt-4'>
             <Row className='border-bottom mb-3'>
-                <Col><FormGroup><Label>Description</Label> </FormGroup></Col>
+                <Col><FormGroup><Label>Title</Label> </FormGroup></Col>
                 <Col><FormGroup><Label>UoM</Label> </FormGroup></Col>
                 <Col><FormGroup><Label>Quantity</Label> </FormGroup></Col>
                 <Col><FormGroup><Label>Remarks</Label> </FormGroup></Col>
@@ -63,7 +63,7 @@ const MaterialsusedTab = ({projectId}) => {
                      return (
                         <Row>
                             <Col>
-                            <FormGroup>{res.description}</FormGroup>
+                            <FormGroup>{res.title}</FormGroup>
                             </Col>
                             <Col>
                             <FormGroup>
@@ -77,7 +77,7 @@ const MaterialsusedTab = ({projectId}) => {
                             </Col>
                             <Col >
                             <FormGroup>
-                                <Label></Label>
+                                <Label>{res.description}</Label>
                             </FormGroup>
                             </Col>
                             <Col>
