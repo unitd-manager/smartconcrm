@@ -1,11 +1,12 @@
 import React,{useEffect,useState} from 'react';
 import * as Icon from 'react-feather';
 import {Row,Col,Button } from 'reactstrap';
-import Swal from 'sweetalert2'
+// import Swal from 'sweetalert2'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
 import $ from 'jquery'; 
+import moment from 'moment';
 import "datatables.net-buttons/js/buttons.colVis"
 import "datatables.net-buttons/js/buttons.flash"
 import "datatables.net-buttons/js/buttons.html5"
@@ -56,14 +57,6 @@ const Training = () => {
       button:true,
       sortable:false,
   },
-  {
-      name:'Delete',
-      selector: "delete",
-      cell: () => <Icon.Trash/>,
-      grow:0,
-      width:'1%',
-      wrap: true
-  },
     {
       name: "Title",
       selector: "title",
@@ -81,51 +74,23 @@ const Training = () => {
     },
     {
       name: "Date",
-      selector: "date",
+      selector: "from_date",
       sortable: true,
       grow:0,
     }
     ]
 
-    const deleteRecord = (id) => {
-      
-      // console.log(id)
-     
-     Swal.fire({
-       title: `Are you sure? ${id}`,
-       text: "You won't be able to revert this!",
-       icon: 'warning',
-       showCancelButton: true,
-       confirmButtonColor: '#3085d6',
-       cancelButtonColor: '#d33',
-       confirmButtonText: 'Yes, delete it!'
-     }).then((result) => {
-       if (result.isConfirmed) {
-         api.post('/training/deleteTraining',{training_id:id}).then(res=>{
-           console.log(res)
-           Swal.fire(
-             'Deleted!',
-             'Your Tender has been deleted.',
-             'success'
-           )
-           getTraining()
-
-         })
-       }
-     })
-
-
-     // api.get(`/tender/deleteTender/${opportunity_id}`)
-     //  .then((res)=> {
-     //      setTenders(res.data.data)
-     //  })
-
-   }
-
-
   return (
 <>
-
+<Row>
+    <Col md="6">
+      <Link to="/TrainingDetails">
+        <Button  color="primary" className="my-3">
+          Add New
+        </Button>
+      </Link>
+    </Col>     
+  </Row>
 <div className="container">
 
         
@@ -140,12 +105,11 @@ const Training = () => {
           <tbody>
             {training && training.map(element=>{
                 return (<tr key={element.title}>
-
-                <td><Link to={`/FinanceEdit/${element.order_id}`} ><Icon.Edit2 /></Link></td>
-                <td><Link to=""><span onClick={()=>deleteRecord(element.order_id)}><Icon.Trash2 /></span></Link></td>
+                <td><Link to={`/TrainingEdit/${element.training_id}`} ><Icon.Edit2 /></Link></td>
+                {/* <td><Link to=""><span onClick={()=>deleteRecord(element.training_id)}><Icon.Trash2 /></span></Link></td> */}
                 <td>{element.title}</td>
                 <td>{element.trainer}</td>
-                <td>{element.date}</td>
+                <td>{moment(element.from_date).format('YYYY-MM-DD')}</td>
                 
                 </tr>)
             })}
@@ -160,27 +124,7 @@ const Training = () => {
           </tfoot>
       </table>
       </div>
-    <Row>
-    <Col md="6">
-      <Link to="/TrainingDetails">
-        <Button  color="primary" className="my-3">
-          Add New
-        </Button>
-      </Link>
-    </Col>     
-  </Row>
-
-    {/* <DataTableExtensions
-      {...tableData}
-    >
-      <DataTable
-        noHeader
-        defaultSortField="id"
-        defaultSortAsc={false}
-        pagination
-        highlightOnHover
-      />
-    </DataTableExtensions> */}
+  
 </>
 
   )

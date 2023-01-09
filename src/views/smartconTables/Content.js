@@ -12,16 +12,33 @@ import "datatables.net-buttons/js/buttons.flash"
 import "datatables.net-buttons/js/buttons.html5"
 import "datatables.net-buttons/js/buttons.print"
 import { Link } from 'react-router-dom';
+import { Input } from '@material-ui/core';
+import message from '../../components/Message';
 import api from '../../constants/api';
+
 
 
 const Content = () => {
     const [content,setContent] = useState(null);
+   
+    const [sortOrder,setSortOrder] = useState(null);
+    const [contentDetails,setContentDetails] = useState({
+      contentId:'',
+      sortOrder:''
+    });
     const getContent = () =>{
       
       api.get('/content/getContent')
         .then((res)=> {
           setContent(res.data.data)
+            console.log(sortOrder)
+        })
+    }
+    const getSortOrder = () =>{
+      
+      api.get('/content/getSortOrder')
+        .then((res)=> {
+          setSortOrder(res.data.data)
             console.log(res.data.data)
         })
     }
@@ -41,10 +58,34 @@ const Content = () => {
         } ,
         1000
         );
-        getContent()
-
+      
+        getContent();
+        getSortOrder();
     }, [])
+    const editSortOrder = () => {
     
+
+   
+      api.post('/content/editSortOrder', contentDetails)
+        .then(() => {
+          message('Record inserted successfully', 'success')
+        })
+        .catch(() => {
+          message('Unable to edit record.', 'error')
+        })
+    }
+  
+
+    // const handleContentDetails = () => {
+      
+
+    //   // setContentDetails({ ...contentDetails, [e.target.name]: e.target.value });
+    //   setContentDetails({
+    //     contentId:contentId,
+    //     sortOrder:sortOrder
+    //   })
+
+    // }
 
    const columns = [
     {
@@ -78,12 +119,7 @@ const Content = () => {
       grow:0,
       wrap: true
     },
-    {
-      name: "Order",
-      selector: "sort_order",
-      sortable: true,
-      grow:0,
-    },
+    
     {
         name: "Section",
         selector: "section_title",
@@ -136,10 +172,13 @@ const Content = () => {
           width:'auto',
           grow:3,
          
-        }
-  
-
-  
+        },
+        {
+          name: "Order",
+          selector: "sort_order",
+          sortable: true,
+          grow:0,
+        } 
  
       ]
       
@@ -200,10 +239,9 @@ const Content = () => {
             {content && content.map(element=>{
                 return (<tr key={element.title}>
                     <td>{element.content_id}</td>
-                    <td><Link to={`/ContentUpdate/${element.content_id}`} ><Icon.Edit2 /></Link></td>
+                    <td><Link to={`/ContentEdit/${element.content_id}`} ><Icon.Edit2 /></Link></td>
                     <td><Link to=""><span onClick={()=>deleteRecord(element.content_id)}><Icon.Trash2 /></span></Link></td>
                     <td>{element.title}</td>
-                    <td>{element.sort_order}</td>
                     <td>{element.section_title}</td>
                     <td>{element.category_title}</td>
                     <td>{element.sub_category_title}</td>
@@ -211,6 +249,17 @@ const Content = () => {
                     <td>{element.content_type}</td>
                     <td>{element.content_id}</td>
                     <td>{element.published}</td>
+                    <td><Input type='text' name='sort_order' onBlur={() => {
+                      
+              
+              setContentDetails({
+               contentId:element.content_id,
+                sortOrder
+              });
+              console.log(contentDetails);
+              editSortOrder();
+                        }} value={contentDetails && contentDetails.sort_order} onChange={(e)=>{setSortOrder(e.target.value)}}>
+                    </Input></td>
               </tr>)
             })}
           </tbody>

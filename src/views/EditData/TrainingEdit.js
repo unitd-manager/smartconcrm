@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Form, FormGroup, Label, Input, TabPane, Button } from 'reactstrap';
+import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify'
 import { useNavigate, useParams } from 'react-router-dom';
 // import Swal from 'sweetalert2'
@@ -7,25 +7,30 @@ import random from 'random'
 import moment from 'moment';
 import * as $ from "jquery";
 import Select from 'react-select';
-import TrainingAttachment from '../../components/finance/TrainingAttachment';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss'
+import AttachmentModalV2 from '../../components/tender/AttachmentModalV2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import ComponentCardV2 from '../../components/ComponentCardV2';
+import ViewFileComponentV2 from '../../components/ProjectModal/ViewFileComponentV2';
 import message from '../../components/Message';
 import api from '../../constants/api';
 
 
 const TrainingEdit = () => {
 
-  const [trainingAttachment, setTrainingAttachment] = useState(false);
+
   const [lineItem] = useState(null);
   const [trainingDetails, setTrainingDetails] = useState()
 
 
   const { id } = useParams()
   const navigate = useNavigate()
-
+  const [attachmentModal, setAttachmentModal] = useState(false);
+  const [attachmentData, setDataForAttachment] = useState({
+    modelType: ''
+  });
 
 
   const [addLineItem, setAddLineItem] = useState([{
@@ -59,11 +64,52 @@ const TrainingEdit = () => {
 
 
 
+  const dataForAttachment = () => {
+    setDataForAttachment({
+      modelType: 'attachment'
+    })
+    console.log('inside DataForAttachment');
+  }
+
+
   const handleInputs = (e) => {
     setTrainingDetails({ ...trainingDetails, [e.target.name]: e.target.value });
   }
 
-
+  const getLinkedEmployee = () =>{
+    
+    api.post('/training/getTrainingStaffById', { training_id: id })
+    .then((res) => {
+      const resData = res.data.data
+      const empArray = []
+      resData.forEach(element => {
+        empArray.push({
+          "id": random.int(1, 99),
+          "employee_name":element.first_name,
+          "employee_id":element.employee_id,
+          "from_date": element.from_date.substring(0,10),
+          "to_date": element.to_date.substring(0,10),
+          "training_staff_id":element.training_staff_id
+    
+        })
+      });
+      setAddLineItem([...empArray])
+     
+    })
+    .catch(() => {
+      message("Fianance Data Not Found", 'info')
+    })
+  }
+  const getTrainingeById = () => {
+    api.post('/training/getTrainingById', { training_id: id })
+      .then((res) => {
+        setTrainingDetails(res.data.data[0])
+        getLinkedEmployee()
+      })
+      .catch(() => {
+        message("Fianance Data Not Found", 'info')
+      })
+  }
 
 
   const [employeeLinked, setEmployeeLinked] = useState();
@@ -87,7 +133,7 @@ const TrainingEdit = () => {
   const insertTrainingStaff = (trainingId,staffObj) => {
        
 
-    api.post('/training/insertTrainingStaff',{
+    api.post('/training/edit-TabEmployeeLinked',{
       training_id: trainingId
     ,employee_id: staffObj.employee_id
     , staff_id:''
@@ -146,9 +192,12 @@ const TrainingEdit = () => {
        
     }
 
-  })
-    api.post('/training/insertTraining', trainingDetails)
+  }) 
+
+  console.log("trainingdetails",trainingDetails);
+    api.post('/training/edit-Training', trainingDetails)
       .then((res) => {
+       
         message('Record inserted successfully', 'success')
         insertStaff(res.data.data.insertId,result) 
       })
@@ -159,6 +208,8 @@ const TrainingEdit = () => {
 
   useEffect(() => {
     getEmployee();
+    getLinkedEmployee();
+    getTrainingeById();
     // getTraining()
     // getFiles();
     console.log(lineItem)
@@ -168,18 +219,44 @@ const TrainingEdit = () => {
 
   return (
     <>
-      <BreadCrumbs heading={trainingDetails && trainingDetails.training_id} />
+      <BreadCrumbs heading={trainingDetails && trainingDetails.title} />
 
       <Form >
         <FormGroup>
 
+
+        <ComponentCardV2>
+            <Row>
+              <Col>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      insertTrainingData();
+                       navigate('/Training');
+                    }}>Save</Button>
+                  </Col>
+                  <Col>              
+                  <Button color="secondary" 
+                  onClick={() => {
+                    insertTrainingData();
+                     }}>Apply</Button>
+                  </Col>
+                  <Col>         
+                  <Button color="danger" 
+                  onClick={() => {
+                    navigate('/Training');
+                    console.log("back to list");
+                  }}>Back to List</Button>
+              </Col>
+            </Row>
+          </ComponentCardV2>
           <ComponentCard title='Main Details'>
             <ToastContainer></ToastContainer>
             <Row>
               <Col md="3">
                 <FormGroup>
                   <Label> Title </Label>
-                  <Input type="text" onChange={handleInputs} value={id} name="title" />
+                  <Input type="text" onChange={handleInputs} value={trainingDetails && trainingDetails.title} name="title" />
                 </FormGroup>
               </Col>
               <Col md="3">
@@ -278,21 +355,21 @@ const TrainingEdit = () => {
       </Form>
 
       <br />
-      <ComponentCard title='Attachments'>
-        <TabPane tabId="3">
-          <Row>
-            <Col xs="12" md="3" className='mb-3'>
-              <Button color="primary" onClick={() => { setTrainingAttachment(true) }}>
-                Add
-              </Button>
-            </Col>
-          </Row>
+      <ComponentCard title="Attachments">
+            <Row>
+              <Col xs="12" md="3" className='mb-3'>
+                <Button color="primary" onClick={() => {
+                  dataForAttachment();
+                  setAttachmentModal(true);
+                }}>
+                  Add
+                </Button>
+              </Col>
+            </Row>
 
-          <TrainingAttachment opportunityId={id} trainingAttachment={trainingAttachment} setTrainingAttachment={setTrainingAttachment} />
-         
-        </TabPane>
-
-      </ComponentCard>
+            <AttachmentModalV2 moduleId={id} roomName='Training' altTagData='Training Data' desc='Training Desc' modelType={attachmentData.modelType} attachmentModal={attachmentModal} setAttachmentModal={setAttachmentModal} />
+            <ViewFileComponentV2 moduleId={id} roomName='Training' />
+          </ComponentCard>
 
       <ComponentCard>
         <ToastContainer></ToastContainer>
@@ -326,7 +403,8 @@ const TrainingEdit = () => {
               
                       <Select
                           key={item.id}
-                          defaultValue={{value:item.employee_id,label:item.employee_name}}
+                          // isDisabled={true}
+                          defaultValue={{value:item.employee_id,label:item.employee_name,training_staff_id:item.tra}}
                           onChange={(e)=>{
                               onchangeItem(e,item.id)
                           }}
@@ -338,21 +416,17 @@ const TrainingEdit = () => {
                       <Input type='date'
                           defaultValue={item.from_date}
                           name="from_date"
+                          // disabled
                            />
                       </td>
                       <td data-label="To Date">
                       <Input type='date'
                           defaultValue={item.to_date}
                          name="to_date"
+                        //  disabled
                            />
                       </td>
-                        <td>
-
-                        <Input defaultValue={item.id} type="hidden" name="id"></Input>
-                        </td>
                   </tr>
-
-
                 );
               })}
 

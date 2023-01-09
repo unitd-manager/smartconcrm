@@ -4,9 +4,10 @@ import {  useNavigate,useParams } from 'react-router-dom';
 import {ToastContainer} from 'react-toastify';
 import Swal from 'sweetalert2'
 import moment from 'moment';
-import ComponentCard from '../../components/ComponentCard';
 import AttachmentModal from '../../components/tender/AttachmentModal';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
+import ComponentCard from '../../components/ComponentCard';
+import ComponentCardV2 from '../../components/ComponentCardV2';
 import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss'
@@ -27,8 +28,14 @@ const SectionEdit = () => {
     const [attachmentModal, setAttachmentModal] = useState(false);
     const [section, setSection] = useState({});
   
+    const applyChanges = () => {
+
+    }
    
-   
+    const backToList = () => {
+      navigate("/Section");
+      
+    }
   
 
     const editSectionyId = () =>
@@ -104,6 +111,15 @@ const SectionEdit = () => {
       })
     }
 
+    const DeleteSection = () => {
+      api.post('/section/deleteSection', {section_id: id} )
+          .then(() => {
+              message('Record editted successfully', 'success')
+          })
+          .catch(() => {
+              message('Unable to edit record.', 'error')
+          })
+  }
   
 
      
@@ -119,7 +135,77 @@ const SectionEdit = () => {
   
     return (
     <>
-    <BreadCrumbs heading={section && section.section_id} />
+     <BreadCrumbs />
+      <Form>
+        <FormGroup>
+          <ComponentCardV2>
+            <Row>
+              
+              <Col>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      editSectionData();
+                      navigate('/Section');
+                    }}
+                  >
+                    Save
+                  </Button>
+                  </Col>
+                  <Col>              
+                  <Button color="primary" 
+                  onClick={() => {
+                    editSectionData();
+                    applyChanges();
+                    console.log("cancel process");
+                  }
+                  }>
+                    Apply
+                  </Button>
+                  </Col>
+                  <Col>         
+                  <Button color="danger" 
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to cancel  \n  \n You will lose any changes made")) {
+                        navigate("/Section");
+                      } else {
+                        applyChanges();
+                      }
+                  }
+                  }>
+                    Cancel
+                  </Button>
+              </Col>
+              <Col>         
+                  <Button color="danger" 
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to delete this record? You cannot undo this action!")) {
+                      DeleteSection();
+                        navigate("/Section")
+                      } else {
+                        applyChanges();
+                      }
+                    console.log("back to list");
+                  }
+                  }>
+                    Delete
+                  </Button>
+                  </Col>
+                  <Col>         
+                  <Button color="danger" 
+                  onClick={() => {
+                    backToList();
+                    console.log("back to list");
+                  }
+                  }>
+                    Back to List
+                  </Button>
+              </Col>
+            </Row>
+            </ComponentCardV2>
+            </FormGroup>
+            </Form>
+    {/* <BreadCrumbs heading={section && section.section_id} /> */}
 
         <Form >
           <FormGroup>
@@ -169,27 +255,11 @@ const SectionEdit = () => {
                             <Label>Yes</Label>
                             <br></br>
                             <Input type='radio' name='published' value="0" onChange={handleInputs} 
-                            checked={section && section.published === 0 && true} ></Input>
+                            checked={section && section.published === 0 && false} ></Input>
                             <Label >No</Label>
                             </FormGroup>
                         </Col>
                         </Row>
-                     
-                 
-             <Row>
-                    <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-                        <Button onClick={()=>{
-                           editSectionData()
-                        }} type="button" className="btn btn-success mr-2">
-                        Save & Continue
-                        </Button>
-                        <Button onClick={()=>{
-                          navigate(-1)
-                        }} type="button" className="btn btn-dark">
-                        Go to List
-                        </Button>
-                     </div>
-                    </Row> 
                     </ComponentCard>
                 </FormGroup>
             </Form>

@@ -7,6 +7,7 @@ import Swal from 'sweetalert2'
 import $ from 'jquery'; 
 import ExpenseHeadModal from '../../components/tender/ExpenseHeadModal';
 import ComponentCard from '../../components/ComponentCard';
+import ComponentCardV2 from '../../components/ComponentCardV2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -29,6 +30,14 @@ const ExpenseEdit = () => {
     const addContactToggle = () => {
       setAddContactModal(!addContactModal);
     };
+     
+    const applyChanges = () => {
+
+    }
+    const backToList = () => {
+      navigate("/Expensehead");
+      
+    }
 
    
 
@@ -196,8 +205,51 @@ useEffect(()=>{
 
 
  return (
+
     <>
-    <BreadCrumbs heading={expenseDetails && expenseDetails.expense_group_id} />
+    
+      <Form>
+        <FormGroup>
+          <ComponentCardV2>
+            <Row>
+              <Col>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      editExpenseData();
+                      navigate('/ExpenseHead');
+                    }}
+                  >
+                    Save
+                  </Button>
+                  </Col>
+                  <Col>              
+                  <Button color="primary" 
+                  onClick={() => {
+                    editExpenseData();
+                    applyChanges();
+                    console.log("cancel process");
+                  }
+                  }>
+                    Apply
+                  </Button>
+                  </Col>
+                  <Col>         
+                  <Button color="danger" 
+                  onClick={() => {
+                    backToList();
+                    console.log("back to list");
+                  }
+                  }>
+                    Back to List
+                  </Button>
+              </Col>
+            </Row>
+            </ComponentCardV2>
+            </FormGroup>
+            </Form>
+
+        <BreadCrumbs heading={expenseDetails && expenseDetails.title} />
 
         <Form >
           <FormGroup>
@@ -215,7 +267,7 @@ useEffect(()=>{
               </Row>
 
 
-                    <Row>
+                    {/* <Row>
                     <div className="pt-3 mt-3 d-flex align-items-center gap-2">
                         <Button onClick={()=>{
                            editExpenseData()
@@ -228,7 +280,7 @@ useEffect(()=>{
                         Go to List
                         </Button>
                      </div>
-                    </Row>
+                    </Row> */}
                   </ComponentCard>
                 </FormGroup>
             </Form>
