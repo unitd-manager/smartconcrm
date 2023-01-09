@@ -7,10 +7,10 @@ import {
     FormGroup,
     Label,
     Input,
-    Button,ModalFooter
+    Button,
   } from 'reactstrap';
   import { ToastContainer } from 'react-toastify';
-  import {   useParams } from 'react-router-dom';
+  import {   useNavigate } from 'react-router-dom';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import api from '../../constants/api';
@@ -18,52 +18,53 @@ import message from '../../components/Message';
 
 
 const SupplierDetails = () => {
-  const {id} = useParams()
-  const [supplierForms, setSupplierForms] = useState({
-    company_name:"",
-    
-  });
-  
- // Get Supplier By Id
-
- const editSupplierById = () =>
- {
-    api.post('/supplier/edit-Supplier',{company_name:id})
-    .then((res)=> {
-        setSupplierForms(res.data.data[0])
-    })
-   .catch(() => {
-     message("Supplier Data Not Found",'info')
-    })
- }
-
- 
-
-//Logic for adding supplier in db
-
-
+  const navigate = useNavigate()
+const [supplierForms, setSupplierForms] = useState({
+  company_name: "",
+})
 
 
 const handleInputsSupplierForms = (e) => {
   setSupplierForms({...supplierForms, [e.target.name]:e.target.value});
 }
 
-const insertSupplier = () => {
-
- 
-  api.post('/supplier/insert-Supplier',supplierForms)
-  .then(()=> {
-    message('Supplier inserted successfully.','success')
-  })
-  .catch(() => {
-    message('Network connection error.','error')
-  })
+    // const [client, setClient] = useState();
+    // const getClient = () => {
+    //   api.get('/clients/getClients')
+    //     .then((res) => {
+    //       setClient(res.data.data)
+    //       console.log(client)
+    //     })
+    // }
+   
   
-  }  
-  useEffect(()=>{
-    editSupplierById();
+   
   
-  },[id])
+    const insertSupplier = () => {
+  
+    
+      api.post('/supplier/insert-Supplier',supplierForms)
+      .then((res)=> {
+       const insertedDataId= res.data.data.insertId
+       console.log(insertedDataId)
+      message('Supplier inserted successfully.','success')
+      setTimeout(()=> {
+      navigate(`/SupplierEdit/${insertedDataId}`)
+      },300);
+        
+      })
+      .catch(() => {
+        message('Network connection error.','error')
+      })
+  
+  
+  }
+  
+  
+    useEffect(() => {
+      // getSupplier();
+    }, [])
+  
     
 
 
@@ -90,14 +91,21 @@ const insertSupplier = () => {
         </Col>
       </Row>
       
-      <ModalFooter>
-        <Button  color="primary" onClick={()=>{ insertSupplier() }} >
-          Save And Continue
-        </Button>
-        <Button color="secondary" onClick={handleInputsSupplierForms}>
-          Cancel
-        </Button>
-      </ModalFooter>
+      <FormGroup>
+                <Row>
+                  <div className="pt-3 mt-3 d-flex align-items-center gap-2">
+                    <Button onClick={()=>{
+                           insertSupplier()
+                        }} type="button" className="btn btn-success mr-2" >Save & Continue
+                    </Button>
+                    <Button onClick={() => {
+                      navigate(-1)
+                    }} type="button" className="btn btn-dark">
+                      Go to List
+                    </Button>
+                  </div>
+                </Row>
+              </FormGroup>
     </div>
   
   );

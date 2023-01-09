@@ -130,7 +130,7 @@ const columns = [
   },
   {
     name: "Balance",
-    selector: "balance",
+    selector: "",
     sortable: true,
     grow:0,
   },
@@ -565,7 +565,7 @@ const columns = [
                 <td>{moment(element.po_date).format('YYYY-MM-DD')}</td>
               <td><Link to={`/PurchaseOrderEdit/${element.po_code}`} >{element.po_code}</Link></td>
               <td>{element.po_value}</td>
-              <td>{element.balance}</td>
+              <td></td>
               <td>{element.payment_status}</td>
               <td><Link to={`/SupplierHistory/${element.purchase_order_id}`}>View History</Link></td>
               </tr>)

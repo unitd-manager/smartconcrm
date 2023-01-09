@@ -1,20 +1,29 @@
 import React, {  useState,useEffect } from 'react';
-import { Row,Col,Form,FormGroup,Label,Input,TabPane,Button, } from 'reactstrap';
+import { Row,Col,Form,FormGroup,Label,Input,Button, } from 'reactstrap';
 import {ToastContainer} from 'react-toastify'
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import {  useNavigate,useParams } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "datatables.net-dt/js/dataTables.dataTables"
+import "datatables.net-dt/css/jquery.dataTables.min.css"
+import $ from 'jquery'; 
+import moment from 'moment';
+import "datatables.net-buttons/js/buttons.colVis"
+import "datatables.net-buttons/js/buttons.flash"
+import "datatables.net-buttons/js/buttons.html5"
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';import {  useNavigate,useParams,Link } from 'react-router-dom';
 import '../form-editor/editor.scss'
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
+import WorkOrderLinked from '../../components/SubConModal/WorkOrderlinked';
+
 
 
 const SubConEdit = () => {
 
   const [subCon, setSubCon] = useState();
   const [subConWorkOrder, setSubConWorkOrder] = useState();
-  const [subConDetails, setSubConDetails] = useState();
+  const [WorkOrderLinkedModal, setWorkOrderLinkedModal] = useState(false);
   const {id} = useParams()
   const navigate = useNavigate()
 
@@ -23,98 +32,129 @@ const SubConEdit = () => {
 // Get SubCon By Id
 const getsubCon = () =>
 {
-   api.get('/subcon/getSubCon',{supplier_id:id})
+   api.get('/subcon/getSubCon',{sub_con_id:id})
    .then((res)=> {
      setSubCon(res.data.data[0])
+     console.log(res)  
+   }).catch(() => {
+     message("subcon not found","info")
+   })
+}
+
+const handleInputs = (e) => {
+  setSubCon({...subCon, [e.target.name]:e.target.value});
+ }
+//Logic for edit data in db
+    
+const editSubConData = () =>
+    {
+      api.post('/subcon/edit-Subcon',subCon)
+      .then(()=> {
+        
+           
+           
+        
+        message('Record editted successfully','success')
+       // setTimeout(() => {
+       //   window.location.reload()
+        //}, 300);
+
+      })
+        .catch(() => {
+          message('Unable to edit record.','error')
+        })
+    }
+   
+
+
+
+
+
+useEffect(()=>{
+  getsubCon();
+},[id])
+
+// Get purchaseOrder By Id
+const getworkOrder = () =>
+{
+   api.post('/subcon/getWorkOrderLinkedss',{sub_con_id:id})
+   .then((res)=> {
+     setSubConWorkOrder(res.data.data)
      console.log(res)  
    }).catch(() => {
      message("Supplier not found","info")
    })
 }
 
-// Get subConWorkOrder By Id
-const getsubConWorkOrder = () =>
-{
-   api.get('/subcon/getTabWorkOrder',{purchase_order_id:id})
-   .then((res)=> {
-     setSubConWorkOrder(res.data.data[0])
-     console.log(res)  
-   }).catch(() => {
-     message("SubCon not found","info")
-   })
-}
-//Logic for edit data in db
-    
-const editSubConData = () =>
-{
-  api.post('/subcon/edit-Subcon',subConDetails)
-  .then(()=> {
-    
-    message('Record editted successfully','success')
-    // setTimeout(() => {
-    //   window.location.reload()
-    // }, 300);
+useEffect(() => {
+  setTimeout(() => {
+      $('#example').DataTable(
+          // {
+          //     pagingType: 'full_numbers',
+          //       pageLength: 20,
+          //       processing: true,
+          //       dom: 'Bfrtip'
+                
+          // }
+      );
+      } ,
+      1000
+      );
 
-  })
-    .catch(() => {
-      message('Unable to edit record.','error')
-    })
-}
-// Get Supplier By Id
+      getworkOrder()
 
-const editSubConById = () =>
-{
-   api.post('/subcon/getsubConById',{sub_con_id:id})
-   .then((res)=> {
-       setSubConDetails(res.data.data)
-       (res.data.data.company_name)
-   })
-  .catch(() => {
-    message("SubCon Data Not Found",'info')
-   })
-}
-// Insert Supplier
-const insertSubCon = () => {
+}, [])
 
- 
-    api.post('/subcon/insertsub_con')
-    .then(()=> {
-    message('SubCon inserted successfully.','success')
-      getsubCon()
-    })
-    .catch(() => {
-      message('Network connection error.','error')
-    })
+
+const columns = [
+  {
+    name: "Date",
+    selector: "work_order_date",
+    grow:0,
+    wrap: true,
+    width:'4%'
+  },
+  {
+    name: "Project",
+    selector: "title",
+    sortable: true,
+    grow:0,
+    wrap: true
+  },
+  {
+    name: "WO Code",
+    selector: "sub_con_work_order_code",
+    sortable: true,
+    grow:2,
+    wrap: true
+  },
+  {
+    name: "Amount",
+    selector: "amount",
+    sortable: true,
+    grow:0,
+  },
+  {
+    name: "Status",
+    selector: "status",
+    sortable: true,
+    grow:0,
+  },
+  {
+    name: "Balance",
+    selector: "",
+    sortable: true,
+    grow:0,
+  },
+  {
+    name: "",
+    selector: "",
+    sortable: true,
+    grow:0,
+  },
   
-  
-}
+]
 
-const handleInputs = (e) => {
- setSubConDetails({...subConDetails, [e.target.name]:e.target.value});
-}
-const editSubConWorkOrder = () =>
-{
-  api.post('/subcon/editWorkOrderPortal',subConDetails)
-  .then(()=> {
-    
-    message('Record editted successfully','success')
-    // setTimeout(() => {
-    //   window.location.reload()
-    // }, 300);
-
-  })
-    .catch(() => {
-      message('Unable to edit record.','error')
-    })
-}
-useEffect(()=>{
-  getsubCon();
-  getsubConWorkOrder();
-  editSubConData();
-  editSubConById();
-  editSubConWorkOrder();
-  insertSubCon();
-},[id])
 
   return (
     <>
@@ -459,7 +499,6 @@ useEffect(()=>{
                     <div className="pt-3 mt-3 d-flex align-items-center gap-2">
                         <Button onClick={()=>{
                            editSubConData()
-                           insertSubCon()
                         }} type="button" className="btn btn-success mr-2">
                         Save & Continue
                         </Button>
@@ -473,10 +512,10 @@ useEffect(()=>{
               
                     <Row>
                     <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-                    <Button color="primary" onClick={()=>{
-                                handleInputs()
-                              }}>
-                        Make SubCon Payment
+                    <Button onClick={()=>{
+                      setWorkOrderLinkedModal(true)
+                    }} color="primary" >
+                        Make Sub Con Payment
                         </Button>
                         
                      </div>
@@ -484,79 +523,46 @@ useEffect(()=>{
                 </ComponentCard>
                 </FormGroup> 
         </Form>
-
-        <ComponentCard>
+        <WorkOrderLinked WorkOrderLinkedModal={WorkOrderLinkedModal} setWorkOrderLinkedModal={setWorkOrderLinkedModal}></WorkOrderLinked>         
+        <ComponentCard >
           <ToastContainer></ToastContainer>
 
 
          
-          <TabPane tabId="2">
-
-              <Row>
-                  <Col md="3" className='mb-4 d-flex justify-content-between'>
-                    <h3>Work Order Linked </h3> 
-                  </Col>
-              </Row>
-
-            <Form>
-                <Row>
-                  <Col><Col md="3">
-                        <FormGroup>
-                        <Label>Project Start Date</Label>
-                            <Input type="date" onChange={handleInputs} />
-                        </FormGroup>
-                    </Col></Col>
-                  <Col><FormGroup><Label>Project</Label><Input type="text" onChange={handleInputs} /> </FormGroup></Col>
-                  <Col><FormGroup><Label>WO Code</Label><Input type="text" onChange={handleInputs} /> </FormGroup></Col>
-                  <Col><FormGroup><Label>Amount</Label> <Input type="number" onChange={handleInputs} /></FormGroup></Col>
-                  <Col md="1"><FormGroup><Label>Status</Label><Input type="text" onChange={handleInputs} /> </FormGroup></Col>
-                  <Col md="1"><FormGroup><Label></Label> Balance<Input type="number" onChange={handleInputs} /></FormGroup></Col>
-                  <Col md="1"><FormGroup><Label></Label> <Input type="number" onChange={handleInputs} /></FormGroup></Col>
-                  
-                </Row>
-                <Row>
-                <Col>
-                  <FormGroup></FormGroup>
-                </Col>
-                <Col>
-                  <FormGroup>
-                      <span>{subConWorkOrder && subConWorkOrder.work_order_date}</span>
-                  </FormGroup>
-                </Col>
-                <Col>
-                  <FormGroup>
-                      <Label>{subConWorkOrder && subConWorkOrder.project_id}</Label>
-                  </FormGroup>
-                </Col>
-                <Col >
-                  <FormGroup>
-                      <Label>{subConWorkOrder && subConWorkOrder.sub_con_worker_code}</Label>
-                  </FormGroup>
-                </Col>
-                <Col md="1">
-                  <FormGroup>
-                      <Label>{subConWorkOrder && subConWorkOrder.status}</Label>
-                  </FormGroup>
-                </Col>
-                <Col md="1">
-                  <FormGroup>
-                      <Label>{subConWorkOrder && subConWorkOrder.history}</Label>
-                  </FormGroup>
-                </Col>
+         
+                <table id="example" className="display">
+        <thead title=' Work Order Linked '>
+            <tr >
+                {columns.map(cell=>{
+                  return (<td key={cell.name}>{cell.name}</td>)
+                })}
+            </tr>
+        </thead>
+        <tbody>
+          {subConWorkOrder && subConWorkOrder.map(element=>{
+              return (<tr key={element.sub_con_id}>
+                <td>{moment(element.date).format('YYYY-MM-DD')}</td>
+              <td><Link to={`/ProjectEdit/${element.title}`} >{element.title}</Link></td>
+              <td>{element.sub_con_work_order_code}</td>
+              <td>{element.amount}</td>
+              <td>{element.status}</td>
+              <td></td>
+              <td><Link to={`/SubConHistory/${element.sub_con_work_order_id}`}></Link></td>
+              </tr>)
+          })}
+        </tbody>
+        {/* <tfoot>
+        <tr>
+                {columns.map(cell=>{
+                  return (<td key={cell.name}>{cell.name}</td>)
+                })}
+            </tr>
+        </tfoot> */}
+    </table> 
                 
-                
-                
-
-                
-                </Row>
-            </Form>
-      </TabPane>
-
-
-      
-          
           
         </ComponentCard>
+
     </>
   )
 };

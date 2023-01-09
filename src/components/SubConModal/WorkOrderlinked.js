@@ -6,40 +6,40 @@ import api from '../../constants/api';
 import message from '../Message';
 import ComponentCard from '../ComponentCard';
 
-const PurchaseOrderLinked = ({PurchaseOrderLinkedModal,setPurchaseOrderLinkedModal}) => {
-  PurchaseOrderLinked.propTypes = {
-    PurchaseOrderLinkedModal: PropTypes.bool,
-    setPurchaseOrderLinkedModal: PropTypes.func
+const WorkOrderLinked = ({WorkOrderLinkedModal,setWorkOrderLinkedModal}) => {
+  WorkOrderLinked.propTypes = {
+    WorkOrderLinkedModal: PropTypes.bool,
+    setWorkOrderLinkedModal: PropTypes.func
   }
   const {id} = useParams();
-    const [purchaseOrder,setPurchaseOrder] = useState();
-    const getpurchaseOrder = () =>{
+    const [workOrder,setWorkOrder] = useState();
+    const getworkOrder = () =>{
     
-      api.post('/supplier/getMakePayment',{supplier_id:id})
+      api.post('/subcon/getSubMakePayment',{sub_con_id:id})
         .then((res)=> {
-            setPurchaseOrder(res.data.data[0])
+            setWorkOrder(res.data.data[0])
             console.log(res.data.data)
         })
     }
 
     //API FOR INSERTING SUPPLIER RECEIPT
     
-    const [supplier,setSupplier] = useState({
+    const [subCon,setSubCon] = useState({
         amount:"",
         mode_of_payment:"",
         remarks:"",
          });
 
-    const handleInputsSupplierForms = (e) => {
-        setSupplier({...supplier, [e.target.name]:e.target.value});
+    const handleInputsSubCon = (e) => {
+        setSubCon({...subCon, [e.target.name]:e.target.value});
       }
      
-    const insertSupplierreceipt = () => {
+    const insertSubConPayment = () => {
 
  
-        api.post('/supplier/insert-SupplierReceipt',supplier)
+        api.post('/subcon/insertsub_con_payments',subCon)
         .then(()=> {
-          message('Supplier inserted successfully.','success')
+          message('subCon inserted successfully.','success')
            //window.location.reload()
         })
         .catch(() => {
@@ -49,14 +49,14 @@ const PurchaseOrderLinked = ({PurchaseOrderLinkedModal,setPurchaseOrderLinkedMod
         }  
         
         useEffect(()=>{
-            getpurchaseOrder();
+            getworkOrder();
         
           },[id])
 
 return (
   <div>
         
-  <Modal size="lg" isOpen={PurchaseOrderLinkedModal} >
+  <Modal size="lg" isOpen={WorkOrderLinkedModal} >
       
       <ModalBody>
       <Form>
@@ -70,22 +70,22 @@ return (
               <Col md="3">
                             <Label></Label>
                             <FormGroup check>
-                            <Input name="po_code(prev_inv_amount)" type="checkbox"/>
-                             <span>{purchaseOrder&&purchaseOrder.po_code}({purchaseOrder&&purchaseOrder.prev_inv_amount})</span>
+                            <Input name="sub_con_worker_code(prev_amount)" type="checkbox"/>
+                             <span>{workOrder&&workOrder.sub_con_worker_code}({workOrder&&workOrder.prev_amount})</span>
                             </FormGroup>
                             </Col>
                             
            <Col md="12">
                   <FormGroup>
                   <Label>Amount</Label>
-                  <Input  type="text" onChange={handleInputsSupplierForms}  name="amount" />
+                  <Input  type="text" onChange={handleInputsSubCon}  name="amount" />
                   </FormGroup>
               </Col>
               <Col md="12">
               <FormGroup>
                                 <Label>Mode Of Payment</Label>
                                 <Input type="select" name="mode_of_payment" 
-                                onChange={handleInputsSupplierForms}
+                                onChange={handleInputsSubCon}
                                 >
                                   <option value="" selected="selected">Please Select</option>
                                   <option value="cash">Cash</option>
@@ -99,21 +99,21 @@ return (
               <Col md="12">
                   <FormGroup>
                   <Label>Note</Label>
-                  <Input  type="text" onChange={handleInputsSupplierForms}  name="remarks" />
+                  <Input  type="text" onChange={handleInputsSubCon}  name="remarks" />
                   </FormGroup>
               </Col>
 
-              {/* <input type='hidden' name='supplier_id' value='1' /> */}
+              <input type='hidden' name='sub_con_id' value='1' />
             
            </ComponentCard>
            </FormGroup>
            <FormGroup>
                 <Row>
                     <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-        <Button  color="primary" onClick={()=>{insertSupplierreceipt() }} >
+        <Button  color="primary" onClick={()=>{insertSubConPayment() }} >
           Submit
         </Button>
-        <Button color="secondary"  onClick={()=>{ setPurchaseOrderLinkedModal(true) }}>
+        <Button color="secondary"  onClick={()=>{ setWorkOrderLinkedModal(true) }}>
           Cancel
         </Button>
                      </div>
@@ -134,4 +134,4 @@ return (
 
 
 };
-export default PurchaseOrderLinked
+export default WorkOrderLinked

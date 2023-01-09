@@ -1,5 +1,5 @@
 import React, {  useState,useEffect  } from 'react';
-import { Row,Col,Form,FormGroup,Label,Input,Button,TabPane } from 'reactstrap';
+import { Row,Col,Form,FormGroup,Label,Input,Button,TabPane,CardTitle } from 'reactstrap';
 import Swal from 'sweetalert2'
 import {ToastContainer} from 'react-toastify'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -24,6 +24,7 @@ const JobInformationEdit = () => {
 
 const [job, setJob] = useState();
 const {id} = useParams()
+// const {ids} = useParams()
 const navigate = useNavigate()
 const [JobInformationEditModal, setJobInformationEditModal] = useState(false);
 const [attachmentModal, setAttachmentModal] = useState(false);
@@ -93,23 +94,19 @@ const editJobData = () =>
        })
      }
    })
- 
-
-  }
-
-
-
-useEffect(()=>{
-editJobById();
-
-},[id])
 
    
-  
+}
+useEffect(()=>{
+    editJobById();
+    
+    },[id])
 
   return (
     <>
-    <BreadCrumbs heading={job && job.first_name} />
+    <CardTitle>Step 1 (Job Information)</CardTitle><BreadCrumbs/>
+    <CardTitle><Label>Employee Name:</Label>{job && job.first_name}</CardTitle>
+    <CardTitle><Label>Fin no:</Label>{job && job.fin_no}</CardTitle>
 
         <Form>
           <FormGroup>
@@ -185,12 +182,12 @@ editJobById();
               <Col md="3">
                             <Label>Paid medical examination fee</Label>
                             <FormGroup check>
-                            <Input name="paid_medical_examination" type="radio" value="1" onChange={handleInputsJobInformation}
+                            <Input name="paid_medical_examination" type="radio" value="1" defaultChecked={job && job.paid_medical_examination===1 && true } onChange={handleInputsJobInformation} 
                             />
                             <Label check>Yes</Label>
                             </FormGroup>
                             <FormGroup check>
-                                <Input name="paid_medical_examination" type="radio" value="0" onChange={handleInputsJobInformation}/>
+                                <Input name="paid_medical_examination" type="radio" value="0" defaultChecked={job && job.paid_medical_examination===1 && true } onChange={handleInputsJobInformation} />
                                 <Label check> No </Label>
                             </FormGroup>
                         </Col>
@@ -218,15 +215,32 @@ editJobById();
               <Col md="3">
                             <Label>Under Probation</Label>
                             <FormGroup check>
-                            <Input name="probationary" type="radio" value="1" onChange={handleInputsJobInformation}
+                            <Input name="probationary" type="radio" value="1" defaultChecked={job && job.probationary===1 && true } onChange={handleInputsJobInformation} 
                             />
                             <Label check>Yes</Label>
                             </FormGroup>
                             <FormGroup check>
-                                <Input name="probationary" type="radio" value="0" onChange={handleInputsJobInformation}/>
+                                <Input name="probationary" type="radio" value="0" defaultChecked={job && job.probationary===1 && true } onChange={handleInputsJobInformation} />
                                 <Label check> No </Label>
                             </FormGroup>
                         </Col>
+             
+              { job && job.probationary === "1" && <Col md="3">
+                  <FormGroup>
+                  <Label>Length of Probation</Label>
+                  <Input type="text" onChange={handleInputsJobInformation} value={job && job.length_of_probation} name="length_of_probation"/>
+                  </FormGroup>
+              </Col>}
+              {job && job.probationary === "1" &&<Col md="3">
+                  <Label>Probation Start Date</Label>
+                  <Input  type="date" onChange={handleInputsJobInformation} value={job && moment(job.probation_start_date).format("YYYY-MM-DD")} name="probation_start_date" />
+                  
+              </Col> }
+             {job && job.probationary === "1" &&<Col md="3">
+                  <Label>Probation End Date</Label>
+                  <Input  type="date" onChange={handleInputsJobInformation} value={job && moment(job.probation_end_date).format("YYYY-MM-DD")} name="probation_end_date" />
+                  
+              </Col>}
               </Row>
               <Row>
               <Col md="3">
@@ -289,7 +303,7 @@ editJobById();
                                 >
                                   <option value="" selected="selected">Please Select</option>
                                   <option value="current">current</option>
-                                  <option value="archive">Archive</option>
+                                  <option value="archive">Archive </option>
                                   <option value="cancel">Cancel</option>
                           
                               </Input>
@@ -298,6 +312,7 @@ editJobById();
                     </Row>
                     </FormGroup>
                     </ComponentCard>
+                    {job && job.status === 'archive' && alert('Please enter TERMINATION INFORMATION of employee if employee is leaving company.')}
 <ComponentCard title='Salary Information'>
                     <FormGroup >
                       <Row>
@@ -335,13 +350,13 @@ editJobById();
               <Row>
                     <Col md="3">
                   <FormGroup>
-                  <Label>Working Calendar(No of Days/Week)(KET) *</Label>
+                  <Label>Working Calendar(No of Days/Week)(KET) <span className='required'> *</span></Label>
                   <Input type="numbers" onChange={handleInputsJobInformation} value={job && job.working_days} name="working_days"/>
                   </FormGroup>
               </Col>
               <Col md="3">
                   <FormGroup>
-                  <Label>Basic Pay *</Label>
+                  <Label>Basic Pay <span className='required'> *</span></Label>
                   <Input type="numbers" onChange={handleInputsJobInformation} value={job && job.basic_pay} name="basic_pay"/>
                   </FormGroup>
               </Col>
@@ -349,15 +364,31 @@ editJobById();
               <Col md="3">
                             <Label> Overtime Applicable</Label>
                             <FormGroup check>
-                            <Input name="overtime" type="radio" value="1" onChange={handleInputsJobInformation}
+                            <Input name="overtime" type="radio" value="1" defaultChecked={job && job.overtime===1 && true } onChange={handleInputsJobInformation} 
                             />
                             <Label check>Yes</Label>
                             </FormGroup>
                             <FormGroup check>
-                                <Input name="overtime" type="radio" value="0" onChange={handleInputsJobInformation}/>
+                                <Input name="overtime" type="radio" value="0" defaultChecked={job && job.overtime===1 && true } onChange={handleInputsJobInformation} />
                                 <Label check> No </Label>
                             </FormGroup>
                         </Col>
+                        
+                       {job && job.overtime === "1" && <Col md="3"> 
+                  <FormGroup>
+                  <Label>Over Time Rate<span className='required'> *</span></Label>
+                  
+                  <Input type="select" value={job && job.over_time_rate} name="govt_donation" 
+                                onChange={handleInputsJobInformation}
+                                >
+                                  <option value="" selected="selected">Please Select</option>
+                                  <option value="1.5">1.5</option>
+                                  <option value="2.0">2.0</option>
+                          
+                              </Input>
+                  </FormGroup>
+              </Col>}
+                        
               <Col md="3">
                   <FormGroup>
                   <Label>Overtime Pay Rate/ Hour</Label>
@@ -438,18 +469,18 @@ editJobById();
               <Col md="3">
                             <Label>CPF Applicable</Label>
                             <FormGroup check>
-                            <Input name="cpf_applicable" type="radio" value="1" onChange={handleInputsJobInformation}
+                            <Input name="cpf_applicable" type="radio" value="1" defaultChecked={job && job.cpf_applicable===1 && true } onChange={handleInputsJobInformation} 
                             />
                             <Label check>Yes</Label>
                             </FormGroup>
                             <FormGroup check>
-                                <Input name="cpf_applicable" type="radio" value="0" onChange={handleInputsJobInformation}/>
+                                <Input name="cpf_applicable" type="radio" value="0" defaultChecked={job && job.cpf_applicable===1 && true } onChange={handleInputsJobInformation} />
                                 <Label check> No </Label>
                             </FormGroup>
                         </Col>
               <Col md="3">
                   <FormGroup>
-                  <Label>Govt donation *</Label>
+                  <Label>Govt donation<span className='required'> *</span></Label>
                   
                   <Input type="select" value={job && job.govt_donation} name="govt_donation" 
                                 onChange={handleInputsJobInformation}
@@ -464,6 +495,30 @@ editJobById();
                               </Input>
                   </FormGroup>
               </Col>
+             {job && job.govt_donation === "cdac" && <Col md="3">  
+                  <FormGroup>
+                  <Label>Pay CDAC</Label>
+                  <Input type="numbers" onChange={handleInputsJobInformation} value={job && job.pay_cdac} name="pay_cdac"/>
+                  </FormGroup>
+              </Col>}
+              {job && job.govt_donation === "sinda" &&<Col md="3">
+                  <FormGroup>
+                  <Label>Pay SINDA</Label>
+                  <Input type="numbers" onChange={handleInputsJobInformation} value={job && job.pay_sinda} name="pay_sinda"/>
+                  </FormGroup>
+              </Col>}
+              {job && job.govt_donation === "mbmf" &&<Col md="3">
+                  <FormGroup>
+                  <Label>Pay MBMF</Label>
+                  <Input type="numbers" onChange={handleInputsJobInformation} value={job && job.pay_mbmf} name="pay_mbmf"/>
+                  </FormGroup>
+              </Col>}
+              {job && job.govt_donation === "euef" &&<Col md="3">
+                  <FormGroup>
+                  <Label>Pay EUEF</Label>
+                  <Input type="numbers" onChange={handleInputsJobInformation} value={job && job.pay_euef} name="pay_euef"/>
+                  </FormGroup>
+              </Col>}
               <Col md="3">
                   <FormGroup>
                   <Label>Income Tax No</Label>

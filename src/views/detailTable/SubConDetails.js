@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState ,useEffect} from 'react';
 import {
     
     Row,
@@ -7,65 +7,66 @@ import {
     FormGroup,
     Label,
     Input,
-    Button,ModalFooter
+    Button,
   } from 'reactstrap';
   import { ToastContainer } from 'react-toastify';
-  import {   useParams } from 'react-router-dom';
+  import {   useNavigate } from 'react-router-dom';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import api from '../../constants/api';
 import message from '../../components/Message';
 
+
 const SubConDetails = () => {
-  const {id} = useParams()
-  const [subConForms, setSubConForms] = useState({
-    company_name:"",
-    
-  });
-  
- // Get Supplier By Id
-
- const editSubConById = () =>
- {
-    api.post('/subcon/edit-Subcon',{company_name:id})
-    .then((res)=> {
-        setSubConForms(res.data.data[0])
-    })
-   .catch(() => {
-     message("SubCon Data Not Found",'info')
-    })
- }
-
- 
-
-//Logic for adding subcon in db
-
-
+  const navigate = useNavigate()
+const [subConForms, setSubConForms] = useState({
+  company_name: "",
+})
 
 
 const handleInputsSubConForms = (e) => {
   setSubConForms({...subConForms, [e.target.name]:e.target.value});
 }
 
-const insertSubCon = () => {
-
- 
-  api.post('/subcon/insertsub_con',subConForms)
-  .then(()=> {
-    message('Supplier inserted successfully.','success')
-  })
-  .catch(() => {
-    message('Network connection error.','error')
-  })
+    // const [client, setClient] = useState();
+    // const getClient = () => {
+    //   api.get('/clients/getClients')
+    //     .then((res) => {
+    //       setClient(res.data.data)
+    //       console.log(client)
+    //     })
+    // }
+   
   
-  }  
-  useEffect(()=>{
-    editSubConById();
+   
   
-  },[id])
+    const insertSubCon = () => {
+  
+    
+      api.post('/subcon/insertsub_con',subConForms)
+      .then((res)=> {
+       const insertedDataId= res.data.data.insertId
+       console.log(insertedDataId)
+      message('Subcon inserted successfully.','success')
+      setTimeout(()=> {
+      navigate(`/SubConEdit/${insertedDataId}`)
+      },300);
+        
+      })
+      .catch(() => {
+        message('Network connection error.','error')
+      })
+  
+  
+  }
+  
+  
+    useEffect(() => {
+      // getSupplier();
+    }, [])
+  
     
 
-  
 
   return (
     <div>
@@ -78,7 +79,7 @@ const insertSubCon = () => {
               <FormGroup>
                 <Row>
                   <Col md="10">
-                    <Label> SubCon Name <span className='required'> *</span> </Label>
+                    <Label> Subcon Name <span className='required'> *</span> </Label>
                     <Input type="text" name="company_name" onChange={handleInputsSubConForms}/>
                     </Col>
                 </Row>
@@ -90,15 +91,24 @@ const insertSubCon = () => {
         </Col>
       </Row>
       
-      <ModalFooter>
-        <Button color="primary" onClick={()=>{ insertSubCon() }}>
-          Save & Continue
-        </Button>
-        <Button color="secondary" onClick={handleInputsSubConForms}>
-          Cancel
-        </Button>
-      </ModalFooter>
+      <FormGroup>
+                <Row>
+                  <div className="pt-3 mt-3 d-flex align-items-center gap-2">
+                    <Button onClick={()=>{
+                           insertSubCon()
+                        }} type="button" className="btn btn-success mr-2" >Save & Continue
+                    </Button>
+                    <Button onClick={() => {
+                      navigate(-1)
+                    }} type="button" className="btn btn-dark">
+                      Go to List
+                    </Button>
+                  </div>
+                </Row>
+              </FormGroup>
     </div>
+  
+
   )
 };
 

@@ -7,11 +7,10 @@ import {
     FormGroup,
     Label,
     Input,
-    Button,ModalFooter
+    Button
   } from 'reactstrap';
   import { ToastContainer } from 'react-toastify';
-  // import { Link } from 'react-router-dom';
-
+  import { useNavigate,useParams} from 'react-router-dom'
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import api from '../../constants/api';
@@ -19,7 +18,8 @@ import message from '../../components/Message';
 
 
 const JobInformationDetails = () => {
- 
+  const {id} = useParams();
+  const navigate = useNavigate();
   const [employee, setEmployee] = useState();
 
   
@@ -37,40 +37,40 @@ const JobInformationDetails = () => {
     })
  }
  
+ const [jobForms, setJobForms] = useState({
+  employee_id: "",
+  first_name: "",
+  fin_no: "",
+});
 
-    
-    //Logic for adding tender in db
-    const [jobForms, setJobForms] = useState({
-      first_name:"",
+const handleInputs = (e) => {
+  setJobForms({ ...jobForms, [e.target.name]: e.target.value });
+}
       
-    });
-    
-    
-    const handleInputsJobForms = (e) => {
-      setJobForms({...jobForms, [e.target.name]:e.target.value});
-    }
-    
-    const insertJobInformation = () => {
-    
-      
-      api.post('/jobinformation/insertjob_information',jobForms)
-      .then(()=> {
-        message('JobInformation inserted successfully.','success')
-      })
-      .catch(() => {
-        message('Network connection error.','error')
-      })
-      }
+      const insertJobInformation = () => {
+    api.post('/jobinformation/insertjob_information', jobForms)
+    .then((res) => {
+      const insertedDataId= res.data.data.insertId
+      console.log(insertedDataId)
+      message('Job Information inserted successfully.','success')
+      setTimeout(()=> {
+        navigate(`/JobInformationEdit/${insertedDataId}`)
+      },300);     
+    })
+    .catch(() => {
+      message('Unable to edit record.', 'error')
+    })
+}
       useEffect(()=>{
         editJobById();
       
-      },[])
+      },[id])
   
     
 
   return (
     <div>
-      <BreadCrumbs />
+      <BreadCrumbs  />
       <Row>
       <ToastContainer></ToastContainer>
         <Col md="12">
@@ -81,31 +81,32 @@ const JobInformationDetails = () => {
                   
                 
                 <Label>Employee Name </Label>
-
-                    <Input type="select" name="employee_id" onChange={(e)=>{
-                      handleInputsJobForms(e)
-                    }}>
-                    <option value="" selected >Please Select</option>
-
-                      {employee && employee.map((ele)=>{
-                        return  (<option key={ele.employee_id} value={ele.employee_id} >{ele.first_name}</option>)
+                <Input type="select"
+                      name="employee_id"onChange={(e)=>{
+                        handleInputs(e)
+                      }}>
+                      <option value="" selected >Please Select</option>
+                      {employee && employee.map((ele) => {
+                        return (<option key={ele.employee_id} value={ele.employee_id} >{ele.first_name}</option>)
                       })}
                     </Input>
-                    </Row>
+                   </Row>
                     
-                <ModalFooter>
-                
-                      
-        
-       
-            < Button color="primary" onClick={()=>{ insertJobInformation() }}>
-          <Link to= {`/JobInformationEdit/:id${jobForms.first_name}`}>Save and Continue</Link></Button>
-           < Button color="secondary" onClick={handleInputsJobForms}>
-          Cancel</Button>
-
-
-            
-      </ModalFooter>
+                   <FormGroup>
+                <Row>
+                  <div className="pt-3 mt-3 d-flex align-items-center gap-2">
+                    <Button type="button" className="btn btn-success mr-2" 
+                    onClick={() => {
+                      insertJobInformation();
+                      }}>
+                      Save & Continue
+                    </Button>
+                    <Button type="submit" className="btn btn-dark">
+                      Cancel
+                    </Button>
+                  </div>
+                </Row>
+              </FormGroup>
 
               </FormGroup>
             </Form>

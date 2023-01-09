@@ -17,7 +17,8 @@ import api from '../../constants/api';
 const JobInformation= () => {
   const [jobInformation,setJobInformation] = useState(null);
   const getJobInformation = () =>{
-    api.get('/jobinformation/getjobinformation')
+
+    api.get('/jobinformation/getjobinformationforList')
       .then((res)=> {
           setJobInformation(res.data.data)
           console.log(res.data.data)
@@ -172,6 +173,7 @@ const JobInformation= () => {
     //  })
 
   }
+  
   
 
 return (
